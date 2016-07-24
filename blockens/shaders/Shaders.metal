@@ -15,6 +15,7 @@ struct GridInfo {
     float gridOffset;
     int numBoxes;
     int numVertices;
+    int numColors;
 };
 
 struct VertexOut {
@@ -53,7 +54,7 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
 
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.color    = color[positionIndex];
+    outVertex.color    = color[boxNum % 2];
     
     return outVertex;
 };

@@ -31,12 +31,7 @@ let vertexData:[Float] =
 let vertexColorData:[Float] =
 [
     0.0, 0.0, 1.0, 1.0,
-    0.0, 0.0, 1.0, 1.0,
-    0.0, 0.0, 1.0, 1.0,
-
-    1.0, 0.0, 0.0, 1.0,
-    0.0, 0.0, 1.0, 1.0,
-    0.0, 0.0, 1.0, 1.0,
+    1.0, 1.0, 0.0, 1.0,
 ]
 
 
@@ -45,6 +40,7 @@ struct GridInfo {
     var gridOffset: Float32
     var numBoxes: Int32
     var numVertices: Int32
+    var numColors: Int32
 }
 
 var gridDimension: Int32 = 25;
@@ -52,7 +48,8 @@ var gridInfoData = GridInfo(
         gridDimension: gridDimension,
         gridOffset: 2.0/Float32(gridDimension),
         numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-        numVertices: Int32(vertexData.count/2))
+        numVertices: Int32(vertexData.count/2),
+        numColors: Int32(vertexColorData.count/4))
 
 let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
 
