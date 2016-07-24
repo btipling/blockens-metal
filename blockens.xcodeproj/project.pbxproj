@@ -206,6 +206,7 @@
 		596DD7CCB9B7EF11731D202F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
+				LastSwiftUpdateCheck = 0730;
 				ORGANIZATIONNAME = apphacker;
 			};
 			buildConfigurationList = 596DDB964BF48A736BA6A225 /* Build configuration list for PBXProject "blockens" */;
@@ -478,6 +479,7 @@
 				596DD44A2A7612D34BF914E8 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		596DD71C08BF4EAFC9BF78D9 /* Build configuration list for PBXNativeTarget "blockensUITests" */ = {
 			isa = XCConfigurationList;
@@ -486,6 +488,7 @@
 				596DD9039155F11B28F5E2FD /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		596DD8FB022F00D976E52AF1 /* Build configuration list for PBXNativeTarget "blockensTests" */ = {
 			isa = XCConfigurationList;
@@ -494,6 +497,7 @@
 				596DD015DF1C63BEDBC0F8AF /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		596DDB964BF48A736BA6A225 /* Build configuration list for PBXProject "blockens" */ = {
 			isa = XCConfigurationList;

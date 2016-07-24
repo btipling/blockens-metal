@@ -11,37 +11,50 @@ import MetalKit
 
 let MaxBuffers = 3
 
+let ConstantBufferSize = 1024*1024
+
 let vertexData:[Float] =
 [
-    -1.0, -1.0, 0.0,
-    -1.0,  1.0, 0.0,
-    1.0, -1.0, 0.0,
-    
-    1.0, -1.0, 0.0,
-    -1.0,  1.0, 0.0,
-    1.0,  1.0, 0.0,
+    -1.0, -1.0,
+    -1.0,  1.0,
+    1.0, -1.0,
+
+    1.0, -1.0,
+    -1.0,  1.0,
+    1.0,  1.0,
 ]
 
 
 // generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames
-let vertexBufferSize = (vertexData.count * sizeofValue(vertexData[0]) * MaxBuffers);
+//let vertexBufferSize = (vertexData.count * sizeofValue(vertexData[0]) * MaxBuffers);
 
 let vertexColorData:[Float] =
 [
     0.0, 0.0, 1.0, 1.0,
     0.0, 0.0, 1.0, 1.0,
     0.0, 0.0, 1.0, 1.0,
-    
+
     1.0, 0.0, 0.0, 1.0,
     0.0, 0.0, 1.0, 1.0,
     0.0, 0.0, 1.0, 1.0,
 ]
 
+
 struct GridInfo {
-    var gridDimension: UInt32
+    var gridDimension: Int32
+    var gridOffset: Float32
+    var numBoxes: Int32
+    var numVertices: Int32
 }
 
-var gridInfoData = GridInfo(gridDimension: 3)
+var gridDimension: Int32 = 25;
+var gridInfoData = GridInfo(
+        gridDimension: gridDimension,
+        gridOffset: 2.0/Float32(gridDimension),
+        numBoxes: Int32(pow(Float(gridDimension), 2.0)),
+        numVertices: Int32(vertexData.count/2))
+
+let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
 
 class GameViewController: NSViewController, MTKViewDelegate {
     
@@ -100,14 +113,14 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
 
 
-        vertexBuffer = device.newBufferWithLength(vertexBufferSize, options: [])
+        vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         vertexBuffer.label = "vertices"
         
         let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
         vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
         vertexColorBuffer.label = "colors"
 
-        let gridInfoBufferSize = sizeofValue(gridInfoData.gridDimension)
+        let gridInfoBufferSize = sizeofValue(gridInfoData.gridDimension) + sizeofValue(gridInfoData.gridOffset) + sizeofValue(gridInfoData.numBoxes) + sizeofValue(gridInfoData.numVertices)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer.label = "gridInfo"
     }
@@ -116,7 +129,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         
         // vData is pointer to the MTLBuffer's Float data contents
         let pData = vertexBuffer.contents()
-        let vData = UnsafeMutablePointer<Float>(pData + vertexBufferSize*bufferIndex)
+        let vData = UnsafeMutablePointer<Float>(pData + 256*bufferIndex)
 
         // reset the vertices to default before adding animated offsets
         vData.initializeFrom(vertexData)
@@ -149,10 +162,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
             
             renderEncoder.pushDebugGroup("draw morphing triangle")
             renderEncoder.setRenderPipelineState(pipelineState)
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: vertexBufferSize*bufferIndex, atIndex: 0)
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 256*bufferIndex, atIndex: 0)
             renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
             renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
-            renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: 6, instanceCount: 1)
+            renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
             
             renderEncoder.popDebugGroup()
             renderEncoder.endEncoding()
