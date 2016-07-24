@@ -48,7 +48,7 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
     pos[0] -= fabs(orgPosition[0]) - fabs(pos[0]);
     pos[1] -= fabs(orgPosition[1]) - fabs(pos[1]);
 
-    // Translate box to it's colum and row position from bottom right.
+    // Translate box to its colum and row position from bottom right.
     pos[0] += gridInfo->gridOffset * float(col);
     pos[1] += gridInfo->gridOffset * float(row);
 
