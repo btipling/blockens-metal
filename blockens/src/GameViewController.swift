@@ -120,7 +120,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
         vertexColorBuffer.label = "colors"
 
-        let gridInfoBufferSize = sizeofValue(gridInfoData.gridDimension) + sizeofValue(gridInfoData.gridOffset) + sizeofValue(gridInfoData.numBoxes) + sizeofValue(gridInfoData.numVertices)
+        let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer.label = "gridInfo"
     }
