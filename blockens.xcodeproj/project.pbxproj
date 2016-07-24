@@ -10,13 +10,13 @@
 		596DD2ED3D5AD150AAF926B8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 596DD76650B83AE4BF3DC31D /* MainMenu.xib */; };
 		596DD3FF9256D3F9CACF175C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 596DD7824DD5750EC33379AA /* Assets.xcassets */; };
 		596DD50B878BEB88BC2ECCE0 /* blockensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD469FAAA560D12454323 /* blockensUITests.swift */; };
-		596DD6451A12813303CA487C /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 596DD712C929F5CE1C16DC14 /* Info.plist */; };
-		596DD795433284864FEBF18A /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 596DDA445427ACB481F938F4 /* Info.plist */; };
 		596DD9CE9B852B6BF143D2D2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD183386F3B4EB9BF5C86 /* AppDelegate.swift */; };
+		596DDA4DF3B3FC29A2CCEFED /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 		596DDC00D167AECA3D7A490A /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD01D9618099F07A163C7 /* GameViewController.swift */; };
-		596DDD28A0B6C57CE262AAF7 /* Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 596DDD2552E9C061B11E36A4 /* Info.plist */; };
 		596DDD8DBFA31BD29C8C1344 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E35FD184C58EFDD19 /* Shaders.metal */; };
 		596DDD8F78F559083286B4EB /* blockensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDEF85B791A90D2B47995 /* blockensTests.swift */; };
+		596DDE627517EB3DBC509889 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
+		596DDE9992173DD0B906A782 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -38,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		596DD01D9618099F07A163C7 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		596DD14F2FA0CAC167115986 /* GameWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameWindow.swift; sourceTree = "<group>"; };
 		596DD183386F3B4EB9BF5C86 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		596DD469FAAA560D12454323 /* blockensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blockensUITests.swift; sourceTree = "<group>"; };
 		596DD47E35FD184C58EFDD19 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
@@ -128,6 +129,7 @@
 			children = (
 				596DD183386F3B4EB9BF5C86 /* AppDelegate.swift */,
 				596DD01D9618099F07A163C7 /* GameViewController.swift */,
+				596DD14F2FA0CAC167115986 /* GameWindow.swift */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -207,6 +209,7 @@
 			isa = PBXProject;
 			attributes = {
 				LastSwiftUpdateCheck = 0730;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = apphacker;
 			};
 			buildConfigurationList = 596DDB964BF48A736BA6A225 /* Build configuration list for PBXProject "blockens" */;
@@ -233,7 +236,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596DD6451A12813303CA487C /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -241,7 +243,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596DD795433284864FEBF18A /* Info.plist in Resources */,
 				596DD3FF9256D3F9CACF175C /* Assets.xcassets in Resources */,
 				596DD2ED3D5AD150AAF926B8 /* MainMenu.xib in Resources */,
 			);
@@ -251,7 +252,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596DDD28A0B6C57CE262AAF7 /* Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -263,6 +263,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				596DD50B878BEB88BC2ECCE0 /* blockensUITests.swift in Sources */,
+				596DDE627517EB3DBC509889 /* GameWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -271,6 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				596DDD8F78F559083286B4EB /* blockensTests.swift in Sources */,
+				596DDE9992173DD0B906A782 /* GameWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -281,6 +283,7 @@
 				596DDD8DBFA31BD29C8C1344 /* Shaders.metal in Sources */,
 				596DD9CE9B852B6BF143D2D2 /* AppDelegate.swift in Sources */,
 				596DDC00D167AECA3D7A490A /* GameViewController.swift in Sources */,
+				596DDA4DF3B3FC29A2CCEFED /* GameWindow.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

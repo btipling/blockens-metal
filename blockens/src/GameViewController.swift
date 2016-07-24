@@ -69,6 +69,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        let gameWindow = appDelegate.getWindow()
+        gameWindow.addKeyEventCallback(handleKeyEvent)
         
         device = MTLCreateSystemDefaultDevice()
         guard device != nil else { // Fallback to a blank NSView, an application could also fallback to OpenGL here.
@@ -84,6 +87,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.sampleCount = 4
         
         loadAssets()
+    }
+
+    func handleKeyEvent(event: NSEvent) {
+
+        Swift.print("Got a key down in game view controller \(event.keyCode) yay!!")
     }
     
     func loadAssets() {
