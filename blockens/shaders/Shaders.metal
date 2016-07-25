@@ -16,6 +16,8 @@ struct GridInfo {
     int numBoxes;
     int numVertices;
     int numColors;
+    int currentRow;
+    int currentCol;
 };
 
 struct VertexOut {
@@ -54,7 +56,11 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
 
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.color    = color[boxNum % 2];
+    if (col == gridInfo->currentCol && row == gridInfo->currentRow) {
+        outVertex.color = color[0];
+    } else {
+        outVertex.color = color[1];
+    }
     
     return outVertex;
 };

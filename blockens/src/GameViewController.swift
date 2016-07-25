@@ -41,6 +41,8 @@ struct GridInfo {
     var numBoxes: Int32
     var numVertices: Int32
     var numColors: Int32
+    var currentRow: Int32
+    var currentCol: Int32
 }
 
 var gridDimension: Int32 = 25;
@@ -49,9 +51,18 @@ var gridInfoData = GridInfo(
         gridOffset: 2.0/Float32(gridDimension),
         numBoxes: Int32(pow(Float(gridDimension), 2.0)),
         numVertices: Int32(vertexData.count/2),
-        numColors: Int32(vertexColorData.count/4))
+        numColors: Int32(vertexColorData.count/4),
+        currentRow: 0,
+        currentCol: 0)
 
 let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
+
+let Keys: [String: UInt16] = [
+    "LEFT_KEY": 123,
+    "RIGHT_KEY": 124,
+    "DOWN_KEY": 125,
+    "UP_KEY": 126,
+];
 
 class GameViewController: NSViewController, MTKViewDelegate {
     
@@ -90,8 +101,43 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func handleKeyEvent(event: NSEvent) {
-
-        Swift.print("Got a key down in game view controller \(event.keyCode) yay!!")
+        switch (event.keyCode) {
+            case Keys["DOWN_KEY"]!:
+                var currentRow = gridInfoData.currentRow;
+                currentRow -= 1;
+                if (currentRow <= 0) {
+                    currentRow = gridInfoData.gridDimension - 1;
+                }
+                gridInfoData.currentRow = currentRow;
+                break
+            case Keys["UP_KEY"]!:
+                var currentRow = gridInfoData.currentRow;
+                currentRow += 1;
+                if (currentRow >= gridInfoData.gridDimension) {
+                    currentRow = 0;
+                }
+                gridInfoData.currentRow = currentRow;
+                break
+            case Keys["RIGHT_KEY"]!:
+                var currentCol = gridInfoData.currentCol;
+                currentCol += 1;
+                if (currentCol >= gridInfoData.gridDimension) {
+                    currentCol = 0;
+                }
+                gridInfoData.currentCol = currentCol;
+                break
+            case Keys["LEFT_KEY"]!:
+                var currentCol = gridInfoData.currentCol;
+                currentCol -= 1;
+                if (currentCol <= 0) {
+                    currentCol = gridInfoData.gridDimension - 1;
+                }
+                gridInfoData.currentCol = currentCol;
+                break
+            default:
+                print("nope")
+                break
+        }
     }
     
     func loadAssets() {
@@ -138,6 +184,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         // reset the vertices to default before adding animated offsets
         vData.initializeFrom(vertexData)
+
+        let gData = gridInfoBuffer.contents()
+        let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
+        gvData.initializeFrom(&gridInfoData, count: 1)
+
 
     }
     
