@@ -71,15 +71,31 @@ let movementMap: [UInt16: Direction] = [
     126: Direction.Up,
 ]
 
+enum SnakeTile: Int32 {
+    case HeadUp = 0, HeadDown, HeadLeft, HeadRight
+    case TailUp, TailDown, TailLeft, TailRight
+    case BodyHorizontal, BodyVertical
+    case CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight
+}
+
+struct SnakeTilePosition {
+    var x: Int32
+    var y: Int32
+    var tile: SnakeTile
+}
+var SnakeTiles: Array<SnakeTilePosition> = Array()
+
 class GameViewController: NSViewController, MTKViewDelegate {
     
     var device: MTLDevice! = nil
     
     var commandQueue: MTLCommandQueue! = nil
     var pipelineState: MTLRenderPipelineState! = nil
+
     var vertexBuffer: MTLBuffer! = nil
     var vertexColorBuffer: MTLBuffer! = nil
     var gridInfoBuffer: MTLBuffer! = nil
+    var snakeTilesBuffer: MTLBuffer! = nil
     
     let inflightSemaphore = dispatch_semaphore_create(MaxBuffers)
     var bufferIndex = 0
@@ -212,7 +228,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         vertexBuffer.label = "vertices"
-        
+
+        let snakeTileBufferSize = sizeof(SnakeTile) * Int(gridInfoData.numBoxes)
+        snakeTilesBuffer = device.newBufferWithLength(snakeTileBufferSize, options: [])
+        snakeTilesBuffer.label = "snake"
+
         let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
         vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
         vertexColorBuffer.label = "colors"
