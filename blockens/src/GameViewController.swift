@@ -57,12 +57,19 @@ var gridInfoData = GridInfo(
 
 let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
 
-let Keys: [String: UInt16] = [
-    "LEFT_KEY": 123,
-    "RIGHT_KEY": 124,
-    "DOWN_KEY": 125,
-    "UP_KEY": 126,
-];
+let MAX_TICK_MILLISECONDS = 2000;
+let MIN_TICK_MILLISECONDS = 250;
+
+enum Direction {
+    case Up, Down, Left, Right
+}
+
+let movementMap: [UInt16: Direction] = [
+    123: Direction.Left,
+    124: Direction.Right,
+    125: Direction.Down,
+    126: Direction.Up,
+]
 
 class GameViewController: NSViewController, MTKViewDelegate {
     
@@ -76,6 +83,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
     
     let inflightSemaphore = dispatch_semaphore_create(MaxBuffers)
     var bufferIndex = 0
+    var currentTickWait = MAX_TICK_MILLISECONDS;
+    var currentDirection: Direction = Direction.Right;
 
     override func viewDidLoad() {
         
@@ -98,46 +107,83 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.sampleCount = 4
         
         loadAssets()
+        scheduleTick()
     }
 
     func handleKeyEvent(event: NSEvent) {
-        switch (event.keyCode) {
-            case Keys["DOWN_KEY"]!:
-                var currentRow = gridInfoData.currentRow;
-                currentRow -= 1;
-                if (currentRow <= 0) {
-                    currentRow = gridInfoData.gridDimension - 1;
-                }
-                gridInfoData.currentRow = currentRow;
+
+        if (Array(movementMap.keys).contains(event.keyCode)) {
+            currentDirection = movementMap[event.keyCode]!
+            move()
+            return
+        }
+
+        print("Nope.")
+    }
+
+    func scheduleTick() {
+        print("Scheduling tick.");
+        NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
+                selector: #selector(GameViewController.tick), userInfo: nil, repeats: false)
+    }
+
+    func tick() {
+        print("Ticking.");
+        move();
+        scheduleTick();
+    }
+
+    func move() {
+        switch (currentDirection) {
+            case Direction.Down:
+                moveDown()
                 break
-            case Keys["UP_KEY"]!:
-                var currentRow = gridInfoData.currentRow;
-                currentRow += 1;
-                if (currentRow >= gridInfoData.gridDimension) {
-                    currentRow = 0;
-                }
-                gridInfoData.currentRow = currentRow;
+            case Direction.Up:
+                moveUp()
                 break
-            case Keys["RIGHT_KEY"]!:
-                var currentCol = gridInfoData.currentCol;
-                currentCol += 1;
-                if (currentCol >= gridInfoData.gridDimension) {
-                    currentCol = 0;
-                }
-                gridInfoData.currentCol = currentCol;
+            case Direction.Left:
+                moveLeft()
                 break
-            case Keys["LEFT_KEY"]!:
-                var currentCol = gridInfoData.currentCol;
-                currentCol -= 1;
-                if (currentCol <= 0) {
-                    currentCol = gridInfoData.gridDimension - 1;
-                }
-                gridInfoData.currentCol = currentCol;
-                break
-            default:
-                print("nope")
+            case Direction.Right:
+                moveRight()
                 break
         }
+    }
+
+    func moveDown() {
+        var currentRow = gridInfoData.currentRow;
+        currentRow -= 1;
+        if (currentRow <= 0) {
+            currentRow = gridInfoData.gridDimension - 1;
+        }
+        gridInfoData.currentRow = currentRow;
+    }
+
+    func moveUp() {
+        var currentRow = gridInfoData.currentRow;
+        currentRow += 1;
+        if (currentRow >= gridInfoData.gridDimension) {
+            currentRow = 0;
+        }
+        gridInfoData.currentRow = currentRow;
+    }
+
+    func moveLeft() {
+        var currentCol = gridInfoData.currentCol;
+        currentCol -= 1;
+        if (currentCol <= 0) {
+            currentCol = gridInfoData.gridDimension - 1;
+        }
+        gridInfoData.currentCol = currentCol;
+    }
+
+    func moveRight() {
+        var currentCol = gridInfoData.currentCol;
+        currentCol += 1;
+        if (currentCol >= gridInfoData.gridDimension) {
+            currentCol = 0;
+        }
+        gridInfoData.currentCol = currentCol;
     }
     
     func loadAssets() {
