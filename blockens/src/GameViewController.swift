@@ -95,6 +95,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var gameTiles: Array<Int32> = []
     var snakeTiles: Array<GameTileInfo> = [GameTileInfo(x: 0, y: 0, tile: GameTile.HeadRight)]
     var timer: NSTimer?
+    var foodBoxLocation: Int32 = 0
 
     override func viewDidLoad() {
         
@@ -115,7 +116,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.delegate = self
         view.device = device
         view.sampleCount = 4
-
+        findFood()
         move()
         loadAssets()
     }
@@ -134,14 +135,30 @@ class GameViewController: NSViewController, MTKViewDelegate {
         timer = NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
                 selector: #selector(GameViewController.move), userInfo: nil, repeats: false)
     }
-    
-    func updateGameTiles() {
+
+    func findFood() {
+        var tries = 1000
+        let snakeTilePositions = mapSnakeTiles()
+        repeat {
+            foodBoxLocation = Int32(arc4random_uniform(UInt32(gridInfoData.numBoxes)))
+            tries -= 1
+        } while (tries > 0 && snakeTilePositions[foodBoxLocation] != nil)
+    }
+
+    func mapSnakeTiles() -> [Int32: GameTileInfo] {
+
         var snakeTilePosition: [Int32: GameTileInfo] = [:]
-        gameTiles = []
+
         for snakeTile in snakeTiles {
             let numBox = snakeTile.y * gridInfoData.gridDimension + snakeTile.x;
             snakeTilePosition[numBox] = snakeTile
         }
+        return snakeTilePosition
+    }
+
+    func updateGameTiles() {
+        let snakeTilePosition = mapSnakeTiles()
+        gameTiles = []
         for i in 0..<gridInfoData.numBoxes {
             if let tile = snakeTilePosition[i] {
                 gameTiles.append(tile.tile.rawValue)
@@ -242,7 +259,6 @@ class GameViewController: NSViewController, MTKViewDelegate {
         } catch let error {
             print("Failed to create pipeline state, error \(error)")
         }
-
 
         // Generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames.
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
