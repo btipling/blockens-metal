@@ -13,8 +13,7 @@ let MaxBuffers = 3
 
 let ConstantBufferSize = 1024*1024
 
-let vertexData:[Float] =
-[
+let vertexData:[Float] = [
     -1.0, -1.0,
     -1.0,  1.0,
     1.0, -1.0,
@@ -25,11 +24,7 @@ let vertexData:[Float] =
 ]
 
 
-// generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames
-//let vertexBufferSize = (vertexData.count * sizeofValue(vertexData[0]) * MaxBuffers);
-
-let vertexColorData:[Float] =
-[
+let vertexColorData:[Float] = [
     0.0, 0.0, 1.0, 1.0,
     1.0, 1.0, 0.0, 1.0,
 ]
@@ -41,24 +36,20 @@ struct GridInfo {
     var numBoxes: Int32
     var numVertices: Int32
     var numColors: Int32
-    var currentRow: Int32
-    var currentCol: Int32
 }
 
-var gridDimension: Int32 = 25;
+var gridDimension: Int32 = 25
 var gridInfoData = GridInfo(
         gridDimension: gridDimension,
         gridOffset: 2.0/Float32(gridDimension),
         numBoxes: Int32(pow(Float(gridDimension), 2.0)),
         numVertices: Int32(vertexData.count/2),
-        numColors: Int32(vertexColorData.count/4),
-        currentRow: 0,
-        currentCol: 0)
+        numColors: Int32(vertexColorData.count/4))
 
 let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
 
-let MAX_TICK_MILLISECONDS = 2000;
-let MIN_TICK_MILLISECONDS = 250;
+let MAX_TICK_MILLISECONDS = 1000
+let MIN_TICK_MILLISECONDS = 250
 
 enum Direction {
     case Up, Down, Left, Right
@@ -71,19 +62,19 @@ let movementMap: [UInt16: Direction] = [
     126: Direction.Up,
 ]
 
-enum SnakeTile: Int32 {
+enum GameTile: Int32 {
     case HeadUp = 0, HeadDown, HeadLeft, HeadRight
     case TailUp, TailDown, TailLeft, TailRight
     case BodyHorizontal, BodyVertical
     case CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight
+    case EmptyTile, GrowTile
 }
 
-struct SnakeTilePosition {
+struct GameTileInfo {
     var x: Int32
     var y: Int32
-    var tile: SnakeTile
+    var tile: GameTile
 }
-var SnakeTiles: Array<SnakeTilePosition> = Array()
 
 class GameViewController: NSViewController, MTKViewDelegate {
     
@@ -95,12 +86,15 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var vertexBuffer: MTLBuffer! = nil
     var vertexColorBuffer: MTLBuffer! = nil
     var gridInfoBuffer: MTLBuffer! = nil
-    var snakeTilesBuffer: MTLBuffer! = nil
+    var gameTilesBuffer: MTLBuffer! = nil
     
     let inflightSemaphore = dispatch_semaphore_create(MaxBuffers)
     var bufferIndex = 0
-    var currentTickWait = MAX_TICK_MILLISECONDS;
-    var currentDirection: Direction = Direction.Right;
+    var currentTickWait = MAX_TICK_MILLISECONDS
+    var currentDirection: Direction = Direction.Right
+    var gameTiles: Array<Int32> = []
+    var snakeTiles: Array<GameTileInfo> = [GameTileInfo(x: 0, y: 0, tile: GameTile.HeadRight)]
+    var timer: NSTimer?
 
     override func viewDidLoad() {
         
@@ -116,14 +110,14 @@ class GameViewController: NSViewController, MTKViewDelegate {
             return
         }
 
-        // setup view properties
+        // Setup view properties.
         let view = self.view as! MTKView
         view.delegate = self
         view.device = device
         view.sampleCount = 4
-        
+
+        move()
         loadAssets()
-        scheduleTick()
     }
 
     func handleKeyEvent(event: NSEvent) {
@@ -134,22 +128,33 @@ class GameViewController: NSViewController, MTKViewDelegate {
             return
         }
 
-        print("Nope.")
     }
 
     func scheduleTick() {
-        print("Scheduling tick.");
-        NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
-                selector: #selector(GameViewController.tick), userInfo: nil, repeats: false)
+        timer = NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
+                selector: #selector(GameViewController.move), userInfo: nil, repeats: false)
     }
-
-    func tick() {
-        print("Ticking.");
-        move();
-        scheduleTick();
+    
+    func updateGameTiles() {
+        var snakeTilePosition: [Int32: GameTileInfo] = [:]
+        gameTiles = []
+        for snakeTile in snakeTiles {
+            let numBox = snakeTile.y * gridInfoData.gridDimension + snakeTile.x;
+            snakeTilePosition[numBox] = snakeTile
+        }
+        for i in 0..<gridInfoData.numBoxes {
+            if let tile = snakeTilePosition[i] {
+                gameTiles.append(tile.tile.rawValue)
+            } else {
+                gameTiles.append(GameTile.EmptyTile.rawValue)
+            }
+        }
     }
 
     func move() {
+        if let currentTimer = timer {
+            currentTimer.invalidate()
+        }
         switch (currentDirection) {
             case Direction.Down:
                 moveDown()
@@ -164,47 +169,60 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 moveRight()
                 break
         }
+        scheduleTick()
     }
 
     func moveDown() {
-        var currentRow = gridInfoData.currentRow;
-        currentRow -= 1;
-        if (currentRow <= 0) {
-            currentRow = gridInfoData.gridDimension - 1;
+        var snakeHead = snakeTiles[0]
+        var y = snakeHead.y
+        y -= 1
+        if (y <= 0) {
+            y = gridInfoData.gridDimension - 1
         }
-        gridInfoData.currentRow = currentRow;
+        snakeHead.tile = GameTile.HeadDown
+        snakeHead.y = y
+        snakeTiles[0] = snakeHead
     }
 
     func moveUp() {
-        var currentRow = gridInfoData.currentRow;
-        currentRow += 1;
-        if (currentRow >= gridInfoData.gridDimension) {
-            currentRow = 0;
+        var snakeHead = snakeTiles[0]
+        var y = snakeHead.y
+        y += 1
+        if (y >= gridInfoData.gridDimension) {
+            y = 0
         }
-        gridInfoData.currentRow = currentRow;
+        snakeHead.tile = GameTile.HeadUp
+        snakeHead.y = y
+        snakeTiles[0] = snakeHead
     }
 
     func moveLeft() {
-        var currentCol = gridInfoData.currentCol;
-        currentCol -= 1;
-        if (currentCol <= 0) {
-            currentCol = gridInfoData.gridDimension - 1;
+        var snakeHead = snakeTiles[0]
+        var x = snakeHead.x
+        x -= 1
+        if (x <= 0) {
+            x = gridInfoData.gridDimension - 1
         }
-        gridInfoData.currentCol = currentCol;
+        snakeHead.tile = GameTile.HeadLeft
+        snakeHead.x = x
+        snakeTiles[0] = snakeHead
     }
 
     func moveRight() {
-        var currentCol = gridInfoData.currentCol;
-        currentCol += 1;
-        if (currentCol >= gridInfoData.gridDimension) {
-            currentCol = 0;
+        var snakeHead = snakeTiles[0]
+        var x = snakeHead.x
+        x += 1
+        if (x >= gridInfoData.gridDimension) {
+            x = 0
         }
-        gridInfoData.currentCol = currentCol;
+        snakeHead.tile = GameTile.HeadRight
+        snakeHead.x = x
+        snakeTiles[0] = snakeHead
     }
     
     func loadAssets() {
         
-        // load any resources required for rendering
+        // Load any resources required for rendering.
         let view = self.view as! MTKView
         commandQueue = device.newCommandQueue()
         commandQueue.label = "main command queue"
@@ -226,12 +244,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
 
 
+        // Generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames.
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         vertexBuffer.label = "vertices"
-
-        let snakeTileBufferSize = sizeof(SnakeTile) * Int(gridInfoData.numBoxes)
-        snakeTilesBuffer = device.newBufferWithLength(snakeTileBufferSize, options: [])
-        snakeTilesBuffer.label = "snake"
 
         let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
         vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
@@ -240,27 +255,33 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer.label = "gridInfo"
+
+        let gameTileBufferSize = sizeofValue(gameTiles)
+        gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
+        gameTilesBuffer.label = "snake"
+
+
     }
     
     func update() {
-        
-        // vData is pointer to the MTLBuffer's Float data contents
+        // vData is pointer to the MTLBuffer's Float data contents.
         let pData = vertexBuffer.contents()
         let vData = UnsafeMutablePointer<Float>(pData + 256*bufferIndex)
-
-        // reset the vertices to default before adding animated offsets
         vData.initializeFrom(vertexData)
 
         let gData = gridInfoBuffer.contents()
         let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
         gvData.initializeFrom(&gridInfoData, count: 1)
 
-
+        updateGameTiles()
+        let tData = gameTilesBuffer.contents()
+        let tvData = UnsafeMutablePointer<Int32>(tData + 0)
+        tvData.initializeFrom(gameTiles)
     }
     
     func drawInMTKView(view: MTKView) {
         
-        // use semaphore to encode 3 frames ahead
+        // Use semaphore to encode 3 frames ahead.
         dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
         
         self.update()
@@ -268,8 +289,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let commandBuffer = commandQueue.commandBuffer()
         commandBuffer.label = "Frame command buffer"
         
-        // use completion handler to signal the semaphore when this frame is completed allowing the encoding of the next frame to proceed
-        // use capture list to avoid any retain cycles if the command buffer gets retained anywhere besides this stack frame
+        // Use completion handler to signal the semaphore when this frame is completed allowing the encoding of the next frame to proceed.
+        // Use capture list to avoid any retain cycles if the command buffer gets retained anywhere besides this stack frame.
         commandBuffer.addCompletedHandler{ [weak self] commandBuffer in
             if let strongSelf = self {
                 dispatch_semaphore_signal(strongSelf.inflightSemaphore)
@@ -287,6 +308,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             renderEncoder.setVertexBuffer(vertexBuffer, offset: 256*bufferIndex, atIndex: 0)
             renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
             renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
+            renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
             renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
             
             renderEncoder.popDebugGroup()
@@ -295,7 +317,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             commandBuffer.presentDrawable(currentDrawable)
         }
         
-        // bufferIndex matches the current semaphore controled frame index to ensure writing occurs at the correct region in the vertex buffer
+        // bufferIndex matches the current semaphore controlled frame index to ensure writing occurs at the correct region in the vertex buffer.
         bufferIndex = (bufferIndex + 1) % MaxBuffers
         
         commandBuffer.commit()

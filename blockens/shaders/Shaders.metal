@@ -16,8 +16,6 @@ struct GridInfo {
     int numBoxes;
     int numVertices;
     int numColors;
-    int currentRow;
-    int currentCol;
 };
 
 struct VertexOut {
@@ -28,7 +26,8 @@ struct VertexOut {
 vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
                                      constant packed_float4* color    [[ buffer(1) ]],
-                                     constant GridInfo* gridInfo [[ buffer(2) ]])
+                                     constant GridInfo* gridInfo [[ buffer(2) ]],
+                                     constant int* gameTiles [[ buffer(3) ]])
 {
 
     VertexOut outVertex;
@@ -54,9 +53,9 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
     pos[0] += gridInfo->gridOffset * float(col);
     pos[1] += gridInfo->gridOffset * float(row);
 
-
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    if (col == gridInfo->currentCol && row == gridInfo->currentRow) {
+
+    if (gameTiles[boxNum] < 10) {
         outVertex.color = color[0];
     } else {
         outVertex.color = color[1];
