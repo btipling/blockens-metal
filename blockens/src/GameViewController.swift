@@ -80,7 +80,7 @@ struct GameTileInfo {
 }
 
 enum GameStatus {
-    case Stopped, Running
+    case Stopped, Paused, Running
 }
 
 class GameViewController: NSViewController, MTKViewDelegate {
@@ -100,7 +100,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var currentTickWait = MAX_TICK_MILLISECONDS
     var currentDirection: Direction = Direction.Right
     var gameTiles: Array<Int32> = []
-    var snakeTiles: Array<GameTileInfo> = [GameTileInfo(x: 0, y: 0, tile: GameTile.HeadRight)]
+    var snakeTiles: Array<GameTileInfo> = []
     var timer: NSTimer?
     var foodBoxLocation: Int32 = 0
     var gameStatus: GameStatus = GameStatus.Running
@@ -124,9 +124,23 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.delegate = self
         view.device = device
         view.sampleCount = 4
-        findFood()
-        tick()
+        resetGame()
         loadAssets()
+    }
+
+    func resetGame() {
+        currentTickWait = MAX_TICK_MILLISECONDS
+        currentDirection = Direction.Right
+
+        let newSpot = getRandomBox()
+        let x = Int32(newSpot % gridInfoData.gridDimension)
+        let y = Int32(newSpot / gridInfoData.gridDimension)
+        snakeTiles = [GameTileInfo(x: x, y: y, tile: GameTile.HeadRight)]
+
+        findFood()
+
+        gameStatus = GameStatus.Running
+        scheduleTick()
     }
 
     func handleKeyEvent(event: NSEvent) {
@@ -138,11 +152,20 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         switch event.keyCode {
             case S_KEY:
-                gameStatus = GameStatus.Running
-                scheduleTick()
+                switch gameStatus {
+                    case GameStatus.Running:
+                        break
+                    case GameStatus.Stopped:
+                        resetGame()
+                        break
+                    default:
+                        gameStatus = GameStatus.Running
+                        scheduleTick()
+                        break
+                }
                 break
             case P_KEY:
-                gameStatus = GameStatus.Stopped
+                gameStatus = GameStatus.Paused
                 break
             default:
                 // Unhandled key code.
@@ -152,7 +175,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func scheduleTick() {
-        if gameStatus == GameStatus.Stopped {
+        if gameStatus != GameStatus.Running {
             return
         }
         if timer?.valid ?? false {
@@ -163,13 +186,21 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 selector: #selector(GameViewController.tick), userInfo: nil, repeats: false)
     }
 
+    func getRandomBox() -> Int32 {
+        return Int32(arc4random_uniform(UInt32(gridInfoData.numBoxes)))
+    }
+
     func findFood() {
         var tries = 1000
         let snakeTilePositions = mapSnakeTiles()
         repeat {
-            foodBoxLocation = Int32(arc4random_uniform(UInt32(gridInfoData.numBoxes)))
+            foodBoxLocation = getRandomBox()
             tries -= 1
         } while (tries > 0 && snakeTilePositions[foodBoxLocation] != nil)
+        if tries == 0 {
+            // Couldn't find a place to put food in 1k tries.
+            gameStatus = GameStatus.Stopped
+        }
     }
 
     func mapSnakeTiles(start: Int = 0) -> [Int32: GameTileInfo] {
@@ -191,8 +222,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
     func moveSnakeBody() {
 
-        if gameStatus == GameStatus.Stopped {
-            return
+        if gameStatus != GameStatus.Running {
+                return
         }
 
         var newSnakeTiles: [GameTileInfo] = []
