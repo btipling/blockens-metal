@@ -26,7 +26,8 @@ let vertexData:[Float] = [
 
 let vertexColorData:[Float] = [
     0.0, 0.0, 1.0, 1.0,
-    1.0, 1.0, 0.0, 1.0,
+    1.0, 1.0, 1.0, 1.0,
+    0.0, 1.0, 0.0, 1.0,
 ]
 
 
@@ -160,11 +161,13 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let snakeTilePosition = mapSnakeTiles()
         gameTiles = []
         for i in 0..<gridInfoData.numBoxes {
-            if let tile = snakeTilePosition[i] {
-                gameTiles.append(tile.tile.rawValue)
-            } else {
-                gameTiles.append(GameTile.EmptyTile.rawValue)
+            var tile = GameTile.EmptyTile
+            if let snakeTile = snakeTilePosition[i] {
+                tile = snakeTile.tile
+            } else if (i == foodBoxLocation) {
+                tile = GameTile.GrowTile
             }
+            gameTiles.append(tile.rawValue)
         }
     }
 
@@ -193,7 +196,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         var snakeHead = snakeTiles[0]
         var y = snakeHead.y
         y -= 1
-        if (y <= 0) {
+        if (y < 0) {
             y = gridInfoData.gridDimension - 1
         }
         snakeHead.tile = GameTile.HeadDown
@@ -217,7 +220,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         var snakeHead = snakeTiles[0]
         var x = snakeHead.x
         x -= 1
-        if (x <= 0) {
+        if (x < 0) {
             x = gridInfoData.gridDimension - 1
         }
         snakeHead.tile = GameTile.HeadLeft

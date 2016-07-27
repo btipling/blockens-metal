@@ -23,6 +23,17 @@ struct VertexOut {
     float4  color;
 };
 
+enum GameTile {
+
+    HeadUp, HeadDown, HeadLeft, HeadRight,
+    TailUp, TailDown, TailLeft, TailRight,
+    BodyHorizontal, BodyVertical,
+    CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight,
+
+    EmptyTile, GrowTile,
+
+};
+
 vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
                                      constant packed_float4* color    [[ buffer(1) ]],
@@ -55,10 +66,12 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
 
-    if (gameTiles[boxNum] < 10) {
+    if (gameTiles[boxNum] < EmptyTile) {
         outVertex.color = color[0];
-    } else {
+    } else if (gameTiles[boxNum] == EmptyTile) {
         outVertex.color = color[1];
+    } else {
+        outVertex.color = color[2];
     }
     
     return outVertex;
