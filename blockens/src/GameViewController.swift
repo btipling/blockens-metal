@@ -62,6 +62,9 @@ let movementMap: [UInt16: Direction] = [
     126: Direction.Up,
 ]
 
+let S_KEY: UInt16 = 1
+let P_KEY: UInt16 = 35
+
 enum GameTile: Int32 {
     case HeadUp = 0, HeadDown, HeadLeft, HeadRight
     case TailUp, TailDown, TailLeft, TailRight
@@ -127,17 +130,33 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func handleKeyEvent(event: NSEvent) {
-
         if Array(movementMap.keys).contains(event.keyCode) {
             currentDirection = movementMap[event.keyCode]!
             tick()
             return
         }
 
+        switch event.keyCode {
+            case S_KEY:
+                gameStatus = GameStatus.Running
+                scheduleTick()
+                break
+            case P_KEY:
+                gameStatus = GameStatus.Stopped
+                break
+            default:
+                // Unhandled key code.
+                break
+        }
+
     }
 
     func scheduleTick() {
         if gameStatus == GameStatus.Stopped {
+            return
+        }
+        if timer?.valid ?? false {
+            // If timer isn't nil and is valid don't start a new one.
             return
         }
         timer = NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
