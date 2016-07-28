@@ -148,7 +148,34 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
     func handleKeyEvent(event: NSEvent) {
         if Array(movementMap.keys).contains(event.keyCode) {
-            currentDirection = movementMap[event.keyCode]!
+            let newDirection = movementMap[event.keyCode]!
+            switch (newDirection) {
+                case Direction.Down:
+                    if oneEighty(Direction.Up) {
+                        return
+                    }
+                    break
+                case Direction.Up:
+                    if oneEighty(Direction.Down) {
+                        return
+                    }
+                    break
+                case Direction.Left:
+                    if oneEighty(Direction.Right) {
+                        return
+                    }
+                    break
+                case Direction.Right:
+
+                    if oneEighty(Direction.Left) {
+                        return
+                    }
+                    break
+                default:
+                    // Just keep going. I don't know what this is.
+                    break
+            }
+            currentDirection = newDirection
             tick()
             return
         }
@@ -321,9 +348,21 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
     }
 
+    func oneEighty(oppositeDirection: Direction) -> Bool {
+
+        if snakeTiles.count > 1 && oppositeDirection == currentDirection {
+            // It's a 180.
+            return true
+        }
+
+        return false
+    }
+
     func moveDown() {
+
         var snakeHead = snakeTiles[0]
         var y = snakeHead.y
+
         y -= 1
         if y < 0 {
             y = gridInfoData.gridDimension - 1
@@ -334,8 +373,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func moveUp() {
+
         var snakeHead = snakeTiles[0]
         var y = snakeHead.y
+
         y += 1
         if y >= gridInfoData.gridDimension {
             y = 0
@@ -346,8 +387,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func moveLeft() {
+
         var snakeHead = snakeTiles[0]
         var x = snakeHead.x
+
         x -= 1
         if x < 0 {
             x = gridInfoData.gridDimension - 1
@@ -358,8 +401,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func moveRight() {
+
         var snakeHead = snakeTiles[0]
         var x = snakeHead.x
+        
         x += 1
         if x >= gridInfoData.gridDimension {
             x = 0
