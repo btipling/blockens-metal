@@ -166,13 +166,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
                     }
                     break
                 case Direction.Right:
-
                     if oneEighty(Direction.Left) {
                         return
                     }
-                    break
-                default:
-                    // Just keep going. I don't know what this is.
                     break
             }
             currentDirection = newDirection
@@ -404,7 +400,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         var snakeHead = snakeTiles[0]
         var x = snakeHead.x
-        
+
         x += 1
         if x >= gridInfoData.gridDimension {
             x = 0
