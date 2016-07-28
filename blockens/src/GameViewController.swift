@@ -9,8 +9,6 @@
 import Cocoa
 import MetalKit
 
-let MaxBuffers = 3
-
 let ConstantBufferSize = 1024*1024
 
 let vertexData:[Float] = [
@@ -94,8 +92,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var gameTilesBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
     
-    let inflightSemaphore = dispatch_semaphore_create(MaxBuffers)
-    var bufferIndex = 0
+    let inflightSemaphore = dispatch_semaphore_create(1)
     var currentTickWait = MAX_TICK_MILLISECONDS
     var currentDirection: Direction = Direction.Right
 
@@ -459,7 +456,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func update() {
         // vData is pointer to the MTLBuffer's Float data contents.
         let pData = vertexBuffer.contents()
-        let vData = UnsafeMutablePointer<Float>(pData + 256*bufferIndex)
+        let vData = UnsafeMutablePointer<Float>(pData + 256)
         vData.initializeFrom(vertexData)
 
         let gData = gridInfoBuffer.contents()
@@ -502,7 +499,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             
             renderEncoder.pushDebugGroup("draw morphing triangle")
             renderEncoder.setRenderPipelineState(pipelineState)
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 256*bufferIndex, atIndex: 0)
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
             renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
             renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
             renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
@@ -515,9 +512,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             commandBuffer.presentDrawable(currentDrawable)
         }
         
-        // bufferIndex matches the current semaphore controlled frame index to ensure writing occurs at the correct region in the vertex buffer.
-        bufferIndex = (bufferIndex + 1) % MaxBuffers
-        
+
         commandBuffer.commit()
     }
 
