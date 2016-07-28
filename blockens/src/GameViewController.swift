@@ -32,22 +32,14 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var device: MTLDevice! = nil
     
     var commandQueue: MTLCommandQueue! = nil
-    var pipelineState: MTLRenderPipelineState! = nil
-
-    var vertexBuffer: MTLBuffer! = nil
-    var vertexColorBuffer: MTLBuffer! = nil
-    var gridInfoBuffer: MTLBuffer! = nil
-    var gameTilesBuffer: MTLBuffer! = nil
-    var boxTilesBuffer: MTLBuffer! = nil
     
     let inflightSemaphore = dispatch_semaphore_create(1)
     var currentTickWait = MAX_TICK_MILLISECONDS
 
     var timer: NSTimer?
     var gameStatus: GameStatus = GameStatus.Running
-    var vertexCount = 0
 
-    let snake: Snake = Snake(data: gridInfoData)
+    let snake: SnakeController = SnakeController(data: gridInfoData)
 
     override func viewDidLoad() {
         
@@ -68,8 +60,16 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.delegate = self
         view.device = device
         view.sampleCount = 4
-        resetGame()
         loadAssets()
+        resetGame()
+    }
+
+    func loadAssets() {
+
+        let view = self.view as! MTKView
+        commandQueue = device.newCommandQueue()
+        commandQueue.label = "main command queue"
+        snake.renderer().loadAssets(device, view: view, gridInfoData: gridInfoData)
     }
 
     func resetGame() {
@@ -145,12 +145,6 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
 
-    func updateGameTiles() {
-        snake.update()
-        vertexCount = snake.vertexCount()
-    }
-
-
     func tick() {
         if let currentTimer = timer {
             currentTimer.invalidate()
@@ -168,83 +162,15 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
         scheduleTick()
     }
-
-    func loadAssets() {
-        
-        // Load any resources required for rendering.
-        let view = self.view as! MTKView
-        commandQueue = device.newCommandQueue()
-        commandQueue.label = "main command queue"
-        
-        let defaultLibrary = device.newDefaultLibrary()!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("passThroughFragment")!
-        let vertexProgram = defaultLibrary.newFunctionWithName("passThroughVertex")!
-        
-        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        pipelineStateDescriptor.vertexFunction = vertexProgram
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineStateDescriptor.sampleCount = view.sampleCount
-        
-        do {
-            try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
-        } catch let error {
-            print("Failed to create pipeline state, error \(error)")
-        }
-
-        // Generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames.
-        vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
-        vertexBuffer.label = "vertices"
-
-        let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
-        vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
-        vertexColorBuffer.label = "colors"
-
-        let gridInfoBufferSize = sizeofValue(gridInfoData)
-        gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
-        gridInfoBuffer.label = "gridInfo"
-
-        let gameTileBufferSize = sizeofValue(snake.gameTiles())
-        gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
-        gameTilesBuffer.label = "gameTiles"
-
-        let boxTileBufferSize = sizeofValue(snake.boxTiles())
-        boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
-        boxTilesBuffer.label = "boxTiles"
-
-
-    }
-    
-    func update() {
-        // vData is pointer to the MTLBuffer's Float data contents.
-        let pData = vertexBuffer.contents()
-        let vData = UnsafeMutablePointer<Float>(pData + 256)
-        vData.initializeFrom(vertexData)
-
-        let gData = gridInfoBuffer.contents()
-        let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
-        gvData.initializeFrom(&gridInfoData, count: 1)
-
-        updateGameTiles()
-        let tData = gameTilesBuffer.contents()
-        let tvData = UnsafeMutablePointer<Int32>(tData + 0)
-        tvData.initializeFrom(snake.gameTiles())
-
-        let bData = boxTilesBuffer.contents()
-        let bvData = UnsafeMutablePointer<Int32>(bData + 0)
-        bvData.initializeFrom(snake.boxTiles())
-    }
     
     func drawInMTKView(view: MTKView) {
-        
         // Use semaphore to encode 3 frames ahead.
         dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
-        
-        self.update()
-        
+
+        snake.update()
         let commandBuffer = commandQueue.commandBuffer()
         commandBuffer.label = "Frame command buffer"
-        
+
         // Use completion handler to signal the semaphore when this frame is completed allowing the encoding of the next frame to proceed.
         // Use capture list to avoid any retain cycles if the command buffer gets retained anywhere besides this stack frame.
         commandBuffer.addCompletedHandler{ [weak self] commandBuffer in
@@ -253,24 +179,16 @@ class GameViewController: NSViewController, MTKViewDelegate {
             }
             return
         }
-        
-        if let renderPassDescriptor = view.currentRenderPassDescriptor, currentDrawable = view.currentDrawable
-        {
-            let renderEncoder = commandBuffer.renderCommandEncoderWithDescriptor(renderPassDescriptor)
-            renderEncoder.label = "render encoder"
-            
-            renderEncoder.pushDebugGroup("draw morphing triangle")
-            renderEncoder.setRenderPipelineState(pipelineState)
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
-            renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
-            renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
-            renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
-            renderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
-            renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
-            
-            renderEncoder.popDebugGroup()
-            renderEncoder.endEncoding()
-                
+
+        if let renderPassDescriptor = view.currentRenderPassDescriptor, currentDrawable = view.currentDrawable {
+            let parallelCommandEncoder = commandBuffer.parallelRenderCommandEncoderWithDescriptor(renderPassDescriptor)
+
+            // Render snake
+            let snakeRenderEncoder = parallelCommandEncoder.renderCommandEncoder()
+            snake.renderer().render(snakeRenderEncoder)
+
+
+            parallelCommandEncoder.endEncoding()
             commandBuffer.presentDrawable(currentDrawable)
         }
         commandBuffer.commit()

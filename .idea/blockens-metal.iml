@@ -7,7 +7,8 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/utils.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameWindow.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameViewController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Assets.xcassets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Base.lproj/MainMenu.xib" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Info.plist" isTestSource="false" />

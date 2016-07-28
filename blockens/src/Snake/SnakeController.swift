@@ -5,7 +5,7 @@
 
 import Foundation
 
-class Snake {
+class SnakeController {
 
     var currentDirection: Direction = Direction.Right
 
@@ -14,7 +14,8 @@ class Snake {
 
     var snakeTiles: Array<GameTileInfo> = []
     var foodBoxLocation: Int32 = 0
-    let gridInfoData: GridInfo
+    var gridInfoData: GridInfo
+    let _renderer: SnakeRenderer = SnakeRenderer()
 
     init(data: GridInfo) {
         gridInfoData = data
@@ -46,6 +47,10 @@ class Snake {
 
     func gameTiles() -> Array<Int32> {
         return _gameTiles
+    }
+
+    func renderer() -> SnakeRenderer {
+        return _renderer
     }
 
     func findFood() -> Bool {
@@ -122,11 +127,10 @@ class Snake {
             _gameTiles.append(GameTile.GrowTile.rawValue)
             _boxTiles.append(foodBoxLocation)
         }
+        _renderer.updateTileCount(_gameTiles.count, gridInfoData: gridInfoData)
+        _renderer.update(_gameTiles, boxTiles: _boxTiles)
     }
 
-    func vertexCount () -> Int {
-        return _gameTiles.count * Int(gridInfoData.numVertices)
-    }
 
     func moveHead() -> Bool {
         switch (currentDirection) {
