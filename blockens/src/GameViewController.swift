@@ -21,63 +21,11 @@ let vertexData:[Float] = [
     1.0,  1.0,
 ]
 
-
 let vertexColorData:[Float] = [
     0.0, 0.0, 1.0, 1.0,
     1.0, 1.0, 1.0, 1.0,
     0.0, 1.0, 0.0, 1.0,
 ]
-
-
-struct GridInfo {
-    var gridDimension: Int32
-    var gridOffset: Float32
-    var numBoxes: Int32
-    var numVertices: Int32
-    var numColors: Int32
-}
-
-var gridDimension: Int32 = 25
-var gridInfoData = GridInfo(
-        gridDimension: gridDimension,
-        gridOffset: 2.0/Float32(gridDimension),
-        numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-        numVertices: Int32(vertexData.count/2),
-        numColors: Int32(vertexColorData.count/4))
-
-let MAX_TICK_MILLISECONDS = 300.0
-
-enum Direction {
-    case Up, Down, Left, Right
-}
-
-let movementMap: [UInt16: Direction] = [
-    123: Direction.Left,
-    124: Direction.Right,
-    125: Direction.Down,
-    126: Direction.Up,
-]
-
-let S_KEY: UInt16 = 1
-let P_KEY: UInt16 = 35
-
-enum GameTile: Int32 {
-    case HeadUp = 0, HeadDown, HeadLeft, HeadRight
-    case TailUp, TailDown, TailLeft, TailRight
-    case BodyHorizontal, BodyVertical
-    case CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight
-    case EmptyTile, GrowTile
-}
-
-struct GameTileInfo {
-    var x: Int32
-    var y: Int32
-    var tile: GameTile
-}
-
-enum GameStatus {
-    case Stopped, Paused, Running
-}
 
 class GameViewController: NSViewController, MTKViewDelegate {
     
@@ -94,16 +42,12 @@ class GameViewController: NSViewController, MTKViewDelegate {
     
     let inflightSemaphore = dispatch_semaphore_create(1)
     var currentTickWait = MAX_TICK_MILLISECONDS
-    var currentDirection: Direction = Direction.Right
 
-    var gameTiles: Array<Int32> = []
-    var boxTiles: Array<Int32> = []
-
-    var snakeTiles: Array<GameTileInfo> = []
     var timer: NSTimer?
-    var foodBoxLocation: Int32 = 0
     var gameStatus: GameStatus = GameStatus.Running
     var vertexCount = 0
+
+    let snake: Snake = Snake(data: gridInfoData)
 
     override func viewDidLoad() {
         
@@ -130,16 +74,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
     func resetGame() {
         currentTickWait = MAX_TICK_MILLISECONDS
-        currentDirection = Direction.Right
-
-        let newSpot = getRandomBox()
-        let x = Int32(newSpot % gridInfoData.gridDimension)
-        let y = Int32(newSpot / gridInfoData.gridDimension)
-        snakeTiles = [GameTileInfo(x: x, y: y, tile: GameTile.HeadRight)]
-
-        findFood()
-
-        gameStatus = GameStatus.Running
+        snake.reset()
         scheduleTick()
     }
 
@@ -148,27 +83,27 @@ class GameViewController: NSViewController, MTKViewDelegate {
             let newDirection = movementMap[event.keyCode]!
             switch (newDirection) {
                 case Direction.Down:
-                    if oneEighty(Direction.Up) {
+                    if snake.oneEighty(Direction.Up) {
                         return
                     }
                     break
                 case Direction.Up:
-                    if oneEighty(Direction.Down) {
+                    if snake.oneEighty(Direction.Down) {
                         return
                     }
                     break
                 case Direction.Left:
-                    if oneEighty(Direction.Right) {
+                    if snake.oneEighty(Direction.Right) {
                         return
                     }
                     break
                 case Direction.Right:
-                    if oneEighty(Direction.Left) {
+                    if snake.oneEighty(Direction.Left) {
                         return
                     }
                     break
             }
-            currentDirection = newDirection
+            snake.setDirection(newDirection)
             tick()
             return
         }
@@ -209,204 +144,31 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 selector: #selector(GameViewController.tick), userInfo: nil, repeats: false)
     }
 
-    func getRandomBox() -> Int32 {
-        return Int32(arc4random_uniform(UInt32(gridInfoData.numBoxes)))
-    }
-
-    func findFood() {
-        var tries = 1000
-        let snakeTilePositions = mapSnakeTiles()
-        repeat {
-            foodBoxLocation = getRandomBox()
-            tries -= 1
-        } while (tries > 0 && snakeTilePositions[foodBoxLocation] != nil)
-        if tries == 0 {
-            // Couldn't find a place to put food in 1k tries.
-            gameStatus = GameStatus.Stopped
-        }
-    }
-
-    func mapSnakeTiles(start: Int = 0) -> [Int32: GameTileInfo] {
-
-        var snakeTilePosition: [Int32: GameTileInfo] = [:]
-
-        if (start >= snakeTiles.count) {
-            return snakeTilePosition
-        }
-
-        let range = start + ((snakeTiles.count - start) - 1)
-        for snakeTile in snakeTiles[start...range] {
-            let numBox = snakeTile.y * gridInfoData.gridDimension + snakeTile.x;
-            snakeTilePosition[numBox] = snakeTile
-        }
-
-        return snakeTilePosition
-    }
-
-    func moveSnakeBody() {
-
-        if gameStatus != GameStatus.Running {
-                return
-        }
-
-        var newSnakeTiles: [GameTileInfo] = []
-        var prevX: Int32 = -1
-        var prevY: Int32 = -1
-        var curX: Int32 = -1
-        var curY: Int32 = -1
-        for snakeTile in snakeTiles {
-            var newSnakeTile = snakeTile
-            if prevX == -1 && prevY == -1 {
-                prevX = snakeTile.x
-                prevY = snakeTile.y
-                newSnakeTiles.append(snakeTile)
-                continue // First snake tile, all done.
-            }
-            if prevX == snakeTile.x && prevY == snakeTile.y {
-                // We just grew.
-                moveHead()
-                return
-            }
-            curX = prevX
-            curY = prevY
-            prevX = snakeTile.x
-            prevY = snakeTile.y
-            newSnakeTile.x = curX
-            newSnakeTile.y = curY
-            newSnakeTiles.append(newSnakeTile)
-        }
-        snakeTiles = newSnakeTiles
-        moveHead()
-    }
 
     func updateGameTiles() {
-        let snakeTilePosition = mapSnakeTiles()
-        gameTiles = []
-        boxTiles = []
-        for (boxNum, tileInfo) in snakeTilePosition {
-            gameTiles.append(tileInfo.tile.rawValue)
-            boxTiles.append(boxNum)
-        }
-        if snakeTilePosition[foodBoxLocation] == nil {
-            gameTiles.append(GameTile.GrowTile.rawValue)
-            boxTiles.append(foodBoxLocation)
-        }
-        vertexCount = gameTiles.count * Int(gridInfoData.numVertices)
+        snake.update()
+        vertexCount = snake.vertexCount()
     }
 
-    func moveHead() {
-        switch (currentDirection) {
-            case Direction.Down:
-                moveDown()
-                break
-            case Direction.Up:
-                moveUp()
-                break
-            case Direction.Left:
-                moveLeft()
-                break
-            case Direction.Right:
-                moveRight()
-                break
-        }
-        var snakeMap = mapSnakeTiles(1)
-        let snakeHead = snakeTiles[0]
-        let currentBoxNum = snakeHead.y * gridInfoData.gridDimension + snakeHead.x
-        if snakeMap[currentBoxNum] != nil {
-            print("Collision")
-            gameStatus = GameStatus.Stopped
-        }
-    }
 
     func tick() {
         if let currentTimer = timer {
             currentTimer.invalidate()
         }
-        eatFoodIfOnFood()
-        moveSnakeBody()
+        if gameStatus != GameStatus.Running {
+            return
+        }
+        if (snake.eatFoodIfOnFood()) {
+            currentTickWait -= log_e(currentTickWait)
+        }
+        if !snake.move() {
+            print("Collision")
+            gameStatus = GameStatus.Stopped
+            return
+        }
         scheduleTick()
     }
 
-    func log_e(n: Double) -> Double {
-        return log(n)/log(M_E)
-    }
-
-    func eatFoodIfOnFood() {
-        let snakeTile = snakeTiles[0]
-        let numBox = snakeTile.y * gridInfoData.gridDimension + snakeTile.x;
-        if numBox == foodBoxLocation {
-            snakeTiles.append(GameTileInfo(x: snakeTile.x, y: snakeTile.y, tile: GameTile.HeadRight))
-            currentTickWait -= log_e(currentTickWait)
-            findFood()
-        }
-    }
-
-    func oneEighty(oppositeDirection: Direction) -> Bool {
-
-        if snakeTiles.count > 1 && oppositeDirection == currentDirection {
-            // It's a 180.
-            return true
-        }
-
-        return false
-    }
-
-    func moveDown() {
-
-        var snakeHead = snakeTiles[0]
-        var y = snakeHead.y
-
-        y -= 1
-        if y < 0 {
-            y = gridInfoData.gridDimension - 1
-        }
-        snakeHead.tile = GameTile.HeadDown
-        snakeHead.y = y
-        snakeTiles[0] = snakeHead
-    }
-
-    func moveUp() {
-
-        var snakeHead = snakeTiles[0]
-        var y = snakeHead.y
-
-        y += 1
-        if y >= gridInfoData.gridDimension {
-            y = 0
-        }
-        snakeHead.tile = GameTile.HeadUp
-        snakeHead.y = y
-        snakeTiles[0] = snakeHead
-    }
-
-    func moveLeft() {
-
-        var snakeHead = snakeTiles[0]
-        var x = snakeHead.x
-
-        x -= 1
-        if x < 0 {
-            x = gridInfoData.gridDimension - 1
-        }
-        snakeHead.tile = GameTile.HeadLeft
-        snakeHead.x = x
-        snakeTiles[0] = snakeHead
-    }
-
-    func moveRight() {
-
-        var snakeHead = snakeTiles[0]
-        var x = snakeHead.x
-
-        x += 1
-        if x >= gridInfoData.gridDimension {
-            x = 0
-        }
-        snakeHead.tile = GameTile.HeadRight
-        snakeHead.x = x
-        snakeTiles[0] = snakeHead
-    }
-    
     func loadAssets() {
         
         // Load any resources required for rendering.
@@ -442,11 +204,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer.label = "gridInfo"
 
-        let gameTileBufferSize = sizeofValue(gameTiles)
+        let gameTileBufferSize = sizeofValue(snake.gameTiles())
         gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
         gameTilesBuffer.label = "gameTiles"
 
-        let boxTileBufferSize = sizeofValue(boxTiles)
+        let boxTileBufferSize = sizeofValue(snake.boxTiles())
         boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
         boxTilesBuffer.label = "boxTiles"
 
@@ -466,11 +228,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
         updateGameTiles()
         let tData = gameTilesBuffer.contents()
         let tvData = UnsafeMutablePointer<Int32>(tData + 0)
-        tvData.initializeFrom(gameTiles)
+        tvData.initializeFrom(snake.gameTiles())
 
         let bData = boxTilesBuffer.contents()
         let bvData = UnsafeMutablePointer<Int32>(bData + 0)
-        bvData.initializeFrom(boxTiles)
+        bvData.initializeFrom(snake.boxTiles())
     }
     
     func drawInMTKView(view: MTKView) {
@@ -511,8 +273,6 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 
             commandBuffer.presentDrawable(currentDrawable)
         }
-        
-
         commandBuffer.commit()
     }
 
