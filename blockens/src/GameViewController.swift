@@ -47,8 +47,6 @@ var gridInfoData = GridInfo(
         numVertices: Int32(vertexData.count/2),
         numColors: Int32(vertexColorData.count/4))
 
-let vertexCount = Int(gridInfoData.numVertices * gridInfoData.numBoxes)
-
 let MAX_TICK_MILLISECONDS = 300.0
 
 enum Direction {
@@ -94,16 +92,21 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var vertexColorBuffer: MTLBuffer! = nil
     var gridInfoBuffer: MTLBuffer! = nil
     var gameTilesBuffer: MTLBuffer! = nil
+    var boxTilesBuffer: MTLBuffer! = nil
     
     let inflightSemaphore = dispatch_semaphore_create(MaxBuffers)
     var bufferIndex = 0
     var currentTickWait = MAX_TICK_MILLISECONDS
     var currentDirection: Direction = Direction.Right
+
     var gameTiles: Array<Int32> = []
+    var boxTiles: Array<Int32> = []
+
     var snakeTiles: Array<GameTileInfo> = []
     var timer: NSTimer?
     var foodBoxLocation: Int32 = 0
     var gameStatus: GameStatus = GameStatus.Running
+    var vertexCount = 0
 
     override func viewDidLoad() {
         
@@ -259,15 +262,16 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func updateGameTiles() {
         let snakeTilePosition = mapSnakeTiles()
         gameTiles = []
-        for i in 0..<gridInfoData.numBoxes {
-            var tile = GameTile.EmptyTile
-            if let snakeTile = snakeTilePosition[i] {
-                tile = snakeTile.tile
-            } else if i == foodBoxLocation {
-                tile = GameTile.GrowTile
-            }
-            gameTiles.append(tile.rawValue)
+        boxTiles = []
+        for (boxNum, tileInfo) in snakeTilePosition {
+            gameTiles.append(tileInfo.tile.rawValue)
+            boxTiles.append(boxNum)
         }
+        if snakeTilePosition[foodBoxLocation] == nil {
+            gameTiles.append(GameTile.GrowTile.rawValue)
+            boxTiles.append(foodBoxLocation)
+        }
+        vertexCount = gameTiles.count * Int(gridInfoData.numVertices)
     }
 
     func moveHead() {
@@ -402,7 +406,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         let gameTileBufferSize = sizeofValue(gameTiles)
         gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
-        gameTilesBuffer.label = "snake"
+        gameTilesBuffer.label = "gameTiles"
+
+        let boxTileBufferSize = sizeofValue(boxTiles)
+        boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
+        boxTilesBuffer.label = "boxTiles"
 
 
     }
@@ -421,6 +429,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let tData = gameTilesBuffer.contents()
         let tvData = UnsafeMutablePointer<Int32>(tData + 0)
         tvData.initializeFrom(gameTiles)
+
+        let bData = boxTilesBuffer.contents()
+        let bvData = UnsafeMutablePointer<Int32>(bData + 0)
+        bvData.initializeFrom(boxTiles)
     }
     
     func drawInMTKView(view: MTKView) {
@@ -453,6 +465,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
             renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
             renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
+            renderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
             renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
             
             renderEncoder.popDebugGroup()
