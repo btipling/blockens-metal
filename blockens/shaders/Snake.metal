@@ -39,8 +39,7 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
                                      constant packed_float4* color    [[ buffer(1) ]],
                                      constant GridInfo* gridInfo [[ buffer(2) ]],
                                      constant int* gameTiles [[ buffer(3) ]],
-                                     constant int* boxTiles [[ buffer(4) ]])
-{
+                                     constant int* boxTiles [[ buffer(4) ]]) {
 
     VertexOut outVertex;
 
@@ -81,7 +80,6 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
     return outVertex;
 };
 
-fragment half4 passThroughFragment(VertexOut inFrag [[stage_in]])
-{
+fragment half4 passThroughFragment(VertexOut inFrag [[stage_in]]) {
     return half4(inFrag.color);
 };
