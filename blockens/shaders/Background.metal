@@ -16,7 +16,7 @@ vertex VertexOut backgroundVertex(uint vid [[ vertex_id ]],
 
     float2 pos = position[vid];
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.color    = color[0];
+    outVertex.color    = float4(1.0, 1.0, 1.0, 1.0);
 
     return outVertex;
 };

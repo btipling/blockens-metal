@@ -55,13 +55,9 @@ class SnakeRenderer: Renderer {
 
     func loadAssets(device: MTLDevice, view: MTKView) {
 
-        // Load any resources required for rendering.
-
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("gameTileVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("gameTileFragment")!
-
-        var gridInfoDataCopy = gridInfoData
 
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
         pipelineStateDescriptor.vertexFunction = vertexProgram
@@ -75,25 +71,24 @@ class SnakeRenderer: Renderer {
             print("Failed to create pipeline state, error \(error)")
         }
 
-        // Generate a large enough buffer to allow streaming vertices for 3 semaphore controlled frames.
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
-        vertexBuffer.label = "vertices"
+        vertexBuffer.label = "game tile vertices"
 
         let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
         vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
-        vertexColorBuffer.label = "colors"
+        vertexColorBuffer.label = "game tile colors"
 
         let gridInfoBufferSize = sizeofValue(gridInfoData)
-        gridInfoBuffer = device.newBufferWithBytes(&gridInfoDataCopy, length: gridInfoBufferSize, options: [])
-        gridInfoBuffer.label = "gridInfo"
+        gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
+        gridInfoBuffer.label = "grid info"
 
         let gameTileBufferSize = sizeofValue(Array<Int32>(count: Int(gridInfoData.numBoxes), repeatedValue: 0))
         gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
-        gameTilesBuffer.label = "gameTiles"
+        gameTilesBuffer.label = "game tiles"
 
         let boxTileBufferSize = sizeofValue(Array<Int32>(count: Int(gridInfoData.numBoxes), repeatedValue: 0))
         boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
-        boxTilesBuffer.label = "boxTiles"
+        boxTilesBuffer.label = "box tiles"
 
     }
 
@@ -124,8 +119,8 @@ class SnakeRenderer: Renderer {
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
         renderEncoder.label = "snake render encoder"
-
         renderEncoder.pushDebugGroup("draw snake and food")
+
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
         renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
