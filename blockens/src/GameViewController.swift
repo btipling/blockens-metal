@@ -147,7 +147,6 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func drawInMTKView(view: MTKView) {
         dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
 
-        snake.update()
         let commandBuffer = commandQueue.commandBuffer()
         commandBuffer.label = "Frame command buffer"
 

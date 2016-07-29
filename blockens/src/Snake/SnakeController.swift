@@ -101,10 +101,12 @@ class SnakeController {
             newSnakeTiles.append(newSnakeTile)
         }
         snakeTiles = newSnakeTiles
-        return moveHead()
+        let result = moveHead()
+        update()
+        return result
     }
 
-    func update() {
+    private func update() {
         let snakeTilePosition = mapSnakeTiles()
         gameTiles = []
         boxTiles = []

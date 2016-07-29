@@ -5,11 +5,8 @@
 
 import Foundation
 
-let MAX_TICK_MILLISECONDS = 300.0
 
-enum Direction {
-    case Up, Down, Left, Right
-}
+let MAX_TICK_MILLISECONDS = 300.0
 
 let movementMap: [UInt16: Direction] = [
         123: Direction.Left,
@@ -37,6 +34,10 @@ struct GameTileInfo {
 
 enum GameStatus {
     case Stopped, Paused, Running
+}
+
+enum Direction {
+    case Up, Down, Left, Right
 }
 
 func getRandomNum(n: Int32) -> Int32 {
