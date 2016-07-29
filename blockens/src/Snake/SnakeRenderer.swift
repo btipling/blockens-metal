@@ -35,7 +35,7 @@ struct GridInfo {
 
 private var gridDimension: Int32 = 25
 
-class SnakeRenderer {
+class SnakeRenderer: Renderer {
 
     var pipelineState: MTLRenderPipelineState! = nil
 
@@ -121,20 +121,20 @@ class SnakeRenderer {
 
     }
 
-    func render(snakeRenderEncoder: MTLRenderCommandEncoder) {
+    func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        snakeRenderEncoder.label = "snake render encoder"
+        renderEncoder.label = "snake render encoder"
 
-        snakeRenderEncoder.pushDebugGroup("draw snake and food")
-        snakeRenderEncoder.setRenderPipelineState(pipelineState)
-        snakeRenderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
-        snakeRenderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
-        snakeRenderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
-        snakeRenderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
-        snakeRenderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
-        snakeRenderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
+        renderEncoder.pushDebugGroup("draw snake and food")
+        renderEncoder.setRenderPipelineState(pipelineState)
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
+        renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
+        renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
+        renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
+        renderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
+        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
 
-        snakeRenderEncoder.popDebugGroup()
-        snakeRenderEncoder.endEncoding()
+        renderEncoder.popDebugGroup()
+        renderEncoder.endEncoding()
     }
 }

@@ -21,7 +21,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var timer: NSTimer?
     var gameStatus: GameStatus = GameStatus.Running
 
-    let snake: SnakeController = SnakeController()
+    let snake = SnakeController()
+    let background = BackgroundController()
+
+    var renderers: [Renderer] = Array()
 
     override func viewDidLoad() {
         
@@ -42,6 +45,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.delegate = self
         view.device = device
         view.sampleCount = 4
+
+        // Add renderers, order matters.
+        renderers.append(background.renderer())
+        renderers.append(snake.renderer())
+
         loadAssets()
         resetGame()
     }
@@ -50,7 +58,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let view = self.view as! MTKView
         commandQueue = device.newCommandQueue()
         commandQueue.label = "main command queue"
-        snake.renderer().loadAssets(device, view: view)
+        for renderer in renderers {
+            renderer.loadAssets(device, view: view)
+        }
     }
 
     func resetGame() {
@@ -158,12 +168,12 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
 
         if let renderPassDescriptor = view.currentRenderPassDescriptor, currentDrawable = view.currentDrawable {
+
             let parallelCommandEncoder = commandBuffer.parallelRenderCommandEncoderWithDescriptor(renderPassDescriptor)
 
-            // Render snake
-            let snakeRenderEncoder = parallelCommandEncoder.renderCommandEncoder()
-            snake.renderer().render(snakeRenderEncoder)
-
+            for renderer in renderers {
+                renderer.render(parallelCommandEncoder.renderCommandEncoder())
+            }
 
             parallelCommandEncoder.endEncoding()
             commandBuffer.presentDrawable(currentDrawable)

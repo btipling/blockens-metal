@@ -4,6 +4,7 @@
 //
 
 import Foundation
+import MetalKit
 
 
 let MAX_TICK_MILLISECONDS = 300.0
@@ -38,6 +39,11 @@ enum GameStatus {
 
 enum Direction {
     case Up, Down, Left, Right
+}
+
+protocol Renderer {
+    func loadAssets(device: MTLDevice, view: MTKView)
+    func render(renderEncoder: MTLRenderCommandEncoder)
 }
 
 func getRandomNum(n: Int32) -> Int32 {
