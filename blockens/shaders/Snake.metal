@@ -1,14 +1,12 @@
 //
-//  Shaders.metal
+//  Snake.metal
 //  blockens
 //
 //  Created by Bjorn Tipling on 7/22/16.
 //  Copyright (c) 2016 apphacker. All rights reserved.
 //
 
-#include <metal_stdlib>
-
-using namespace metal;
+#include "utils.h"
 
 struct GridInfo {
     int gridDimension;
@@ -16,11 +14,6 @@ struct GridInfo {
     int numBoxes;
     int numVertices;
     int numColors;
-};
-
-struct VertexOut {
-    float4  position [[position]];
-    float4  color;
 };
 
 enum GameTile {
@@ -34,7 +27,7 @@ enum GameTile {
 
 };
 
-vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
+vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
                                      constant packed_float4* color    [[ buffer(1) ]],
                                      constant GridInfo* gridInfo [[ buffer(2) ]],
@@ -80,6 +73,6 @@ vertex VertexOut passThroughVertex(uint vid [[ vertex_id ]],
     return outVertex;
 };
 
-fragment half4 passThroughFragment(VertexOut inFrag [[stage_in]]) {
+fragment half4 gameTileFragment(VertexOut inFrag [[stage_in]]) {
     return half4(inFrag.color);
 };

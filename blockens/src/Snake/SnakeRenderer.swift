@@ -58,8 +58,8 @@ class SnakeRenderer: Renderer {
         // Load any resources required for rendering.
 
         let defaultLibrary = device.newDefaultLibrary()!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("passThroughFragment")!
-        let vertexProgram = defaultLibrary.newFunctionWithName("passThroughVertex")!
+        let vertexProgram = defaultLibrary.newFunctionWithName("gameTileVertex")!
+        let fragmentProgram = defaultLibrary.newFunctionWithName("gameTileFragment")!
 
         var gridInfoDataCopy = gridInfoData
 
