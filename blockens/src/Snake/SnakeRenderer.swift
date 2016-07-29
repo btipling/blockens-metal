@@ -6,6 +6,35 @@
 import Foundation
 import MetalKit
 
+private let ConstantBufferSize = 1024*1024
+
+private let squareTileVertexData:[Float] = [
+        -1.0, -1.0,
+        -1.0,  1.0,
+        1.0, -1.0,
+
+        1.0, -1.0,
+        -1.0,  1.0,
+        1.0,  1.0,
+]
+
+private let vertexColorData:[Float] = [
+        0.0, 0.0, 1.0, 1.0,
+        1.0, 1.0, 1.0, 1.0,
+        0.0, 1.0, 0.0, 1.0,
+]
+
+
+struct GridInfo {
+    var gridDimension: Int32
+    var gridOffset: Float32
+    var numBoxes: Int32
+    var numVertices: Int32
+    var numColors: Int32
+}
+
+private var gridDimension: Int32 = 25
+
 class SnakeRenderer {
 
     var pipelineState: MTLRenderPipelineState! = nil
@@ -16,9 +45,15 @@ class SnakeRenderer {
     var gameTilesBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
     var vertexCount = 0
+    var gridInfoData = GridInfo(
+            gridDimension: gridDimension,
+            gridOffset: 2.0/Float32(gridDimension),
+            numBoxes: Int32(pow(Float(gridDimension), 2.0)),
+            numVertices: Int32(squareTileVertexData.count/2),
+            numColors: Int32(vertexColorData.count/4))
 
 
-    func loadAssets(device: MTLDevice, view: MTKView, gridInfoData: GridInfo) {
+    func loadAssets(device: MTLDevice, view: MTKView) {
 
         // Load any resources required for rendering.
 
@@ -62,7 +97,7 @@ class SnakeRenderer {
 
     }
 
-    func updateTileCount(count: Int, gridInfoData: GridInfo) {
+    func updateTileCount(count: Int) {
         vertexCount = count * Int(gridInfoData.numVertices)
     }
 
@@ -70,7 +105,7 @@ class SnakeRenderer {
         // vData is pointer to the MTLBuffer's Float data contents.
         let pData = vertexBuffer.contents()
         let vData = UnsafeMutablePointer<Float>(pData + 256)
-        vData.initializeFrom(vertexData)
+        vData.initializeFrom(squareTileVertexData)
 
         let gData = gridInfoBuffer.contents()
         let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)

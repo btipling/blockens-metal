@@ -9,24 +9,6 @@
 import Cocoa
 import MetalKit
 
-let ConstantBufferSize = 1024*1024
-
-let vertexData:[Float] = [
-    -1.0, -1.0,
-    -1.0,  1.0,
-    1.0, -1.0,
-
-    1.0, -1.0,
-    -1.0,  1.0,
-    1.0,  1.0,
-]
-
-let vertexColorData:[Float] = [
-    0.0, 0.0, 1.0, 1.0,
-    1.0, 1.0, 1.0, 1.0,
-    0.0, 1.0, 0.0, 1.0,
-]
-
 class GameViewController: NSViewController, MTKViewDelegate {
     
     var device: MTLDevice! = nil
@@ -39,7 +21,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var timer: NSTimer?
     var gameStatus: GameStatus = GameStatus.Running
 
-    let snake: SnakeController = SnakeController(data: gridInfoData)
+    let snake: SnakeController = SnakeController()
 
     override func viewDidLoad() {
         
@@ -65,11 +47,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func loadAssets() {
-
         let view = self.view as! MTKView
         commandQueue = device.newCommandQueue()
         commandQueue.label = "main command queue"
-        snake.renderer().loadAssets(device, view: view, gridInfoData: gridInfoData)
+        snake.renderer().loadAssets(device, view: view)
     }
 
     func resetGame() {
@@ -164,15 +145,12 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
     
     func drawInMTKView(view: MTKView) {
-        // Use semaphore to encode 3 frames ahead.
         dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
 
         snake.update()
         let commandBuffer = commandQueue.commandBuffer()
         commandBuffer.label = "Frame command buffer"
 
-        // Use completion handler to signal the semaphore when this frame is completed allowing the encoding of the next frame to proceed.
-        // Use capture list to avoid any retain cycles if the command buffer gets retained anywhere besides this stack frame.
         commandBuffer.addCompletedHandler{ [weak self] commandBuffer in
             if let strongSelf = self {
                 dispatch_semaphore_signal(strongSelf.inflightSemaphore)
