@@ -22,7 +22,7 @@
 		596DDCA9FA70947FE1E34F50 /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
 		596DDCCD5FDBEE9FF7FD0B1D /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
 		596DDCE97373276ADE2C4F62 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDDC60CE1C3C87B5429F8 /* utils.swift */; };
-		596DDD8DBFA31BD29C8C1344 /* Shaders.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E35FD184C58EFDD19 /* Shaders.metal */; };
+		596DDD8DBFA31BD29C8C1344 /* Snake.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E35FD184C58EFDD19 /* Snake.metal */; };
 		596DDD8F78F559083286B4EB /* blockensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDEF85B791A90D2B47995 /* blockensTests.swift */; };
 		596DDE627517EB3DBC509889 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 		596DDE9992173DD0B906A782 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
@@ -52,7 +52,7 @@
 		596DD183386F3B4EB9BF5C86 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeRenderer.swift; sourceTree = "<group>"; };
 		596DD469FAAA560D12454323 /* blockensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blockensUITests.swift; sourceTree = "<group>"; };
-		596DD47E35FD184C58EFDD19 /* Shaders.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Shaders.metal; sourceTree = "<group>"; };
+		596DD47E35FD184C58EFDD19 /* Snake.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Snake.metal; sourceTree = "<group>"; };
 		596DD6667F709F246FF2012A /* blockensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blockensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		596DD712C929F5CE1C16DC14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		596DD7824DD5750EC33379AA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -121,7 +121,7 @@
 		596DD860B720099AB3B27792 /* shaders */ = {
 			isa = PBXGroup;
 			children = (
-				596DD47E35FD184C58EFDD19 /* Shaders.metal */,
+				596DD47E35FD184C58EFDD19 /* Snake.metal */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -309,7 +309,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				596DDD8DBFA31BD29C8C1344 /* Shaders.metal in Sources */,
+				596DDD8DBFA31BD29C8C1344 /* Snake.metal in Sources */,
 				596DD9CE9B852B6BF143D2D2 /* AppDelegate.swift in Sources */,
 				596DDC00D167AECA3D7A490A /* GameViewController.swift in Sources */,
 				596DDA4DF3B3FC29A2CCEFED /* GameWindow.swift in Sources */,
