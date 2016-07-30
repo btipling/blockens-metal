@@ -8,20 +8,26 @@
 
 #include "utils.h"
 
-vertex VertexOut backgroundVertex(uint vid [[ vertex_id ]],
+vertex VertexTextureOut backgroundVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
-                                     constant packed_float4* color    [[ buffer(1) ]]) {
+                                     constant packed_float4* color    [[ buffer(1) ]],
+                                     constant packed_float2* textCoords  [[ buffer(2) ]]) {
 
-    VertexOut outVertex;
+    VertexTextureOut outVertex;
 
     float2 pos = position[vid];
-    outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
+    outVertex.position = float4(pos[0], pos[1], 1.0, 1.0);
     outVertex.color    = color[0];
+    outVertex.textCoords = textCoords[vid];
 
     return outVertex;
 };
 
-fragment half4 backgroundFragment(VertexOut inFrag [[stage_in]]) {
-    return half4(inFrag.color);
+fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]],
+        texture2d<float> wtfTexture [[ texture(0) ]]) {
+    constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
+    // return half4(inFrag.color);
+    float4 wtf = wtfTexture.sample(textureSampler, inFrag.textCoords);
+    return wtf;
 };
 
