@@ -59,7 +59,7 @@ class BackgroundRenderer: Renderer {
         return flippedImage
     }
 
-    func loadTextureRIP(device: MTLDevice) -> MTLTexture {
+    func loadTexture(device: MTLDevice) -> MTLTexture {
         var image = NSImage(named: "wall_texture")!
         image = flipImage(image)
         var imageRect:CGRect = CGRectMake(0, 0, image.size.width, image.size.height)
@@ -75,7 +75,7 @@ class BackgroundRenderer: Renderer {
     }
 
     func loadAssets(device: MTLDevice, view: MTKView) {
-        texture = loadTextureRIP(device)
+        texture = loadTexture(device)
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("backgroundVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("backgroundFragment")!

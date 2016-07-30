@@ -24,10 +24,9 @@ vertex VertexTextureOut backgroundVertex(uint vid [[ vertex_id ]],
 };
 
 fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]],
-        texture2d<float> wtfTexture [[ texture(0) ]]) {
+        texture2d<float> bgTexture [[ texture(0) ]]) {
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
-    // return half4(inFrag.color);
-    float4 wtf = wtfTexture.sample(textureSampler, inFrag.textCoords);
-    return wtf;
+    float2 coords = inFrag.textCoords * 5;
+    return bgTexture.sample(textureSampler, coords);
 };
 
