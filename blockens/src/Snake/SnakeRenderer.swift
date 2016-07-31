@@ -18,19 +18,21 @@ private let squareTileVertexData:[Float] = [
         1.0,  1.0,
 ]
 
-private let vertexColorData:[Float] = [
-        0.33, 0.33, 0.33, 1.0,
-        1.0, 1.0, 1.0, 1.0,
-        0.55, 0.55, 0.55, 1.0,
-]
+private let textureData:[Float] = [
+        0.0,  1.0,
+        0.0,  0.0,
+        1.0,  1.0,
 
+        1.0,  1.0,
+        0.0,  0.0,
+        1.0,  0.0,
+]
 
 struct GridInfo {
     var gridDimension: Int32
     var gridOffset: Float32
     var numBoxes: Int32
     var numVertices: Int32
-    var numColors: Int32
 }
 
 private var gridDimension: Int32 = 40
@@ -40,17 +42,20 @@ class SnakeRenderer: Renderer {
     var pipelineState: MTLRenderPipelineState! = nil
 
     var vertexBuffer: MTLBuffer! = nil
-    var vertexColorBuffer: MTLBuffer! = nil
     var gridInfoBuffer: MTLBuffer! = nil
     var gameTilesBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
+    var textureBuffer: MTLBuffer! = nil
+
+    var foodTexture: MTLTexture! = nil
+    var snakeTexture: MTLTexture! = nil
+
     var vertexCount = 0
     var gridInfoData = GridInfo(
             gridDimension: gridDimension,
             gridOffset: 2.0/Float32(gridDimension),
             numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-            numVertices: Int32(squareTileVertexData.count/2),
-            numColors: Int32(vertexColorData.count/4))
+            numVertices: Int32(squareTileVertexData.count/2))
 
 
     func loadAssets(device: MTLDevice, view: MTKView) {
@@ -58,6 +63,9 @@ class SnakeRenderer: Renderer {
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("gameTileVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("gameTileFragment")!
+
+        foodTexture = loadTexture(device, name: "yellow_block")
+        snakeTexture = loadTexture(device, name: "green_block")
 
         let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
         pipelineStateDescriptor.vertexFunction = vertexProgram
@@ -74,9 +82,9 @@ class SnakeRenderer: Renderer {
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         vertexBuffer.label = "game tile vertices"
 
-        let vertexColorSize = vertexColorData.count * sizeofValue(vertexColorData[0])
-        vertexColorBuffer = device.newBufferWithBytes(vertexColorData, length: vertexColorSize, options: [])
-        vertexColorBuffer.label = "game tile colors"
+        let textBufferSize = textureData.count * sizeofValue(textureData[0])
+        textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
+        textureBuffer.label = "game tile texture coords"
 
         let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
@@ -90,6 +98,7 @@ class SnakeRenderer: Renderer {
         boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
         boxTilesBuffer.label = "box tiles"
 
+        print("loading snake assets done")
     }
 
     func updateTileCount(count: Int) {
@@ -99,7 +108,7 @@ class SnakeRenderer: Renderer {
     func update(gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
         // vData is pointer to the MTLBuffer's Float data contents.
         let pData = vertexBuffer.contents()
-        let vData = UnsafeMutablePointer<Float>(pData + 256)
+        let vData = UnsafeMutablePointer<Float>(pData)
         vData.initializeFrom(squareTileVertexData)
 
         let gData = gridInfoBuffer.contents()
@@ -122,11 +131,16 @@ class SnakeRenderer: Renderer {
         renderEncoder.pushDebugGroup("draw snake and food")
 
         renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 256, atIndex: 0)
-        renderEncoder.setVertexBuffer(vertexColorBuffer, offset:0 , atIndex: 1)
+
+        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: 0)
+        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 1)
         renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
         renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
         renderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
+
+        renderEncoder.setFragmentTexture(snakeTexture, atIndex: 0)
+        renderEncoder.setFragmentTexture(foodTexture, atIndex: 1)
+
         renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
 
         renderEncoder.popDebugGroup()

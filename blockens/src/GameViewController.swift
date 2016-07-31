@@ -64,6 +64,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func resetGame() {
+        gameStatus = GameStatus.Running
         currentTickWait = MAX_TICK_MILLISECONDS
         snake.reset()
         scheduleTick()

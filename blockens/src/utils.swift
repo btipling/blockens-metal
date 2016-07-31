@@ -53,3 +53,35 @@ func getRandomNum(n: Int32) -> Int32 {
 func log_e(n: Double) -> Double {
     return log(n)/log(M_E)
 }
+
+func flipImage(image: NSImage) -> NSImage {
+    var imageBounds = NSZeroRect
+    imageBounds.size = image.size
+    let transform = NSAffineTransform()
+    transform.translateXBy(0.0, yBy: imageBounds.height)
+    transform.scaleXBy(1, yBy: -1)
+    transform.concat()
+    let flippedImage = NSImage(size: imageBounds.size)
+
+    flippedImage.lockFocus()
+    transform.concat()
+    image.drawInRect(imageBounds, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
+    flippedImage.unlockFocus()
+
+    return flippedImage
+}
+
+func loadTexture(device: MTLDevice, name: String) -> MTLTexture {
+    var image = NSImage(named: name)!
+    image = flipImage(image)
+    var imageRect:CGRect = CGRectMake(0, 0, image.size.width, image.size.height)
+    let imageRef = image.CGImageForProposedRect(&imageRect, context: nil, hints: nil)!
+    let textureLoader = MTKTextureLoader(device: device)
+    var texture: MTLTexture? = nil
+    do {
+        texture = try textureLoader.newTextureWithCGImage(imageRef, options: .None)
+    } catch {
+        print("Got an error trying to texture \(error)")
+    }
+    return texture!
+}

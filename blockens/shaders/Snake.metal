@@ -13,7 +13,6 @@ struct GridInfo {
     float gridOffset;
     int numBoxes;
     int numVertices;
-    int numColors;
 };
 
 enum GameTile {
@@ -29,7 +28,7 @@ enum GameTile {
 
 vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
-                                     constant packed_float4* color    [[ buffer(1) ]],
+                                     constant packed_float2* textCoords    [[ buffer(1) ]],
                                      constant GridInfo* gridInfo [[ buffer(2) ]],
                                      constant int* gameTiles [[ buffer(3) ]],
                                      constant int* boxTiles [[ buffer(4) ]]) {
@@ -49,6 +48,8 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     int row = boxNum / dimension;
 
     float2 pos = position[positionIndex];
+    float2 coords = textCoords[positionIndex];
+
     float2 orgPosition = float2(pos[0], pos[1]);
 
     // Scale box size based on dimension where dimension is the width and height as both are the same value.
@@ -63,16 +64,29 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     pos[1] += gridInfo->gridOffset * float(row);
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
+    outVertex.textCoords = coords;
 
     if (gameTile < EmptyTile) {
-        outVertex.color = color[0];
+        outVertex.textureId = 0;
     } else {
-        outVertex.color = color[2];
+        outVertex.textureId = 1;
     }
     
     return outVertex;
 };
 
-fragment half4 gameTileFragment(VertexOut inFrag [[stage_in]]) {
-    return half4(inFrag.color);
+fragment float4 gameTileFragment(VertexOut inFrag [[stage_in]],
+        texture2d<float> snakeTexture [[ texture(0) ]],
+        texture2d<float> foodTexture [[ texture(1) ]]) {
+
+
+    constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
+    float2 coords = inFrag.textCoords;
+
+    switch (inFrag.textureId) {
+        case 0:
+            return snakeTexture.sample(textureSampler, coords);
+        default:
+            return foodTexture.sample(textureSampler, coords);
+    }
 };
