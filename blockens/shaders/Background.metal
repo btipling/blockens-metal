@@ -31,7 +31,7 @@ fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]],
         texture2d<float> bgTexture5 [[ texture(4) ]]) {
 
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
-    float2 coords = inFrag.textCoords * 6;
+    float2 coords = inFrag.textCoords * 3;
 
     switch (inFrag.tickCount % 5) {
         case 0:
