@@ -19,9 +19,9 @@ private let squareTileVertexData:[Float] = [
 ]
 
 private let vertexColorData:[Float] = [
-        0.0, 0.0, 1.0, 1.0,
+        0.33, 0.33, 0.33, 1.0,
         1.0, 1.0, 1.0, 1.0,
-        0.0, 1.0, 0.0, 1.0,
+        0.55, 0.55, 0.55, 1.0,
 ]
 
 

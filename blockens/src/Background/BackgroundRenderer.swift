@@ -28,6 +28,18 @@ private let textureData:[Float] = [
         1.0,  1.0,
 ]
 
+let maxSecondsUntilBGAnimation: Int32 = 18
+let framesPerSecond: NSTimeInterval = 15.0
+let framesOnFullWind: NSTimeInterval = 10.0
+let secondsUntilNextFrame: NSTimeInterval = 1.0/framesPerSecond
+
+enum WindDirection {
+    case Forward, Backward, Stopped
+}
+
+func getSecondsUntilBGAnimation() -> NSTimeInterval {
+    return NSTimeInterval(getRandomNum(maxSecondsUntilBGAnimation))
+}
 
 class BackgroundRenderer: Renderer {
 
@@ -38,6 +50,11 @@ class BackgroundRenderer: Renderer {
     var textureBuffer: MTLBuffer! = nil
     var textures: [MTLTexture!] = []
     var tickCount: Int32 = 0
+    var currentFrame = 0
+    var lastAnimationTime: NSTimeInterval = NSDate().timeIntervalSince1970
+    var lastAnimationFrame: NSTimeInterval = 0
+    var windDirection = WindDirection.Stopped
+    var secondsUntilBGAnimation = getSecondsUntilBGAnimation()
 
     func flipImage(image: NSImage) -> NSImage {
         var imageBounds = NSZeroRect
@@ -105,14 +122,43 @@ class BackgroundRenderer: Renderer {
         print("loading assets done")
     }
 
-    func update() {
+    func blowWind() {
+        let now = NSDate().timeIntervalSince1970
+        if (windDirection == WindDirection.Stopped && now - lastAnimationTime > secondsUntilBGAnimation) {
+            lastAnimationFrame = NSDate().timeIntervalSince1970
+            windDirection = WindDirection.Forward
+            updateTickCount()
+        }
+        if (windDirection != WindDirection.Stopped && now - lastAnimationFrame > secondsUntilNextFrame) {
+            if (windDirection == WindDirection.Forward && tickCount < 4) {
+                lastAnimationFrame = now
+                tickCount += 1
+                if (tickCount == 4) {
+                    // Hang on to the full wind state for a little longer.
+                    lastAnimationFrame += secondsUntilNextFrame * framesOnFullWind
+                }
+            } else {
+                windDirection = WindDirection.Backward
+                lastAnimationFrame = now
+                tickCount -= 1
+                if (tickCount == 0) {
+                    lastAnimationTime = now
+                    secondsUntilBGAnimation = getSecondsUntilBGAnimation()
+                    windDirection = WindDirection.Stopped
+                }
+            }
+            updateTickCount()
+        }
+    }
+
+    func updateTickCount() {
         let pData = tickBuffer.contents()
         let vData = UnsafeMutablePointer<Int32>(pData)
         vData.initializeFrom(&tickCount, count: 1)
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
-        update()
+        blowWind()
 
         renderEncoder.label = "background render encoder"
         renderEncoder.pushDebugGroup("draw background")
