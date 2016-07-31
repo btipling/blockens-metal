@@ -13,7 +13,7 @@ struct VertexOut {
 
 struct VertexTextureOut {
     float4  position [[position]];
-    float4  color;
+    int  tickCount;
     float2  textCoords;
 };
 
