@@ -15,10 +15,10 @@
         <window title="Blockens" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g" customClass="GameWindow" customModule="blockens" customModuleProvider="target">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES"/>
             <windowPositionMask key="initialPositionMask" rightStrut="YES" topStrut="YES"/>
-            <rect key="contentRect" x="960" y="397" width="480" height="480"/>
+            <rect key="contentRect" x="832" y="260" width="480" height="580"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="EiT-Mj-1SZ" customClass="MTKView">
-                <rect key="frame" x="0.0" y="0.0" width="480" height="480"/>
+                <rect key="frame" x="0.0" y="0.0" width="480" height="580"/>
                 <autoresizingMask key="autoresizingMask"/>
             </view>
             <contentBorderThickness minY="22"/>

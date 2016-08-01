@@ -8,16 +8,24 @@
 
 #include "utils.h"
 
+struct BGInfo {
+    int tickCount;
+    float viewDiffRatio;
+};
+
 vertex VertexTextureOut backgroundVertex(uint vid [[ vertex_id ]],
-                                     constant int* tickCount [[ buffer(0) ]],
+                                     constant BGInfo* bgInfo [[ buffer(0) ]],
                                      constant packed_float2* position  [[ buffer(1) ]],
                                      constant packed_float2* textCoords  [[ buffer(2) ]]) {
 
     VertexTextureOut outVertex;
 
     float2 pos = position[vid];
+
+    pos[1] = pushDownYByRatio(pos[1], bgInfo->viewDiffRatio);
+
     outVertex.position = float4(pos[0], pos[1], 1.0, 1.0);
-    outVertex.tickCount = tickCount[0];
+    outVertex.tickCount = bgInfo->tickCount;
     outVertex.textCoords = textCoords[vid];
 
     return outVertex;
@@ -48,3 +56,14 @@ fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]],
 
 };
 
+float pushDownYByRatio(float y, float viewDiffRatio) {
+    y -= 1;
+    y *= -1;
+    float yRatio = y/2;
+    float missingHeight = 2 * viewDiffRatio;
+    float newHeight = 2 - missingHeight;
+    float newTop = missingHeight - 1;
+    float result = (newHeight * yRatio) + newTop;
+    result *= -1;
+    return result;
+}

@@ -41,25 +41,31 @@ func getSecondsUntilBGAnimation() -> NSTimeInterval {
     return NSTimeInterval(getRandomNum(maxSecondsUntilBGAnimation))
 }
 
+struct BGInfo {
+    var tickCount: Int32
+    var viewDiffRatio : Float32
+}
+
 class BackgroundRenderer: Renderer {
 
     var pipelineState: MTLRenderPipelineState! = nil
 
     var backgroundVertexBuffer: MTLBuffer! = nil
-    var tickBuffer: MTLBuffer! = nil
+    var bgDataBuffer: MTLBuffer! = nil
     var textureBuffer: MTLBuffer! = nil
     var textures: [MTLTexture!] = []
-    var tickCount: Int32 = 0
+    var bgInfoData = BGInfo(tickCount: 0, viewDiffRatio : 0.0)
     var currentFrame = 0
     var lastAnimationTime: NSTimeInterval = NSDate().timeIntervalSince1970
     var lastAnimationFrame: NSTimeInterval = 0
     var windDirection = WindDirection.Stopped
     var secondsUntilBGAnimation = getSecondsUntilBGAnimation()
 
-    func loadAssets(device: MTLDevice, view: MTKView) {
+    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         for i in 1...5 {
             textures.append(loadTexture(device, name: "bg\(i)"))
         }
+        bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("backgroundVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("backgroundFragment")!
@@ -76,8 +82,8 @@ class BackgroundRenderer: Renderer {
             print("Failed to create pipeline state, error \(error)")
         }
 
-        tickBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
-        tickBuffer.label = "background colors"
+        bgDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
+        bgDataBuffer.label = "background colors"
 
         let backgroundVertexSize = backgroundVertexData.count * sizeofValue(backgroundVertexData[0])
         backgroundVertexBuffer = device.newBufferWithBytes(backgroundVertexData, length:  backgroundVertexSize, options: [])
@@ -86,6 +92,7 @@ class BackgroundRenderer: Renderer {
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
         textureBuffer.label = "bg texture coords"
+        updateTickCount()
         print("loading bg assets done")
     }
 
@@ -97,18 +104,18 @@ class BackgroundRenderer: Renderer {
             updateTickCount()
         }
         if (windDirection != WindDirection.Stopped && now - lastAnimationFrame > secondsUntilNextFrame) {
-            if (windDirection == WindDirection.Forward && tickCount < 4) {
+            if (windDirection == WindDirection.Forward && bgInfoData.tickCount < 4) {
                 lastAnimationFrame = now
-                tickCount += 1
-                if (tickCount == 4) {
+                bgInfoData.tickCount += 1
+                if (bgInfoData.tickCount == 4) {
                     // Hang on to the full wind state for a little longer.
                     lastAnimationFrame += secondsUntilNextFrame * framesOnFullWind
                 }
             } else {
                 windDirection = WindDirection.Backward
                 lastAnimationFrame = now
-                tickCount -= 1
-                if (tickCount == 0) {
+                bgInfoData.tickCount -= 1
+                if (bgInfoData.tickCount == 0) {
                     lastAnimationTime = now
                     secondsUntilBGAnimation = getSecondsUntilBGAnimation()
                     windDirection = WindDirection.Stopped
@@ -119,9 +126,9 @@ class BackgroundRenderer: Renderer {
     }
 
     func updateTickCount() {
-        let pData = tickBuffer.contents()
-        let vData = UnsafeMutablePointer<Int32>(pData)
-        vData.initializeFrom(&tickCount, count: 1)
+        let pData = bgDataBuffer.contents()
+        let vData = UnsafeMutablePointer<BGInfo>(pData)
+        vData.initializeFrom(&bgInfoData, count: 1)
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
@@ -131,7 +138,7 @@ class BackgroundRenderer: Renderer {
         renderEncoder.pushDebugGroup("draw background")
 
         renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(tickBuffer, offset:0 , atIndex: 0)
+        renderEncoder.setVertexBuffer(bgDataBuffer, offset:0 , atIndex: 0)
         renderEncoder.setVertexBuffer(backgroundVertexBuffer, offset: 0, atIndex: 1)
         renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 2)
         for i in 0..<5 {

@@ -13,6 +13,7 @@ struct GridInfo {
     float gridOffset;
     int numBoxes;
     int numVertices;
+    float viewDiffRatio;
 };
 
 enum GameTile {
@@ -62,6 +63,8 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     // Translate box to its colum and row position from bottom right.
     pos[0] += gridInfo->gridOffset * float(col);
     pos[1] += gridInfo->gridOffset * float(row);
+
+    pos[1] = pushDownYByRatio(pos[1], gridInfo->viewDiffRatio);
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     outVertex.textCoords = coords;

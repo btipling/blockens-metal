@@ -33,6 +33,7 @@ struct GridInfo {
     var gridOffset: Float32
     var numBoxes: Int32
     var numVertices: Int32
+    var viewDiffRatio : Float32
 }
 
 private var gridDimension: Int32 = 30
@@ -55,11 +56,14 @@ class SnakeRenderer: Renderer {
             gridDimension: gridDimension,
             gridOffset: 2.0/Float32(gridDimension),
             numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-            numVertices: Int32(squareTileVertexData.count/2))
+            numVertices: Int32(squareTileVertexData.count/2),
+            viewDiffRatio: 0.0)
 
 
-    func loadAssets(device: MTLDevice, view: MTKView) {
+    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
+
+        gridInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("gameTileVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("gameTileFragment")!

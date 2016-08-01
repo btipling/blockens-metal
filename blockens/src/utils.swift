@@ -33,6 +33,12 @@ struct GameTileInfo {
     var tile: GameTile
 }
 
+struct FrameInfo {
+    let viewWidth: Int32
+    let viewHeight: Int32
+    let viewDiffRatio: Float32
+}
+
 enum GameStatus {
     case Stopped, Paused, Running
 }
@@ -42,7 +48,7 @@ enum Direction {
 }
 
 protocol Renderer {
-    func loadAssets(device: MTLDevice, view: MTKView)
+    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo)
     func render(renderEncoder: MTLRenderCommandEncoder)
 }
 

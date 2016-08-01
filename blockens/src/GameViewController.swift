@@ -58,8 +58,15 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let view = self.view as! MTKView
         commandQueue = device.newCommandQueue()
         commandQueue.label = "main command queue"
+        let frame = view.frame
+        let width = frame.size.width
+        let height = frame.size.height
+        let maxDimension = max(width, height)
+        let sizeDiff = abs(width - height)
+        let ratio: Float = Float(sizeDiff)/Float(maxDimension)
+        let frameInfo = FrameInfo(viewWidth: Int32(width), viewHeight: Int32(height), viewDiffRatio: ratio)
         for renderer in renderers {
-            renderer.loadAssets(device, view: view)
+            renderer.loadAssets(device, view: view, frameInfo: frameInfo)
         }
     }
 

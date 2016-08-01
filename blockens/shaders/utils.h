@@ -18,4 +18,6 @@ struct VertexTextureOut {
     float2  textCoords;
 };
 
+float pushDownYByRatio(float y, float viewDiffRatio);
+
 #endif /* utils_h */
