@@ -60,7 +60,6 @@ func flipImage(image: NSImage) -> NSImage {
     let transform = NSAffineTransform()
     transform.translateXBy(0.0, yBy: imageBounds.height)
     transform.scaleXBy(1, yBy: -1)
-    transform.concat()
     let flippedImage = NSImage(size: imageBounds.size)
 
     flippedImage.lockFocus()

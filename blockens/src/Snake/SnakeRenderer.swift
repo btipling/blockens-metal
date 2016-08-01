@@ -35,7 +35,7 @@ struct GridInfo {
     var numVertices: Int32
 }
 
-private var gridDimension: Int32 = 40
+private var gridDimension: Int32 = 30
 
 class SnakeRenderer: Renderer {
 

@@ -82,11 +82,17 @@ fragment float4 gameTileFragment(VertexOut inFrag [[stage_in]],
 
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
     float2 coords = inFrag.textCoords;
-
+    float4 result;
     switch (inFrag.textureId) {
         case 0:
-            return snakeTexture.sample(textureSampler, coords);
+            result = snakeTexture.sample(textureSampler, coords);
+            break;
         default:
-            return foodTexture.sample(textureSampler, coords);
+            result = foodTexture.sample(textureSampler, coords);
+            break;
     }
+    if (result[3] == 0) {
+        discard_fragment();
+    }
+    return result;
 };
