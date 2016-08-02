@@ -144,7 +144,7 @@ class BackgroundRenderer: Renderer {
         for i in 0..<5 {
             renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: backgroundVertexData.count, instanceCount: 1)
+        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: backgroundVertexData.count * 2, instanceCount: 1)
 
         renderEncoder.popDebugGroup()
         renderEncoder.endEncoding()

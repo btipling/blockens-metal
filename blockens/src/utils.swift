@@ -19,6 +19,13 @@ let movementMap: [UInt16: Direction] = [
 let S_KEY: UInt16 = 1
 let P_KEY: UInt16 = 35
 
+let DARK_GREEN = rgbaToNormalizedGPUColors(31, g: 60, b: 6)
+let LIGHT_GREEN = rgbaToNormalizedGPUColors(159, g: 229, b: 88)
+let YELLOW = rgbaToNormalizedGPUColors(251, g: 243, b: 131)
+let ORANGE = rgbaToNormalizedGPUColors(236, g: 202, b: 0)
+let ORANGE_BROWN = rgbaToNormalizedGPUColors(214, g: 158, b: 2)
+let BLUE = rgbaToNormalizedGPUColors(2, g: 166, b: 214)
+
 enum GameTile: Int32 {
     case HeadUp = 0, HeadDown, HeadLeft, HeadRight
     case TailUp, TailDown, TailLeft, TailRight
@@ -50,6 +57,10 @@ enum Direction {
 protocol Renderer {
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo)
     func render(renderEncoder: MTLRenderCommandEncoder)
+}
+
+func rgbaToNormalizedGPUColors(r: Int, g: Int, b: Int, a: Int = 255) -> [Float32] {
+    return [Float32(r)/255.0, Float32(g)/255.0, Float32(b)/255.0, Float32(a)/255.0]
 }
 
 func getRandomNum(n: Int32) -> Int32 {
