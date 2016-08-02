@@ -13,9 +13,11 @@
 		596DD45708FD159F63EC090F /* Background.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD350D6F698905EFB20CA /* Background.metal */; };
 		596DD5032A68369249FAFB39 /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDE48B29318AD5678C65B /* BackgroundRenderer.swift */; };
 		596DD50B878BEB88BC2ECCE0 /* blockensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD469FAAA560D12454323 /* blockensUITests.swift */; };
+		596DD5C34D66623EBA97F976 /* SkyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */; };
 		596DD5C40263070DEE379239 /* SnakeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */; };
 		596DD805A5B7A2E9288C181D /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD94112BC3E00F1E226D6 /* BackgroundController.swift */; };
 		596DD898730307A82643DE27 /* utils.h in Sources */ = {isa = PBXBuildFile; fileRef = 596DDC020310C45B3869EAB1 /* utils.h */; };
+		596DD91BB12388F73A41653E /* SkyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD03EFB5DF652D34D92E4 /* SkyController.swift */; };
 		596DD93511CF06E76DCB8EA4 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDDC60CE1C3C87B5429F8 /* utils.swift */; };
 		596DD94F2819A7E08420B66B /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDE48B29318AD5678C65B /* BackgroundRenderer.swift */; };
 		596DD9783838F92C4BBB66CD /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD94112BC3E00F1E226D6 /* BackgroundController.swift */; };
@@ -26,18 +28,22 @@
 		596DD9EBB1780B56658876B3 /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD94112BC3E00F1E226D6 /* BackgroundController.swift */; };
 		596DDA4DF3B3FC29A2CCEFED /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 		596DDA73C724BF050731F6ED /* utils.h in Sources */ = {isa = PBXBuildFile; fileRef = 596DDC020310C45B3869EAB1 /* utils.h */; };
+		596DDAE05FD2D5CEFE572BE5 /* SkyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD03EFB5DF652D34D92E4 /* SkyController.swift */; };
 		596DDC00D167AECA3D7A490A /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD01D9618099F07A163C7 /* GameViewController.swift */; };
 		596DDC0BD9A5767ACCC7816E /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDDC60CE1C3C87B5429F8 /* utils.swift */; };
 		596DDC0ED6E102A6F2C7E8F7 /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
 		596DDCA9FA70947FE1E34F50 /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
 		596DDCCD5FDBEE9FF7FD0B1D /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
 		596DDCE97373276ADE2C4F62 /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDDC60CE1C3C87B5429F8 /* utils.swift */; };
+		596DDD3B34F591CE8BFB0D4B /* SkyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */; };
 		596DDD7B8D40B97CFC01C4CD /* Background.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD350D6F698905EFB20CA /* Background.metal */; };
 		596DDD8DBFA31BD29C8C1344 /* Snake.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E35FD184C58EFDD19 /* Snake.metal */; };
 		596DDD8F78F559083286B4EB /* blockensTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDEF85B791A90D2B47995 /* blockensTests.swift */; };
 		596DDDE63103F154428EBFBC /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDE48B29318AD5678C65B /* BackgroundRenderer.swift */; };
+		596DDE0F40A39776E2963C05 /* SkyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */; };
 		596DDE627517EB3DBC509889 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 		596DDE9992173DD0B906A782 /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
+		596DDED821185F187713F72E /* SkyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD03EFB5DF652D34D92E4 /* SkyController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +65,7 @@
 
 /* Begin PBXFileReference section */
 		596DD01D9618099F07A163C7 /* GameViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameViewController.swift; sourceTree = "<group>"; };
+		596DD03EFB5DF652D34D92E4 /* SkyController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkyController.swift; sourceTree = "<group>"; };
 		596DD12117DA96C0C681F421 /* SnakeController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeController.swift; sourceTree = "<group>"; };
 		596DD14F2FA0CAC167115986 /* GameWindow.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GameWindow.swift; sourceTree = "<group>"; };
 		596DD183386F3B4EB9BF5C86 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -70,6 +77,7 @@
 		596DD712C929F5CE1C16DC14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		596DD7824DD5750EC33379AA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		596DD8CC75B0B84F4348C7A1 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SkyRenderer.swift; sourceTree = "<group>"; };
 		596DD94112BC3E00F1E226D6 /* BackgroundController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BackgroundController.swift; sourceTree = "<group>"; };
 		596DDA445427ACB481F938F4 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
 		596DDC020310C45B3869EAB1 /* utils.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = utils.h; sourceTree = "<group>"; };
@@ -172,6 +180,7 @@
 				596DDDC60CE1C3C87B5429F8 /* utils.swift */,
 				596DDC8C4DC7D4CC8D8F5AE8 /* Snake */,
 				596DD92FFB413EB01D3548E9 /* Background */,
+				596DDE0ECA255BD791779048 /* Sky */,
 			);
 			path = src;
 			sourceTree = "<group>";
@@ -195,6 +204,15 @@
 				596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */,
 			);
 			path = Snake;
+			sourceTree = "<group>";
+		};
+		596DDE0ECA255BD791779048 /* Sky */ = {
+			isa = PBXGroup;
+			children = (
+				596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */,
+				596DD03EFB5DF652D34D92E4 /* SkyController.swift */,
+			);
+			path = Sky;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -322,6 +340,8 @@
 				596DD5032A68369249FAFB39 /* BackgroundRenderer.swift in Sources */,
 				596DDD7B8D40B97CFC01C4CD /* Background.metal in Sources */,
 				596DD9882A7C9CB6D03500DD /* utils.h in Sources */,
+				596DD5C34D66623EBA97F976 /* SkyRenderer.swift in Sources */,
+				596DD91BB12388F73A41653E /* SkyController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -338,6 +358,8 @@
 				596DD94F2819A7E08420B66B /* BackgroundRenderer.swift in Sources */,
 				596DD45708FD159F63EC090F /* Background.metal in Sources */,
 				596DDA73C724BF050731F6ED /* utils.h in Sources */,
+				596DDD3B34F591CE8BFB0D4B /* SkyRenderer.swift in Sources */,
+				596DDAE05FD2D5CEFE572BE5 /* SkyController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -356,6 +378,8 @@
 				596DDDE63103F154428EBFBC /* BackgroundRenderer.swift in Sources */,
 				596DD9E1FE9BA749805F6D41 /* Background.metal in Sources */,
 				596DD898730307A82643DE27 /* utils.h in Sources */,
+				596DDE0F40A39776E2963C05 /* SkyRenderer.swift in Sources */,
+				596DDED821185F187713F72E /* SkyController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
