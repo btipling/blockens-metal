@@ -55,15 +55,3 @@ fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]],
     }
 
 }
-
-float pushDownYByRatio(float y, float viewDiffRatio) {
-    y -= 1;
-    y *= -1;
-    float yRatio = y/2;
-    float missingHeight = 2 * viewDiffRatio;
-    float newHeight = 2 - missingHeight;
-    float newTop = missingHeight - 1;
-    float result = (newHeight * yRatio) + newTop;
-    result *= -1;
-    return result;
-}

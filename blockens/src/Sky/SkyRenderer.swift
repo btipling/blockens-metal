@@ -28,17 +28,25 @@ private let textureData:[Float] = [
         1.0,  1.0,
 ]
 
+struct SkyInfo {
+    var tickCount: Int32
+    var viewDiffRatio : Float32
+}
+
 class SkyRenderer: Renderer {
 
     var pipelineState: MTLRenderPipelineState! = nil
 
     var skyVertexBuffer: MTLBuffer! = nil
-    var bgDataBuffer: MTLBuffer! = nil
+    var skyInfoDataBuffer: MTLBuffer! = nil
     var textureBuffer: MTLBuffer! = nil
     var texture: MTLTexture!
+    var skyInfoData = SkyInfo(tickCount: 0, viewDiffRatio : 0.0)
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         texture = loadTexture(device, name: "mountains")
+        skyInfoData.viewDiffRatio = frameInfo.viewDiffRatio
+        skyInfoData.tickCount = 0
         let defaultLibrary = device.newDefaultLibrary()!
         let vertexProgram = defaultLibrary.newFunctionWithName("skyVertex")!
         let fragmentProgram = defaultLibrary.newFunctionWithName("skyFragment")!
@@ -62,6 +70,13 @@ class SkyRenderer: Renderer {
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
         textureBuffer.label = "bg texture coords"
+
+        skyInfoDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
+        skyInfoDataBuffer.label = "sky colors"
+        let pData = skyInfoDataBuffer.contents()
+        let vData = UnsafeMutablePointer<SkyInfo>(pData)
+        vData.initializeFrom(&skyInfoData, count: 1)
+
         print("loading sky assets done")
     }
 
@@ -75,6 +90,7 @@ class SkyRenderer: Renderer {
         renderEncoder.setRenderPipelineState(pipelineState)
         renderEncoder.setVertexBuffer(skyVertexBuffer, offset: 0, atIndex: 0)
         renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 1)
+        renderEncoder.setVertexBuffer(skyInfoDataBuffer, offset:0 , atIndex: 2)
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
         renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: skyVertexData.count * 2, instanceCount: 1)
 

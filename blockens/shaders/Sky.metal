@@ -10,18 +10,22 @@
 
 
 struct SkyInfo {
-
+    int tickCount;
+    float viewDiffRatio;
 };
 
 vertex VertexTextureOut skyVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
                                      constant packed_float2* textCoords    [[ buffer(1) ]],
-                                     constant SkyInfo* gridInfo [[ buffer(2) ]]) {
+                                     constant SkyInfo* skyInfo [[ buffer(2) ]]) {
 
     VertexTextureOut outVertex;
 
     int positionIndex = vid % 6;
     float2 pos = position[positionIndex];
+
+    pos[1] = pushUpYByRatio(pos[1], skyInfo->viewDiffRatio);
+
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     outVertex.textCoords = textCoords[positionIndex];
     outVertex.vid = vid;
@@ -44,8 +48,4 @@ fragment float4 skyFragment(VertexTextureOut inFrag [[stage_in]],
     }
 
     return result;
-}
-
-float4 rgbaToNormalizedGPUColors(int r, int g, int b) {
-    return float4(float(r)/255.0, float(g)/255.0, float(b)/255.0, 1.0);
 }

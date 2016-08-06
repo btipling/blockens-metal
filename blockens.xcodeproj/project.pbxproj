@@ -10,10 +10,12 @@
 		596DD110F517D254D8D565FF /* SnakeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */; };
 		596DD1D8C00640623028E7D2 /* Sky.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD4F80A20523509100E29 /* Sky.metal */; };
 		596DD2ED3D5AD150AAF926B8 /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 596DD76650B83AE4BF3DC31D /* MainMenu.xib */; };
+		596DD386AC9B203EBB20F376 /* utils.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E9198B2F0DB66B659 /* utils.metal */; };
 		596DD3FF9256D3F9CACF175C /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 596DD7824DD5750EC33379AA /* Assets.xcassets */; };
 		596DD45708FD159F63EC090F /* Background.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD350D6F698905EFB20CA /* Background.metal */; };
 		596DD5032A68369249FAFB39 /* BackgroundRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDE48B29318AD5678C65B /* BackgroundRenderer.swift */; };
 		596DD50B878BEB88BC2ECCE0 /* blockensUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD469FAAA560D12454323 /* blockensUITests.swift */; };
+		596DD548D09CECEA622CC79D /* utils.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E9198B2F0DB66B659 /* utils.metal */; };
 		596DD5C34D66623EBA97F976 /* SkyRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD8CF87B3556E83BDF89C /* SkyRenderer.swift */; };
 		596DD5C40263070DEE379239 /* SnakeRenderer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */; };
 		596DD805A5B7A2E9288C181D /* BackgroundController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD94112BC3E00F1E226D6 /* BackgroundController.swift */; };
@@ -30,6 +32,7 @@
 		596DDA4DF3B3FC29A2CCEFED /* GameWindow.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD14F2FA0CAC167115986 /* GameWindow.swift */; };
 		596DDA73C724BF050731F6ED /* utils.h in Sources */ = {isa = PBXBuildFile; fileRef = 596DDC020310C45B3869EAB1 /* utils.h */; };
 		596DDAE05FD2D5CEFE572BE5 /* SkyController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD03EFB5DF652D34D92E4 /* SkyController.swift */; };
+		596DDB8B99B511126D0E4BED /* utils.metal in Sources */ = {isa = PBXBuildFile; fileRef = 596DD47E9198B2F0DB66B659 /* utils.metal */; };
 		596DDC00D167AECA3D7A490A /* GameViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD01D9618099F07A163C7 /* GameViewController.swift */; };
 		596DDC0BD9A5767ACCC7816E /* utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DDDC60CE1C3C87B5429F8 /* utils.swift */; };
 		596DDC0ED6E102A6F2C7E8F7 /* SnakeController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 596DD12117DA96C0C681F421 /* SnakeController.swift */; };
@@ -74,6 +77,7 @@
 		596DD3977095FD282BBABFA8 /* SnakeRenderer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnakeRenderer.swift; sourceTree = "<group>"; };
 		596DD469FAAA560D12454323 /* blockensUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = blockensUITests.swift; sourceTree = "<group>"; };
 		596DD47E35FD184C58EFDD19 /* Snake.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Snake.metal; sourceTree = "<group>"; };
+		596DD47E9198B2F0DB66B659 /* utils.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = utils.metal; sourceTree = "<group>"; };
 		596DD4F80A20523509100E29 /* Sky.metal */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.metal; path = Sky.metal; sourceTree = "<group>"; };
 		596DD6667F709F246FF2012A /* blockensUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = blockensUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		596DD712C929F5CE1C16DC14 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.info; path = Info.plist; sourceTree = "<group>"; };
@@ -151,6 +155,7 @@
 				596DD350D6F698905EFB20CA /* Background.metal */,
 				596DDC020310C45B3869EAB1 /* utils.h */,
 				596DD4F80A20523509100E29 /* Sky.metal */,
+				596DD47E9198B2F0DB66B659 /* utils.metal */,
 			);
 			path = shaders;
 			sourceTree = "<group>";
@@ -345,6 +350,7 @@
 				596DD9882A7C9CB6D03500DD /* utils.h in Sources */,
 				596DD5C34D66623EBA97F976 /* SkyRenderer.swift in Sources */,
 				596DD91BB12388F73A41653E /* SkyController.swift in Sources */,
+				596DD548D09CECEA622CC79D /* utils.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -363,6 +369,7 @@
 				596DDA73C724BF050731F6ED /* utils.h in Sources */,
 				596DDD3B34F591CE8BFB0D4B /* SkyRenderer.swift in Sources */,
 				596DDAE05FD2D5CEFE572BE5 /* SkyController.swift in Sources */,
+				596DDB8B99B511126D0E4BED /* utils.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -384,6 +391,7 @@
 				596DDE0F40A39776E2963C05 /* SkyRenderer.swift in Sources */,
 				596DDED821185F187713F72E /* SkyController.swift in Sources */,
 				596DD1D8C00640623028E7D2 /* Sky.metal in Sources */,
+				596DD386AC9B203EBB20F376 /* utils.metal in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
