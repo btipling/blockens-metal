@@ -28,13 +28,6 @@ private let textureData:[Float] = [
         1.0,  1.0,
 ]
 
-
-
-struct SkyInfo {
-    var tickCount: Int32
-    var viewDiffRatio : Float32
-}
-
 class SkyRenderer: Renderer {
 
     var pipelineState: MTLRenderPipelineState! = nil
@@ -43,7 +36,6 @@ class SkyRenderer: Renderer {
     var bgDataBuffer: MTLBuffer! = nil
     var textureBuffer: MTLBuffer! = nil
     var texture: MTLTexture!
-    var bgInfoData = SkyInfo(tickCount: 0, viewDiffRatio : 0.0)
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         texture = loadTexture(device, name: "mountains")
@@ -63,9 +55,6 @@ class SkyRenderer: Renderer {
             print("Failed to create pipeline state, error \(error)")
         }
 
-        bgDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
-        bgDataBuffer.label = "sky colors"
-
         let skyVertexSize = skyVertexData.count * sizeofValue(skyVertexData[0])
         skyVertexBuffer = device.newBufferWithBytes(skyVertexData, length:  skyVertexSize, options: [])
         skyVertexBuffer.label = "sky vertices"
@@ -84,9 +73,8 @@ class SkyRenderer: Renderer {
         renderEncoder.pushDebugGroup("draw sky")
 
         renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(bgDataBuffer, offset:0 , atIndex: 0)
-        renderEncoder.setVertexBuffer(skyVertexBuffer, offset: 0, atIndex: 1)
-        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 2)
+        renderEncoder.setVertexBuffer(skyVertexBuffer, offset: 0, atIndex: 0)
+        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 1)
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
         renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: skyVertexData.count * 2, instanceCount: 1)
 

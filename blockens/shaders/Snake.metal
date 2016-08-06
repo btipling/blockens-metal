@@ -76,7 +76,7 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     }
     
     return outVertex;
-};
+}
 
 fragment float4 gameTileFragment(VertexOut inFrag [[stage_in]],
         texture2d<float> snakeTexture [[ texture(0) ]],
@@ -98,4 +98,4 @@ fragment float4 gameTileFragment(VertexOut inFrag [[stage_in]],
         discard_fragment();
     }
     return result;
-};
+}

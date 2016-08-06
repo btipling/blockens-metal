@@ -23,6 +23,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
     let snake = SnakeController()
     let background = BackgroundController()
+    let sky = SkyController()
 
     var renderers: [Renderer] = Array()
 
@@ -47,6 +48,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.sampleCount = 4
 
         // Add renderers, order matters.
+        renderers.append(sky.renderer())
         renderers.append(background.renderer())
         renderers.append(snake.renderer())
 
