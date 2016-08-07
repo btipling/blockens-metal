@@ -62,26 +62,12 @@ class SnakeRenderer: Renderer {
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
-
         gridInfoData.viewDiffRatio = frameInfo.viewDiffRatio
-        let defaultLibrary = device.newDefaultLibrary()!
-        let vertexProgram = defaultLibrary.newFunctionWithName("gameTileVertex")!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("gameTileFragment")!
+
+        pipelineState = createPipeLineState("gameTileVertex", fragment: "gameTileFragment", device: device, view: view)
 
         foodTexture = loadTexture(device, name: "yellow_block")
         snakeTexture = loadTexture(device, name: "green_block")
-
-        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        pipelineStateDescriptor.vertexFunction = vertexProgram
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineStateDescriptor.sampleCount = view.sampleCount
-
-        do {
-            try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
-        } catch let error {
-            print("Failed to create pipeline state, error \(error)")
-        }
 
         vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         vertexBuffer.label = "game tile vertices"
@@ -131,23 +117,16 @@ class SnakeRenderer: Renderer {
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        renderEncoder.label = "snake render encoder"
-        renderEncoder.pushDebugGroup("draw snake and food")
+        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "snake and food")
 
-        renderEncoder.setRenderPipelineState(pipelineState)
 
-        renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: 0)
-        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 1)
-        renderEncoder.setVertexBuffer(gridInfoBuffer, offset:0 , atIndex: 2)
-        renderEncoder.setVertexBuffer(gameTilesBuffer, offset:0 , atIndex: 3)
-        renderEncoder.setVertexBuffer(boxTilesBuffer, offset:0 , atIndex: 4)
+        for (i, buffer) in [vertexBuffer, textureBuffer, gridInfoBuffer, gameTilesBuffer, boxTilesBuffer].enumerate() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
+        }
 
         renderEncoder.setFragmentTexture(snakeTexture, atIndex: 0)
         renderEncoder.setFragmentTexture(foodTexture, atIndex: 1)
 
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
-
-        renderEncoder.popDebugGroup()
-        renderEncoder.endEncoding()
+        drawPrimitives(renderEncoder, vertexCount: vertexCount)
     }
 }

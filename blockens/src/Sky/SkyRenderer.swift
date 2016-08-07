@@ -47,21 +47,8 @@ class SkyRenderer: Renderer {
         texture = loadTexture(device, name: "mountains")
         skyInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         skyInfoData.tickCount = 0
-        let defaultLibrary = device.newDefaultLibrary()!
-        let vertexProgram = defaultLibrary.newFunctionWithName("skyVertex")!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("skyFragment")!
 
-        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        pipelineStateDescriptor.vertexFunction = vertexProgram
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineStateDescriptor.sampleCount = view.sampleCount
-
-        do {
-            try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
-        } catch let error {
-            print("Failed to create pipeline state, error \(error)")
-        }
+        pipelineState = createPipeLineState("skyVertex", fragment: "skyFragment", device: device, view: view)
 
         let skyVertexSize = skyVertexData.count * sizeofValue(skyVertexData[0])
         skyVertexBuffer = device.newBufferWithBytes(skyVertexData, length:  skyVertexSize, options: [])
@@ -84,17 +71,15 @@ class SkyRenderer: Renderer {
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        renderEncoder.label = "sky render encoder"
-        renderEncoder.pushDebugGroup("draw sky")
+        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sky")
 
-        renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(skyVertexBuffer, offset: 0, atIndex: 0)
-        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 1)
-        renderEncoder.setVertexBuffer(skyInfoDataBuffer, offset:0 , atIndex: 2)
+        for (i, vertexBuffer) in [skyVertexBuffer, textureBuffer, skyInfoDataBuffer].enumerate() {
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
+        }
+
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: skyVertexData.count * 2, instanceCount: 1)
 
-        renderEncoder.popDebugGroup()
-        renderEncoder.endEncoding()
+        drawPrimitives(renderEncoder, vertexCount: skyVertexData.count * 2)
+
     }
 }

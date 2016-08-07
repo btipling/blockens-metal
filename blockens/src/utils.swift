@@ -104,3 +104,40 @@ func loadTexture(device: MTLDevice, name: String) -> MTLTexture {
     }
     return texture!
 }
+
+func createPipeLineState(vertex: String, fragment: String, device: MTLDevice, view: MTKView) -> MTLRenderPipelineState {
+    let defaultLibrary = device.newDefaultLibrary()!
+    let vertexProgram = defaultLibrary.newFunctionWithName(vertex)!
+    let fragmentProgram = defaultLibrary.newFunctionWithName(fragment)!
+
+    let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+    pipelineStateDescriptor.vertexFunction = vertexProgram
+    pipelineStateDescriptor.fragmentFunction = fragmentProgram
+    pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
+    pipelineStateDescriptor.sampleCount = view.sampleCount
+
+    var pipelineState: MTLRenderPipelineState! = nil
+    do {
+        try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
+    } catch let error {
+        print("Failed to create pipeline state, error \(error)")
+    }
+
+    return pipelineState
+}
+
+func setPipeLineState(renderEncoder: MTLRenderCommandEncoder, pipelineState: MTLRenderPipelineState, name: String) {
+
+    renderEncoder.label = "\(name) render encoder"
+    renderEncoder.pushDebugGroup("draw \(name)")
+    renderEncoder.setRenderPipelineState(pipelineState)
+
+}
+
+func drawPrimitives(renderEncoder: MTLRenderCommandEncoder, vertexCount: Int) {
+
+    renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
+    renderEncoder.popDebugGroup()
+    renderEncoder.endEncoding()
+
+}

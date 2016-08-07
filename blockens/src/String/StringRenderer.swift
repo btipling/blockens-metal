@@ -79,21 +79,7 @@ class StringRenderer: Renderer  {
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
-        let defaultLibrary = device.newDefaultLibrary()!
-        let vertexProgram = defaultLibrary.newFunctionWithName("stringVertex")!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("stringFragment")!
-
-        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        pipelineStateDescriptor.vertexFunction = vertexProgram
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineStateDescriptor.sampleCount = view.sampleCount
-
-        do {
-            try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
-        } catch let error {
-            print("Failed to create pipeline state, error \(error)")
-        }
+        pipelineState = createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
 
         let stringVertexSize = stringVertexData.count * sizeofValue(stringVertexData[0])
         stringVertexBuffer = device.newBufferWithBytes(stringVertexData, length:  stringVertexSize, options: [])

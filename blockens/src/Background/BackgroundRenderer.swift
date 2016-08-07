@@ -66,21 +66,8 @@ class BackgroundRenderer: Renderer {
             textures.append(loadTexture(device, name: "bg\(i)"))
         }
         bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
-        let defaultLibrary = device.newDefaultLibrary()!
-        let vertexProgram = defaultLibrary.newFunctionWithName("backgroundVertex")!
-        let fragmentProgram = defaultLibrary.newFunctionWithName("backgroundFragment")!
 
-        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
-        pipelineStateDescriptor.vertexFunction = vertexProgram
-        pipelineStateDescriptor.fragmentFunction = fragmentProgram
-        pipelineStateDescriptor.colorAttachments[0].pixelFormat = view.colorPixelFormat
-        pipelineStateDescriptor.sampleCount = view.sampleCount
-
-        do {
-            try pipelineState = device.newRenderPipelineStateWithDescriptor(pipelineStateDescriptor)
-        } catch let error {
-            print("Failed to create pipeline state, error \(error)")
-        }
+        pipelineState = createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
 
         bgDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
         bgDataBuffer.label = "background colors"
@@ -132,21 +119,18 @@ class BackgroundRenderer: Renderer {
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
+
         blowWind()
+        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "background")
 
-        renderEncoder.label = "background render encoder"
-        renderEncoder.pushDebugGroup("draw background")
+        for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer, textureBuffer].enumerate() {
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
+        }
 
-        renderEncoder.setRenderPipelineState(pipelineState)
-        renderEncoder.setVertexBuffer(bgDataBuffer, offset:0 , atIndex: 0)
-        renderEncoder.setVertexBuffer(backgroundVertexBuffer, offset: 0, atIndex: 1)
-        renderEncoder.setVertexBuffer(textureBuffer, offset:0 , atIndex: 2)
         for i in 0..<5 {
             renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: backgroundVertexData.count, instanceCount: 1)
 
-        renderEncoder.popDebugGroup()
-        renderEncoder.endEncoding()
+        drawPrimitives(renderEncoder, vertexCount: backgroundVertexData.count)
     }
 }
