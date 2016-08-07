@@ -58,7 +58,6 @@ class StringRenderer: Renderer  {
     func calcNumVertices() {
         stringInfo.numVertices = stringInfo.numSegments
         stringInfo.numVertices *= numVerticesInARectangle
-
     }
 
 
@@ -89,7 +88,9 @@ class StringRenderer: Renderer  {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
 
-        renderEncoder.setVertexBuffer(stringVertexBuffer, offset:0 , atIndex: 0)
+        for (i, buffer) in [stringVertexBuffer, boxTilesBuffer, segmentTrackerBuffer].enumerate() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
+        }
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count)
     }

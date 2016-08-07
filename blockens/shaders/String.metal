@@ -9,7 +9,9 @@
 #include "utils.h"
 
 vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
-                                     constant packed_float2* position  [[ buffer(0) ]]) {
+                                     constant packed_float2* position  [[ buffer(0) ]],
+                                     constant packed_float2* boxTiles  [[ buffer(1) ]],
+                                     constant packed_float2* segmentTracker  [[ buffer(2) ]]) {
 
     VertexOut outVertex;
 
