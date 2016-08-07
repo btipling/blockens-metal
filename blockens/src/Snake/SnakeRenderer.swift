@@ -6,26 +6,6 @@
 import Foundation
 import MetalKit
 
-private let squareTileVertexData:[Float] = [
-        -1.0, -1.0,
-        -1.0,  1.0,
-        1.0, -1.0,
-
-        1.0, -1.0,
-        -1.0,  1.0,
-        1.0,  1.0,
-]
-
-private let textureData:[Float] = [
-        0.0,  1.0,
-        0.0,  0.0,
-        1.0,  1.0,
-
-        1.0,  1.0,
-        0.0,  0.0,
-        1.0,  0.0,
-]
-
 struct GridInfo {
     var gridDimension: Int32
     var gridOffset: Float32
@@ -52,15 +32,16 @@ class SnakeRenderer: Renderer {
     var snakeTexture: MTLTexture! = nil
 
     var vertexCount = 0
-    var gridInfoData = GridInfo(
-            gridDimension: gridDimension,
-            gridOffset: 2.0/Float32(gridDimension),
-            numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-            numVertices: Int32(squareTileVertexData.count/2),
-            viewDiffRatio: 0.0)
+    var gridInfoData: GridInfo
 
     init (utils: RenderUtils) {
         renderUtils = utils
+        gridInfoData = GridInfo(
+                gridDimension: gridDimension,
+                gridOffset: 2.0/Float32(gridDimension),
+                numBoxes: Int32(pow(Float(gridDimension), 2.0)),
+                numVertices: Int32(renderUtils.rectangleVertexData.count/2),
+                viewDiffRatio: 0.0)
     }
 
 
@@ -73,11 +54,8 @@ class SnakeRenderer: Renderer {
         foodTexture = renderUtils.loadTexture(device, name: "yellow_block")
         snakeTexture = renderUtils.loadTexture(device, name: "green_block")
 
-        vertexBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "game tile vertices")
-
-        let textBufferSize = textureData.count * sizeofValue(textureData[0])
-        textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
-        textureBuffer.label = "game tile texture coords"
+        vertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "game tile vertices")
+        textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "game tile texture coords")
 
         let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
@@ -99,10 +77,6 @@ class SnakeRenderer: Renderer {
     }
 
     func update(gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
-        // vData is pointer to the MTLBuffer's Float data contents.
-        let pData = vertexBuffer.contents()
-        let vData = UnsafeMutablePointer<Float>(pData)
-        vData.initializeFrom(squareTileVertexData)
 
         let gData = gridInfoBuffer.contents()
         let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
