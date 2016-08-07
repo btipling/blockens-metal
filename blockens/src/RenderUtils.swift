@@ -28,6 +28,16 @@ class RenderUtils {
             1.0,  -1.0,
     ]
 
+    private let rectangleTextureCoords:[Float] = [
+            0.0,  1.0,
+            0.0,  0.0,
+            1.0,  1.0,
+
+            0.0,  0.0,
+            1.0,  0.0,
+            1.0,  1.0,
+    ]
+
     let CONSTANT_BUFFER_SIZE = 1024*1024
 
     func loadTexture(device: MTLDevice, name: String) -> MTLTexture {
@@ -90,8 +100,17 @@ class RenderUtils {
 
     func createRectangleVertexBuffer(device: MTLDevice, bufferLabel: String) -> MTLBuffer {
 
-        let rectangleVertexSize = rectangleVertexData.count * sizeofValue(rectangleVertexData[0])
-        let buffer = device.newBufferWithBytes(rectangleVertexData, length:  rectangleVertexSize, options: [])
+        let bufferSize = rectangleVertexData.count * sizeofValue(rectangleVertexData[0])
+        let buffer = device.newBufferWithBytes(rectangleVertexData, length: bufferSize, options: [])
+        buffer.label = bufferLabel
+
+        return buffer
+    }
+
+    func createRectangleTextureCoordsBuffer(device: MTLDevice, bufferLabel: String) -> MTLBuffer {
+
+        let bufferSize = rectangleTextureCoords.count * sizeofValue(rectangleTextureCoords[0])
+        let buffer = device.newBufferWithBytes(rectangleTextureCoords, length: bufferSize, options: [])
         buffer.label = bufferLabel
 
         return buffer

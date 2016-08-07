@@ -6,17 +6,6 @@
 import Foundation
 import MetalKit
 
-
-private let textureData:[Float] = [
-        0.0,  1.0,
-        0.0,  0.0,
-        1.0,  1.0,
-
-        0.0,  0.0,
-        1.0,  0.0,
-        1.0,  1.0,
-]
-
 let maxSecondsUntilBGAnimation: Int32 = 18
 let framesPerSecond: NSTimeInterval = 15.0
 let framesOnFullWind: NSTimeInterval = 10.0
@@ -66,10 +55,8 @@ class BackgroundRenderer: Renderer {
 
         bgDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "background colors")
         backgroundVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "background vertices")
+        textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "bg texture coords")
 
-        let textBufferSize = textureData.count * sizeofValue(textureData[0])
-        textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
-        textureBuffer.label = "bg texture coords"
         updateTickCount()
         print("loading bg assets done")
     }

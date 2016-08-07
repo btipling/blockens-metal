@@ -6,16 +6,6 @@
 import Foundation
 import MetalKit
 
-private let textureData:[Float] = [
-        0.0,  1.0,
-        0.0,  0.0,
-        1.0,  1.0,
-
-        0.0,  0.0,
-        1.0,  0.0,
-        1.0,  1.0,
-]
-
 struct SkyInfo {
     var tickCount: Int32
     var viewDiffRatio : Float32
@@ -43,13 +33,8 @@ class SkyRenderer: Renderer {
         skyInfoData.tickCount = 0
 
         pipelineState = renderUtils.createPipeLineState("skyVertex", fragment: "skyFragment", device: device, view: view)
-
         skyVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sky vertices")
-
-        let textBufferSize = textureData.count * sizeofValue(textureData[0])
-        textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
-        textureBuffer.label = "bg texture coords"
-
+        textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "sky texture coords")
         skyInfoDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "sky colors")
 
         let pData = skyInfoDataBuffer.contents()
