@@ -5,14 +5,29 @@
 
 import Foundation
 
-class Score {
+class Score: RenderController {
+
     let stringController = StringController()
 
-    init() {
+    private var currentScore: Int32 = 0
 
+    init() {
+        reset()
     }
 
-    func setScore(newScore: Int32) {
+    private func setScore(newScore: Int32) {
+        currentScore = newScore
+    }
 
+    func score() -> Int32 {
+        return currentScore;
+    }
+
+    func reset() {
+        currentScore = 0;
+    }
+
+    func renderer() -> Renderer {
+        return stringController.renderer()
     }
 }

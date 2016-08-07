@@ -22,6 +22,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var gameStatus: GameStatus = GameStatus.Running
 
     let snake: SnakeController = SnakeController()
+    let score = Score()
     var renderers: [Renderer] = Array()
 
     override func viewDidLoad() {
@@ -32,7 +33,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let renderControllers: [RenderController] = [
                 BackgroundController(),
                 SkyController(),
-                snake
+                snake,
+                score,
         ]
 
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate

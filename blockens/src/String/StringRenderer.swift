@@ -12,6 +12,7 @@ class StringRenderer: Renderer  {
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
+        renderEncoder.endEncoding()
     }
 
 }
