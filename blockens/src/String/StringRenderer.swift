@@ -90,15 +90,11 @@ class StringRenderer: Renderer  {
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        renderEncoder.label = "string render encoder"
-        renderEncoder.pushDebugGroup("draw string")
-
-        renderEncoder.setRenderPipelineState(pipelineState)
+        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
+        
         renderEncoder.setVertexBuffer(stringVertexBuffer, offset:0 , atIndex: 0)
-        renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: stringVertexData.count, instanceCount: 1)
 
-        renderEncoder.popDebugGroup()
-        renderEncoder.endEncoding()
+        drawPrimitives(renderEncoder, vertexCount: stringVertexData.count)
     }
 
 

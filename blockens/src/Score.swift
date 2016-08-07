@@ -15,8 +15,9 @@ class Score: RenderController {
         reset()
     }
 
-    private func setScore(newScore: Int32) {
+    func setScore(newScore: Int32) {
         currentScore = newScore
+        stringController.set(String(newScore))
     }
 
     func score() -> Int32 {
