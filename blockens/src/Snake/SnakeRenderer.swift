@@ -6,8 +6,6 @@
 import Foundation
 import MetalKit
 
-private let ConstantBufferSize = 1024*1024
-
 private let squareTileVertexData:[Float] = [
         -1.0, -1.0,
         -1.0,  1.0,
@@ -40,6 +38,8 @@ private var gridDimension: Int32 = 30
 
 class SnakeRenderer: Renderer {
 
+    let renderUtils: RenderUtils
+
     var pipelineState: MTLRenderPipelineState! = nil
 
     var vertexBuffer: MTLBuffer! = nil
@@ -59,17 +59,21 @@ class SnakeRenderer: Renderer {
             numVertices: Int32(squareTileVertexData.count/2),
             viewDiffRatio: 0.0)
 
+    init (utils: RenderUtils) {
+        renderUtils = utils
+    }
+
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         gridInfoData.viewDiffRatio = frameInfo.viewDiffRatio
 
-        pipelineState = createPipeLineState("gameTileVertex", fragment: "gameTileFragment", device: device, view: view)
+        pipelineState = renderUtils.createPipeLineState("gameTileVertex", fragment: "gameTileFragment", device: device, view: view)
 
-        foodTexture = loadTexture(device, name: "yellow_block")
-        snakeTexture = loadTexture(device, name: "green_block")
+        foodTexture = renderUtils.loadTexture(device, name: "yellow_block")
+        snakeTexture = renderUtils.loadTexture(device, name: "green_block")
 
-        vertexBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
+        vertexBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
         vertexBuffer.label = "game tile vertices"
 
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
@@ -117,7 +121,7 @@ class SnakeRenderer: Renderer {
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "snake and food")
+        renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "snake and food")
 
 
         for (i, buffer) in [vertexBuffer, textureBuffer, gridInfoBuffer, gameTilesBuffer, boxTilesBuffer].enumerate() {
@@ -127,6 +131,6 @@ class SnakeRenderer: Renderer {
         renderEncoder.setFragmentTexture(snakeTexture, atIndex: 0)
         renderEncoder.setFragmentTexture(foodTexture, atIndex: 1)
 
-        drawPrimitives(renderEncoder, vertexCount: vertexCount)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: vertexCount)
     }
 }

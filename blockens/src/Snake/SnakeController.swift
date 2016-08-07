@@ -14,7 +14,7 @@ class SnakeController: RenderController {
 
     var snakeTiles: Array<GameTileInfo> = []
     var foodBoxLocation: Int32 = 0
-    private let _renderer: SnakeRenderer = SnakeRenderer()
+    private let _renderer: SnakeRenderer = SnakeRenderer(utils: RenderUtils())
 
     init() {
         reset()

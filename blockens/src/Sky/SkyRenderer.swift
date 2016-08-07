@@ -6,8 +6,6 @@
 import Foundation
 import MetalKit
 
-private let ConstantBufferSize = 1024*1024
-
 private let skyVertexData:[Float] = [
         -1.0, -1.0,
         -1.0,  1.0,
@@ -35,6 +33,8 @@ struct SkyInfo {
 
 class SkyRenderer: Renderer {
 
+    let renderUtils: RenderUtils
+
     var pipelineState: MTLRenderPipelineState! = nil
 
     var skyVertexBuffer: MTLBuffer! = nil
@@ -43,12 +43,16 @@ class SkyRenderer: Renderer {
     var texture: MTLTexture!
     var skyInfoData = SkyInfo(tickCount: 0, viewDiffRatio : 0.0)
 
+    init (utils: RenderUtils) {
+        renderUtils = utils
+    }
+
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
-        texture = loadTexture(device, name: "mountains")
+        texture = renderUtils.loadTexture(device, name: "mountains")
         skyInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         skyInfoData.tickCount = 0
 
-        pipelineState = createPipeLineState("skyVertex", fragment: "skyFragment", device: device, view: view)
+        pipelineState = renderUtils.createPipeLineState("skyVertex", fragment: "skyFragment", device: device, view: view)
 
         let skyVertexSize = skyVertexData.count * sizeofValue(skyVertexData[0])
         skyVertexBuffer = device.newBufferWithBytes(skyVertexData, length:  skyVertexSize, options: [])
@@ -58,7 +62,7 @@ class SkyRenderer: Renderer {
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
         textureBuffer.label = "bg texture coords"
 
-        skyInfoDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
+        skyInfoDataBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
         skyInfoDataBuffer.label = "sky colors"
         let pData = skyInfoDataBuffer.contents()
         let vData = UnsafeMutablePointer<SkyInfo>(pData)
@@ -71,7 +75,7 @@ class SkyRenderer: Renderer {
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sky")
+        renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sky")
 
         for (i, vertexBuffer) in [skyVertexBuffer, textureBuffer, skyInfoDataBuffer].enumerate() {
             renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
@@ -79,7 +83,7 @@ class SkyRenderer: Renderer {
 
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
 
-        drawPrimitives(renderEncoder, vertexCount: skyVertexData.count * 2)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: skyVertexData.count * 2)
 
     }
 }

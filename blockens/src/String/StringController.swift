@@ -10,7 +10,7 @@ class StringController: RenderController {
     private var _str: String = "";
 
     init (xScale: Float32, yScale: Float32, xPadding: Float32, yPadding: Float32) {
-        _renderer = StringRenderer(xScale: xScale, yScale: yScale, xPadding: xPadding, yPadding: yPadding)
+        _renderer = StringRenderer(utils: RenderUtils(), xScale: xScale, yScale: yScale, xPadding: xPadding, yPadding: yPadding)
     }
 
     func set(str: String) {

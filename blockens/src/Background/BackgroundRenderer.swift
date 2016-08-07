@@ -6,8 +6,6 @@
 import Foundation
 import MetalKit
 
-private let ConstantBufferSize = 1024*1024
-
 private let backgroundVertexData:[Float] = [
         -1.0, -1.0,
         -1.0,  1.0,
@@ -48,6 +46,8 @@ struct BGInfo {
 
 class BackgroundRenderer: Renderer {
 
+    let renderUtils: RenderUtils
+
     var pipelineState: MTLRenderPipelineState! = nil
 
     var backgroundVertexBuffer: MTLBuffer! = nil
@@ -61,15 +61,19 @@ class BackgroundRenderer: Renderer {
     var windDirection = WindDirection.Stopped
     var secondsUntilBGAnimation = getSecondsUntilBGAnimation()
 
+    init (utils: RenderUtils) {
+        renderUtils = utils
+    }
+
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         for i in 1...5 {
-            textures.append(loadTexture(device, name: "bg\(i)"))
+            textures.append(renderUtils.loadTexture(device, name: "bg\(i)"))
         }
         bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
 
-        pipelineState = createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
+        pipelineState = renderUtils.createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
 
-        bgDataBuffer = device.newBufferWithLength(ConstantBufferSize, options: [])
+        bgDataBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
         bgDataBuffer.label = "background colors"
 
         let backgroundVertexSize = backgroundVertexData.count * sizeofValue(backgroundVertexData[0])
@@ -121,7 +125,7 @@ class BackgroundRenderer: Renderer {
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
         blowWind()
-        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "background")
+        renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "background")
 
         for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer, textureBuffer].enumerate() {
             renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
@@ -131,6 +135,6 @@ class BackgroundRenderer: Renderer {
             renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
 
-        drawPrimitives(renderEncoder, vertexCount: backgroundVertexData.count)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: backgroundVertexData.count)
     }
 }

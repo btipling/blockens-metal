@@ -37,6 +37,8 @@ struct StringInfo {
 
 class StringRenderer: Renderer  {
 
+    let renderUtils: RenderUtils
+
     var pipelineState: MTLRenderPipelineState! = nil
     var stringVertexBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
@@ -47,7 +49,9 @@ class StringRenderer: Renderer  {
     let numVerticesInARectangle: Int32 = 6
     let gridWidth: Int32 = 5
     let gridHeight: Int32 = 8
-    init(xScale: Float32, yScale: Float32, xPadding: Float32, yPadding: Float32) {
+
+    init(utils: RenderUtils, xScale: Float32, yScale: Float32, xPadding: Float32, yPadding: Float32) {
+        renderUtils = utils
         stringInfo = StringInfo(
                 gridWidth: gridWidth,
                 gridHeight: gridHeight,
@@ -75,26 +79,40 @@ class StringRenderer: Renderer  {
             stringInfo.numSegments += segmentCount
         }
         calcNumVertices()
+
+        let bData = boxTilesBuffer.contents()
+        let bvData = UnsafeMutablePointer<Int32>(bData + 0)
+        bvData.initializeFrom(boxTiles)
+
+        let tData = segmentTrackerBuffer.contents()
+        let tvData = UnsafeMutablePointer<Int32>(tData + 0)
+        tvData.initializeFrom(segmentTracker)
     }
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
-        pipelineState = createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
+        pipelineState = renderUtils.createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
 
         let stringVertexSize = stringVertexData.count * sizeofValue(stringVertexData[0])
         stringVertexBuffer = device.newBufferWithBytes(stringVertexData, length:  stringVertexSize, options: [])
         stringVertexBuffer.label = "string vertices"
+
+        boxTilesBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
+        boxTilesBuffer.label = "string box tile vertices"
+
+        segmentTrackerBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
+        segmentTrackerBuffer.label = "segment tracker vertices"
 
         print("loading string assets done")
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
-        
+        renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
+
         renderEncoder.setVertexBuffer(stringVertexBuffer, offset:0 , atIndex: 0)
 
-        drawPrimitives(renderEncoder, vertexCount: stringVertexData.count)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: stringVertexData.count)
     }
 
 

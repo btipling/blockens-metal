@@ -9,20 +9,21 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameViewController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/characterData.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Score.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RenderUtils.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Assets.xcassets" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Base.lproj/MainMenu.xib" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/utils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Sky.metal" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/String.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Background.metal" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/String.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Snake.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/utils.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Info.plist" isTestSource="false" />
