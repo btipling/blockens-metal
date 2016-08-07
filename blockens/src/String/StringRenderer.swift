@@ -29,11 +29,14 @@ class StringRenderer: Renderer  {
 
     let renderUtils: RenderUtils
 
+    var stringInfo: StringInfo
+
     var pipelineState: MTLRenderPipelineState! = nil
+
     var stringVertexBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
     var segmentTrackerBuffer: MTLBuffer! = nil
-    var stringInfo: StringInfo! = nil
+    var stringInfoBuffer: MTLBuffer! = nil
 
     // Sixes vertices for two triangles to make a rectangle.
     let numVerticesInARectangle: Int32 = 6
@@ -69,6 +72,11 @@ class StringRenderer: Renderer  {
         }
         calcNumVertices()
 
+
+        let contents = stringInfoBuffer.contents()
+        let pointer = UnsafeMutablePointer<StringInfo>(contents)
+        pointer.initializeFrom(&stringInfo, count: 1)
+
         renderUtils.updateBufferFromIntArray(boxTilesBuffer, data: boxTiles)
         renderUtils.updateBufferFromIntArray(segmentTrackerBuffer, data: segmentTracker)
     }
@@ -76,6 +84,9 @@ class StringRenderer: Renderer  {
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         pipelineState = renderUtils.createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
+
+        stringInfoBuffer = device.newBufferWithBytes(&stringInfo, length: sizeofValue(stringInfo), options: [])
+        stringInfoBuffer.label = "string info"
 
         stringVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "string vertices")
         boxTilesBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "string box tile vertices")
@@ -88,11 +99,12 @@ class StringRenderer: Renderer  {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
 
-        for (i, buffer) in [stringVertexBuffer, boxTilesBuffer, segmentTrackerBuffer].enumerate() {
+        for (i, buffer) in [stringVertexBuffer, boxTilesBuffer, segmentTrackerBuffer, stringInfoBuffer].enumerate() {
             renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
         }
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count)
+        let vertexCount = Int(stringInfo.numSegments) * renderUtils.rectangleVertexData.count
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: vertexCount)
     }
 
 

@@ -8,10 +8,27 @@
 
 #include "utils.h"
 
+struct StringInfo {
+    int gridWidth;
+    int gridHeight;
+
+    float xScale;
+    float yScale;
+
+    float xPadding;
+    float yPadding;
+
+    int numBoxes;
+    int numVertices;
+    int numCharacters;
+    int numSegments;
+};
+
 vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
                                      constant packed_float2* boxTiles  [[ buffer(1) ]],
-                                     constant packed_float2* segmentTracker  [[ buffer(2) ]]) {
+                                     constant packed_float2* segmentTracker  [[ buffer(2) ]],
+                                     constant StringInfo* stringInfo [[ buffer(3) ]]) {
 
     VertexOut outVertex;
 

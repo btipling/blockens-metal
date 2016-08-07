@@ -29,8 +29,8 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/Info.plist" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensUITests/blockensUITests.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensUITests/Info.plist" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockensTests/blockensTests.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensTests/Info.plist" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockensTests/blockensTests.swift" isTestSource="false" />
     </content>
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="module-library">

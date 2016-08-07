@@ -78,9 +78,9 @@ class SnakeRenderer: Renderer {
 
     func update(gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
 
-        let gData = gridInfoBuffer.contents()
-        let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
-        gvData.initializeFrom(&gridInfoData, count: 1)
+        let contents = gridInfoBuffer.contents()
+        let pointer = UnsafeMutablePointer<GridInfo>(contents)
+        pointer.initializeFrom(&gridInfoData, count: 1)
 
         renderUtils.updateBufferFromIntArray(gameTilesBuffer, data: gameTiles)
         renderUtils.updateBufferFromIntArray(boxTilesBuffer, data: boxTiles)
