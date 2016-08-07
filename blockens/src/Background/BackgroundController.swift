@@ -5,10 +5,12 @@
 
 import Foundation
 
-class BackgroundController {
+class BackgroundController: RenderController {
+
     private let _renderer = BackgroundRenderer()
 
-    func renderer () -> BackgroundRenderer {
+    func renderer() -> Renderer {
         return _renderer
     }
+
 }

@@ -5,7 +5,7 @@
 
 import Foundation
 
-class SnakeController {
+class SnakeController: RenderController {
 
     var currentDirection: Direction = Direction.Right
 
@@ -38,7 +38,7 @@ class SnakeController {
         return currentDirection
     }
 
-    func renderer() -> SnakeRenderer {
+    func renderer() -> Renderer {
         return _renderer
     }
 

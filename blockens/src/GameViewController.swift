@@ -21,15 +21,20 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var timer: NSTimer?
     var gameStatus: GameStatus = GameStatus.Running
 
-    let snake = SnakeController()
-    let background = BackgroundController()
-    let sky = SkyController()
-
+    let snake: SnakeController = SnakeController()
     var renderers: [Renderer] = Array()
 
     override func viewDidLoad() {
         
         super.viewDidLoad()
+
+        // Add render controllers, order matters.
+        let renderControllers: [RenderController] = [
+                BackgroundController(),
+                SkyController(),
+                snake
+        ]
+
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         let gameWindow = appDelegate.getWindow()
         gameWindow.addKeyEventCallback(handleKeyEvent)
@@ -47,10 +52,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.device = device
         view.sampleCount = 4
 
-        // Add renderers, order matters.
-        renderers.append(sky.renderer())
-        renderers.append(background.renderer())
-        renderers.append(snake.renderer())
+        for renderController in renderControllers {
+            renderers.append(renderController.renderer())
+        }
 
         loadAssets()
         resetGame()

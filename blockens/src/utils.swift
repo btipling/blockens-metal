@@ -58,6 +58,9 @@ protocol Renderer {
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo)
     func render(renderEncoder: MTLRenderCommandEncoder)
 }
+protocol RenderController {
+    func renderer() -> Renderer
+}
 
 func rgbaToNormalizedGPUColors(r: Int, g: Int, b: Int, a: Int = 255) -> [Float32] {
     return [Float32(r)/255.0, Float32(g)/255.0, Float32(b)/255.0, Float32(a)/255.0]

@@ -1,13 +1,12 @@
 //
-// Created by Bjorn Tipling on 7/28/16.
+// Created by Bjorn Tipling on 8/6/16.
 // Copyright (c) 2016 apphacker. All rights reserved.
 //
 
 import Foundation
 
-class SkyController: RenderController {
-
-    private let _renderer = SkyRenderer()
+class StringController: RenderController {
+    private let _renderer: StringRenderer = StringRenderer()
 
     func renderer() -> Renderer {
         return _renderer
