@@ -82,13 +82,8 @@ class SnakeRenderer: Renderer {
         let gvData = UnsafeMutablePointer<GridInfo>(gData + 0)
         gvData.initializeFrom(&gridInfoData, count: 1)
 
-        let tData = gameTilesBuffer.contents()
-        let tvData = UnsafeMutablePointer<Int32>(tData + 0)
-        tvData.initializeFrom(gameTiles)
-
-        let bData = boxTilesBuffer.contents()
-        let bvData = UnsafeMutablePointer<Int32>(bData + 0)
-        bvData.initializeFrom(boxTiles)
+        renderUtils.updateBufferFromIntArray(gameTilesBuffer, data: gameTiles)
+        renderUtils.updateBufferFromIntArray(boxTilesBuffer, data: boxTiles)
 
     }
 

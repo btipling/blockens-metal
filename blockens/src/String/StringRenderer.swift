@@ -70,13 +70,8 @@ class StringRenderer: Renderer  {
         }
         calcNumVertices()
 
-        let bData = boxTilesBuffer.contents()
-        let bvData = UnsafeMutablePointer<Int32>(bData + 0)
-        bvData.initializeFrom(boxTiles)
-
-        let tData = segmentTrackerBuffer.contents()
-        let tvData = UnsafeMutablePointer<Int32>(tData + 0)
-        tvData.initializeFrom(segmentTracker)
+        renderUtils.updateBufferFromIntArray(boxTilesBuffer, data: boxTiles)
+        renderUtils.updateBufferFromIntArray(segmentTrackerBuffer, data: segmentTracker)
     }
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {

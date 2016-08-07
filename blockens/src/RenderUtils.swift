@@ -115,4 +115,10 @@ class RenderUtils {
 
         return buffer
     }
+
+    func updateBufferFromIntArray(buffer: MTLBuffer, data: [Int32]) {
+        let contents = buffer.contents()
+        let pointer = UnsafeMutablePointer<Int32>(contents)
+        pointer.initializeFrom(data)
+    }
 }
