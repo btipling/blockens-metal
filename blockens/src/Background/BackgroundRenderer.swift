@@ -6,15 +6,6 @@
 import Foundation
 import MetalKit
 
-private let backgroundVertexData:[Float] = [
-        -1.0, -1.0,
-        -1.0,  1.0,
-        1.0, -1.0,
-
-        -1.0, 1.0,
-        1.0,  1.0,
-        1.0,  -1.0,
-]
 
 private let textureData:[Float] = [
         0.0,  1.0,
@@ -73,12 +64,8 @@ class BackgroundRenderer: Renderer {
 
         pipelineState = renderUtils.createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
 
-        bgDataBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
-        bgDataBuffer.label = "background colors"
-
-        let backgroundVertexSize = backgroundVertexData.count * sizeofValue(backgroundVertexData[0])
-        backgroundVertexBuffer = device.newBufferWithBytes(backgroundVertexData, length:  backgroundVertexSize, options: [])
-        backgroundVertexBuffer.label = "background vertices"
+        bgDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "background colors")
+        backgroundVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "background vertices")
 
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
@@ -135,6 +122,6 @@ class BackgroundRenderer: Renderer {
             renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: backgroundVertexData.count)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count)
     }
 }

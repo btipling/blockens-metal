@@ -73,8 +73,7 @@ class SnakeRenderer: Renderer {
         foodTexture = renderUtils.loadTexture(device, name: "yellow_block")
         snakeTexture = renderUtils.loadTexture(device, name: "green_block")
 
-        vertexBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
-        vertexBuffer.label = "game tile vertices"
+        vertexBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "game tile vertices")
 
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])

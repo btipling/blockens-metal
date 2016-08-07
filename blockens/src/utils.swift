@@ -6,8 +6,6 @@
 import Foundation
 import Cocoa
 
-let CONSTANT_BUFFER_SIZE = 1024*1024
-
 let MAX_TICK_MILLISECONDS = 300.0
 
 let movementMap: [UInt16: Direction] = [

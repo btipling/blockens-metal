@@ -18,6 +18,18 @@ protocol RenderController {
 
 class RenderUtils {
 
+    let rectangleVertexData:[Float] = [
+            -1.0, -1.0,
+            -1.0,  1.0,
+            1.0, -1.0,
+
+            -1.0, 1.0,
+            1.0,  1.0,
+            1.0,  -1.0,
+    ]
+
+    let CONSTANT_BUFFER_SIZE = 1024*1024
+
     func loadTexture(device: MTLDevice, name: String) -> MTLTexture {
         var image = NSImage(named: name)!
         image = flipImage(image)
@@ -59,7 +71,6 @@ class RenderUtils {
         renderEncoder.label = "\(name) render encoder"
         renderEncoder.pushDebugGroup("draw \(name)")
         renderEncoder.setRenderPipelineState(pipelineState)
-
     }
 
     func drawPrimitives(renderEncoder: MTLRenderCommandEncoder, vertexCount: Int) {
@@ -67,6 +78,22 @@ class RenderUtils {
         renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
         renderEncoder.popDebugGroup()
         renderEncoder.endEncoding()
+    }
 
+    func createSizedBuffer(device: MTLDevice, bufferLabel: String) -> MTLBuffer {
+
+        let buffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
+        buffer.label = bufferLabel
+
+        return buffer
+    }
+
+    func createRectangleVertexBuffer(device: MTLDevice, bufferLabel: String) -> MTLBuffer {
+
+        let rectangleVertexSize = rectangleVertexData.count * sizeofValue(rectangleVertexData[0])
+        let buffer = device.newBufferWithBytes(rectangleVertexData, length:  rectangleVertexSize, options: [])
+        buffer.label = bufferLabel
+
+        return buffer
     }
 }

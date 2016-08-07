@@ -6,16 +6,6 @@
 import Foundation
 import MetalKit
 
-private let skyVertexData:[Float] = [
-        -1.0, -1.0,
-        -1.0,  1.0,
-        1.0, -1.0,
-
-        -1.0, 1.0,
-        1.0,  1.0,
-        1.0,  -1.0,
-]
-
 private let textureData:[Float] = [
         0.0,  1.0,
         0.0,  0.0,
@@ -54,16 +44,14 @@ class SkyRenderer: Renderer {
 
         pipelineState = renderUtils.createPipeLineState("skyVertex", fragment: "skyFragment", device: device, view: view)
 
-        let skyVertexSize = skyVertexData.count * sizeofValue(skyVertexData[0])
-        skyVertexBuffer = device.newBufferWithBytes(skyVertexData, length:  skyVertexSize, options: [])
-        skyVertexBuffer.label = "sky vertices"
+        skyVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sky vertices")
 
         let textBufferSize = textureData.count * sizeofValue(textureData[0])
         textureBuffer = device.newBufferWithBytes(textureData, length: textBufferSize, options: [])
         textureBuffer.label = "bg texture coords"
 
-        skyInfoDataBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
-        skyInfoDataBuffer.label = "sky colors"
+        skyInfoDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "sky colors")
+
         let pData = skyInfoDataBuffer.contents()
         let vData = UnsafeMutablePointer<SkyInfo>(pData)
         vData.initializeFrom(&skyInfoData, count: 1)
@@ -83,7 +71,7 @@ class SkyRenderer: Renderer {
 
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: skyVertexData.count * 2)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count * 2)
 
     }
 }

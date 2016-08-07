@@ -6,16 +6,6 @@
 import Foundation
 import MetalKit
 
-private let stringVertexData:[Float] = [
-        -1.0, -1.0,
-        -1.0,  1.0,
-        1.0, -1.0,
-
-        -1.0, 1.0,
-        1.0,  1.0,
-        1.0,  -1.0,
-]
-
 struct StringInfo {
     var gridWidth: Int32
     var gridHeight: Int32
@@ -93,15 +83,9 @@ class StringRenderer: Renderer  {
 
         pipelineState = renderUtils.createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
 
-        let stringVertexSize = stringVertexData.count * sizeofValue(stringVertexData[0])
-        stringVertexBuffer = device.newBufferWithBytes(stringVertexData, length:  stringVertexSize, options: [])
-        stringVertexBuffer.label = "string vertices"
-
-        boxTilesBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
-        boxTilesBuffer.label = "string box tile vertices"
-
-        segmentTrackerBuffer = device.newBufferWithLength(CONSTANT_BUFFER_SIZE, options: [])
-        segmentTrackerBuffer.label = "segment tracker vertices"
+        stringVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "string vertices")
+        boxTilesBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "string box tile vertices")
+        segmentTrackerBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "segment tracker vertices")
 
         print("loading string assets done")
     }
@@ -112,7 +96,7 @@ class StringRenderer: Renderer  {
 
         renderEncoder.setVertexBuffer(stringVertexBuffer, offset:0 , atIndex: 0)
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: stringVertexData.count)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count)
     }
 
 
