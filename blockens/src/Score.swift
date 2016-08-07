@@ -7,7 +7,7 @@ import Foundation
 
 class Score: RenderController {
 
-    let stringController = StringController()
+    let stringController = StringController(xScale: 1, yScale: 0.04, xPadding: 0.0, yPadding: 0.01)
 
     private var currentScore: Int32 = 0
 

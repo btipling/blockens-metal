@@ -5,7 +5,7 @@
 
 import Foundation
 
-let CharacterMap: [String:[Int32]] = [
+let CharacterMap: [Character:[Int32]] = [
     "0" : [
         1, 1, 1, 1, 1,
         1, 1, 1, 1, 1,
