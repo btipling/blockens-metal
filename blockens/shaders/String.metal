@@ -34,28 +34,51 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
     uint vertexId = vid % 6;
     int currentSegment = (int)(vid / 6);
 
-    float2 pos = position[vertexId] * stringInfo->scale;
+    // Scale the character from normal coordinates.
+    float2 pos = position[vertexId];
+
+    // Position segment vertex within character grid.
+    int segmentPosition = segmentPositions[currentSegment];
+
+    float col = segmentPosition % stringInfo->gridWidth;
+    float row = (stringInfo->gridHeight - 1) - segmentPosition / stringInfo->gridWidth;
+
+    float2 orgPosition = float2(pos[0], pos[1]);
+
+    pos[0] /= stringInfo->gridWidth;
+    pos[1] /= stringInfo->gridHeight;
+
+    // Translate box to bottom right (-1, -1) position.
+    pos[0] -= fabs(orgPosition[0]) - fabs(pos[0]);
+    pos[1] -= fabs(orgPosition[1]) - fabs(pos[1]);
+
+    // Translate box to its colum and row position from bottom right.
+    pos[0] += float((2.0/stringInfo->gridWidth) * col);
+    pos[1] += float((2.0/stringInfo->gridHeight) * row);
+
+    pos *= stringInfo->scale;
     float diff = 2 * stringInfo->scale;
-    float offset = 2 - diff;
+    float offset = (2 - diff)/2;
 
-    pos[0] -= offset/2;
+    // Set padding from top left.
+    pos[0] -= offset;
     pos[0] += stringInfo->xPadding;
-    pos[1] += offset/2 - stringInfo->yPadding;
+    pos[1] += offset - stringInfo->yPadding;
 
+    // Offset to character x position.
     int currentChar = 0;
     for( int i = 0; i < stringInfo->numCharacters; i++ ) {
         int segmentCount = segmentsPerCharacter[i];
-        if (currentSegment > segmentCount) {
+        if (currentSegment >= segmentCount) {
              currentChar += 1;
         } else {
             break;
         }
     }
+    pos[0] += currentChar * 0.08;
 
-    pos[0] += currentChar * 0.1;
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-
     return outVertex;
 }
 

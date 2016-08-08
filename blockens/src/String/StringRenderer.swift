@@ -55,19 +55,12 @@ class StringRenderer: Renderer  {
                 numSegments: 0)
     }
 
-    func calcNumVertices() {
-        stringInfo.numVertices = stringInfo.numSegments
-        stringInfo.numVertices *= Int32(renderUtils.numVerticesInARectangle())
-    }
-
 
     func update(segmentPositions: [Int32], segmentsPerCharacter: [Int32]) {
         stringInfo.numCharacters = Int32(segmentsPerCharacter.count)
-        stringInfo.numSegments = 0
-        for segmentCount in segmentsPerCharacter {
-            stringInfo.numSegments += segmentCount
-        }
-        calcNumVertices()
+        stringInfo.numSegments = Int32(segmentPositions.count)
+        stringInfo.numVertices = stringInfo.numSegments
+        stringInfo.numVertices *= Int32(renderUtils.numVerticesInARectangle())
 
         let contents = stringInfoBuffer.contents()
         let pointer = UnsafeMutablePointer<StringInfo>(contents)
@@ -75,7 +68,7 @@ class StringRenderer: Renderer  {
 
         renderUtils.updateBufferFromIntArray(segmentPositionsBuffer, data: segmentPositions)
         renderUtils.updateBufferFromIntArray(segmentsPerCharacterBuffer, data: segmentsPerCharacter)
-        //print("info \(stringInfo) \n \(segmentsPerCharacter)")
+//        print("info \(stringInfo) \n \(segmentsPerCharacter) \n \(segmentPositions)")
     }
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
