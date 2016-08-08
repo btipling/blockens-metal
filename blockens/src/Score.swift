@@ -7,7 +7,7 @@ import Foundation
 
 class Score: RenderController {
 
-    let stringController = StringController(scale: 0.03, xPadding: 0.01, yPadding: 0.01)
+    let stringController = StringController(scale: 0.018, xPadding: 0.01, yPadding: 0.01)
 
     private var currentScore: Int32 = 0
 
@@ -17,7 +17,7 @@ class Score: RenderController {
 
     func setScore(newScore: Int32) {
         currentScore = newScore
-        stringController.set("2102")//String(newScore))
+        stringController.set(" SCORE: \(String(newScore))")
     }
 
     func score() -> Int32 {

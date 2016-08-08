@@ -56,14 +56,6 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
     pos[0] += float((2.0/stringInfo->gridWidth) * col);
     pos[1] += float((2.0/stringInfo->gridHeight) * row);
 
-    pos *= stringInfo->scale;
-    float diff = 2 * stringInfo->scale;
-    float offset = (2 - diff)/2;
-
-    // Set padding from top left.
-    pos[0] -= offset;
-    pos[0] += stringInfo->xPadding;
-    pos[1] += offset - stringInfo->yPadding;
 
     // Offset to character x position.
     int currentChar = 0;
@@ -75,7 +67,17 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
             break;
         }
     }
-    pos[0] += currentChar * 0.08;
+    pos[0] += currentChar * 2.5;
+
+    pos *= stringInfo->scale;
+    float diff = 2 * stringInfo->scale;
+    float offset = (2 - diff)/2;
+
+    // Set padding from top left.
+    pos[0] -= offset;
+    pos[0] += stringInfo->xPadding;
+    pos[1] += offset - stringInfo->yPadding;
+
 
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);

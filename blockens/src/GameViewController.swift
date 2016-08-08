@@ -167,7 +167,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
             gameStatus = GameStatus.Stopped
             return
         }
-        score.setScore(210)
+        score.setScore(1234567890)
         scheduleTick()
     }
     
