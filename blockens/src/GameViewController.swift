@@ -79,6 +79,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func resetGame() {
+        score.reset()
         gameStatus = GameStatus.Running
         currentTickWait = MAX_TICK_MILLISECONDS
         snake.reset()
@@ -160,14 +161,16 @@ class GameViewController: NSViewController, MTKViewDelegate {
             return
         }
         if (snake.eatFoodIfOnFood()) {
+            score.eat()
             currentTickWait -= log_e(currentTickWait)
+        } else {
+            score.move()
         }
         if !snake.move() {
             print("Collision")
             gameStatus = GameStatus.Stopped
             return
         }
-        score.setScore(1234567890)
         scheduleTick()
     }
     

@@ -5,19 +5,38 @@
 
 import Foundation
 
+private let BASE_MOVEMENT_MODIFIER = 1
+private let BASE_FOOD_MODIFIER = 100
+private let FOOD_INCREASE = 100
+private let SPEED_INCREASE = 1
+
+
+
 class Score: RenderController {
 
     let stringController = StringController(scale: 0.018, xPadding: 0.01, yPadding: 0.01)
 
     private var currentScore: Int32 = 0
+    private var movementModifier = BASE_MOVEMENT_MODIFIER
+    private var foodModifier = BASE_FOOD_MODIFIER
 
     init() {
         reset()
     }
 
-    func setScore(newScore: Int32) {
-        currentScore = newScore
-        stringController.set(" SCORE: \(String(newScore))")
+    private func updateScore() {
+        stringController.set(" SCORE: \(String(currentScore))")
+    }
+
+    func move() {
+        currentScore += movementModifier
+        updateScore()
+    }
+
+    func eat() {
+        currentScore += foodModifier
+        movementModifier += SPEED_INCREASE
+        foodModifier += FOOD_INCREASE
     }
 
     func score() -> Int32 {
