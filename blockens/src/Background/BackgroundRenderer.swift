@@ -109,6 +109,6 @@ class BackgroundRenderer: Renderer {
             renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle())
     }
 }

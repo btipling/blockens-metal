@@ -40,7 +40,7 @@ class SnakeRenderer: Renderer {
                 gridDimension: gridDimension,
                 gridOffset: 2.0/Float32(gridDimension),
                 numBoxes: Int32(pow(Float(gridDimension), 2.0)),
-                numVertices: Int32(renderUtils.rectangleVertexData.count/2),
+                numVertices: Int32(renderUtils.numVerticesInARectangle()),
                 viewDiffRatio: 0.0)
     }
 

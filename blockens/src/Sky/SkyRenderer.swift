@@ -56,7 +56,7 @@ class SkyRenderer: Renderer {
 
         renderEncoder.setFragmentTexture(texture, atIndex: 0)
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.rectangleVertexData.count * 2)
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle() * 2)
 
     }
 }

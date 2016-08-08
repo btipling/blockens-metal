@@ -40,6 +40,10 @@ class RenderUtils {
 
     let CONSTANT_BUFFER_SIZE = 1024*1024
 
+    func numVerticesInARectangle() -> Int {
+        return rectangleVertexData.count/2 // Divided by 2 because each pair is x,y for a single vertex.
+    }
+
     func loadTexture(device: MTLDevice, name: String) -> MTLTexture {
         var image = NSImage(named: name)!
         image = flipImage(image)
@@ -84,7 +88,6 @@ class RenderUtils {
     }
 
     func drawPrimitives(renderEncoder: MTLRenderCommandEncoder, vertexCount: Int) {
-
         renderEncoder.drawPrimitives(.Triangle, vertexStart: 0, vertexCount: vertexCount, instanceCount: 1)
         renderEncoder.popDebugGroup()
         renderEncoder.endEncoding()
