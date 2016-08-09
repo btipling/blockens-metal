@@ -5,12 +5,19 @@
 
 import Foundation
 
+struct SpriteLayerSetup {
+    let textureName: String
+    let width: Int32
+    let height: Int32
+    let viewDiffRatio : Float32
+}
+
 class SpriteLayerController: RenderController {
 
     let _renderer: SpriteLayerRenderer
 
-    init (textureName: String, width: Int32, height: Int32, position: Int32) {
-        _renderer = SpriteLayerRenderer(utils: RenderUtils(), textureName: textureName, width: width, height: height)
+    init (setup: SpriteLayerSetup) {
+        _renderer = SpriteLayerRenderer(utils: RenderUtils(), setup: setup)
     }
 
     func renderer() -> Renderer {

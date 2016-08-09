@@ -9,6 +9,7 @@ import MetalKit
 struct SpriteLayerInfo {
     let gridWidth: Int32
     let gridHeight: Int32
+    let viewDiffRatio : Float32
     var numVertices: Int32
 }
 
@@ -31,13 +32,14 @@ class SpriteLayerRenderer: Renderer {
     private var spriteInfoBuffer: MTLBuffer! = nil
     private var textCoordBuffer: MTLBuffer? = nil
 
-    init (utils: RenderUtils, textureName: String, width: Int32, height: Int32) {
+    init (utils: RenderUtils, setup: SpriteLayerSetup) {
         renderUtils = utils
-        self.textureName = textureName
+        self.textureName = setup.textureName
 
         info = SpriteLayerInfo(
-                gridWidth: width,
-                gridHeight: height,
+                gridWidth: setup.width,
+                gridHeight: setup.height,
+                viewDiffRatio: setup.viewDiffRatio,
                 numVertices: 0)
     }
 

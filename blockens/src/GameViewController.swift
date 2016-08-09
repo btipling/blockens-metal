@@ -10,11 +10,11 @@ import Cocoa
 import MetalKit
 
 class GameViewController: NSViewController, MTKViewDelegate {
-    
+
     var device: MTLDevice! = nil
-    
+
     var commandQueue: MTLCommandQueue! = nil
-    
+
     let inflightSemaphore = dispatch_semaphore_create(1)
     var currentTickWait = MAX_TICK_MILLISECONDS
 
@@ -22,25 +22,18 @@ class GameViewController: NSViewController, MTKViewDelegate {
     var gameStatus: GameStatus = GameStatus.Running
 
     let snake: SnakeController = SnakeController()
+    var backgroundSpriteLayer: SpriteLayerController! = nil
     let score = Score()
     var renderers: [Renderer] = Array()
 
     override func viewDidLoad() {
-        
-        super.viewDidLoad()
 
-        // Add render controllers, order matters.
-        let renderControllers: [RenderController] = [
-                BackgroundController(),
-                SkyController(),
-                snake,
-                score,
-        ]
+        super.viewDidLoad()
 
         let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
         let gameWindow = appDelegate.getWindow()
         gameWindow.addKeyEventCallback(handleKeyEvent)
-        
+
         device = MTLCreateSystemDefaultDevice()
         guard device != nil else { // Fallback to a blank NSView, an application could also fallback to OpenGL here.
             print("Metal is not supported on this device")
@@ -54,25 +47,50 @@ class GameViewController: NSViewController, MTKViewDelegate {
         view.device = device
         view.sampleCount = 4
 
+
+        let frameInfo = setupFrameInfo(view)
+
+        setupBackgroundSpriteLayer(frameInfo)
+
+        // Add render controllers, order matters.
+        let renderControllers: [RenderController] = [
+                BackgroundController(),
+                SkyController(),
+                snake,
+                score,
+        ]
+
         for renderController in renderControllers {
             renderers.append(renderController.renderer())
         }
-
-        loadAssets()
+        loadAssets(view, frameInfo: frameInfo)
         resetGame()
     }
 
-    func loadAssets() {
-        let view = self.view as! MTKView
-        commandQueue = device.newCommandQueue()
-        commandQueue.label = "main command queue"
+    func setupFrameInfo(view: MTKView) -> FrameInfo {
         let frame = view.frame
         let width = frame.size.width
         let height = frame.size.height
         let maxDimension = max(width, height)
         let sizeDiff = abs(width - height)
         let ratio: Float = Float(sizeDiff)/Float(maxDimension)
-        let frameInfo = FrameInfo(viewWidth: Int32(width), viewHeight: Int32(height), viewDiffRatio: ratio)
+
+        return FrameInfo(viewWidth: Int32(width), viewHeight: Int32(height), viewDiffRatio: ratio)
+    }
+
+    func setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
+
+        backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
+                textureName: "grass",
+                width: 20,
+                height: 20,
+                viewDiffRatio: frameInfo.viewDiffRatio))
+    }
+
+    func loadAssets(view: MTKView, frameInfo: FrameInfo) {
+        commandQueue = device.newCommandQueue()
+        commandQueue.label = "main command queue"
+
         for renderer in renderers {
             renderer.loadAssets(device, view: view, frameInfo: frameInfo)
         }
@@ -173,7 +191,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
         scheduleTick()
     }
-    
+
     func drawInMTKView(view: MTKView) {
         dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
 
