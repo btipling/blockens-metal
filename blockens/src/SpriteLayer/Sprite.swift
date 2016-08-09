@@ -6,6 +6,6 @@
 import Foundation
 
 protocol Sprite {
-    func gridNumber() -> Int32
+    func gridPosition() -> Int32
     func update() -> [Int32]
 }

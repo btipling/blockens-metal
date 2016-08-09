@@ -18,6 +18,5 @@ vertex VertexOut spriteVertex(uint vid [[ vertex_id ]],
 }
 
 fragment float4 spriteFragment(VertexTextureOut inFrag [[stage_in]]) {
-
     return float4(1.0, 1.0, 1.0, 1.0);
 }

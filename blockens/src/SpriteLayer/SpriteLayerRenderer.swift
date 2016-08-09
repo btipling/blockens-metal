@@ -17,21 +17,23 @@ class SpriteLayerRenderer: Renderer {
     let renderUtils: RenderUtils
 
     private var sprites: [Sprite] = Array()
-    private var gridLocations: [Int32] = Array()
+    private var gridPositions: [Int32] = Array()
     private var info: SpriteLayerInfo! = nil
     private var textureCoordinates: [Int32]? = nil
 
     var pipelineState: MTLRenderPipelineState! = nil
 
+    private let textureName: String
     private var texture: MTLTexture! = nil
 
     private var spriteVertexBuffer: MTLBuffer! = nil
-    private var gridLocationsBuffer: MTLBuffer! = nil
+    private var gridPositionsBuffer: MTLBuffer! = nil
     private var spriteInfoBuffer: MTLBuffer! = nil
     private var textCoordBuffer: MTLBuffer? = nil
 
-    init (utils: RenderUtils, width: Int32, height: Int32) {
+    init (utils: RenderUtils, textureName: String, width: Int32, height: Int32) {
         renderUtils = utils
+        self.textureName = textureName
 
         info = SpriteLayerInfo(
                 gridWidth: width,
@@ -39,13 +41,10 @@ class SpriteLayerRenderer: Renderer {
                 numVertices: 0)
     }
 
-    func setTexture(newTexture: MTLTexture) {
-        texture = newTexture
-    }
 
     func addSprite(sprite: Sprite) {
         sprites.append(sprite)
-        gridLocations.append(sprite.gridNumber())
+        gridPositions.append(sprite.gridPosition())
         info.numVertices += renderUtils.numVerticesInARectangle()
     }
 
@@ -53,7 +52,10 @@ class SpriteLayerRenderer: Renderer {
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         pipelineState = renderUtils.createPipeLineState("spriteVertex", fragment: "spriteFragment", device: device, view: view)
 
+        texture = renderUtils.loadTexture(device, name: textureName)
+
         spriteVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sprite layer vertices")
+        gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: gridPositions.count, bufferLabel: "grid positions")
         textCoordBuffer = renderUtils.createBufferFromIntArray(device, count: textureCoordinates!.count, bufferLabel: "text coords tiles")
 
         spriteInfoBuffer = device.newBufferWithBytes(&spriteInfoBuffer, length: sizeofValue(spriteInfoBuffer), options: [])
@@ -76,7 +78,7 @@ class SpriteLayerRenderer: Renderer {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sprite layer")
 
-        for (i, buffer) in [spriteVertexBuffer, textCoordBuffer, spriteInfoBuffer].enumerate() {
+        for (i, buffer) in [spriteVertexBuffer, gridPositionsBuffer, textCoordBuffer, spriteInfoBuffer].enumerate() {
             renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
         }
 
