@@ -4,8 +4,9 @@
     <content url="file://$USER_HOME$/Library/Caches/AppCode2016.2/DerivedData/blockens-fktibwtyjjwcafghmcllmbbbbhuf/Build/Intermediates/blockens.build/Debug/blockens.build/DerivedSources" />
     <content url="file://$MODULE_DIR$">
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/utils.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RendererController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/AppDelegate.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameWindow.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Renderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameViewController.swift" isTestSource="false" />
@@ -14,6 +15,7 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameWindow.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Score.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyRenderer.swift" isTestSource="false" />

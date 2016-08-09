@@ -6,16 +6,6 @@
 import Foundation
 import MetalKit
 
-protocol Renderer {
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo)
-    func render(renderEncoder: MTLRenderCommandEncoder)
-}
-
-protocol RenderController {
-    func renderer() -> Renderer
-}
-
-
 class RenderUtils {
 
     let rectangleVertexData:[Float] = [

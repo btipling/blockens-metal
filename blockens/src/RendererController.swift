@@ -5,7 +5,6 @@
 
 import Foundation
 
-protocol Sprite {
-    func gridNumber() -> Int32
-    func update() -> [Int32]
+protocol RenderController {
+    func renderer() -> Renderer
 }

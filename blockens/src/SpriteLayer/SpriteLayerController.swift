@@ -9,8 +9,8 @@ class SpriteLayerController: RenderController {
 
     let _renderer: SpriteLayerRenderer
 
-    init () {
-        _renderer = SpriteLayerRenderer()
+    init (width: Int32, height: Int32) {
+        _renderer = SpriteLayerRenderer(width: width, height: height)
     }
 
     func renderer() -> Renderer {
