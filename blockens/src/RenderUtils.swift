@@ -109,6 +109,14 @@ class RenderUtils {
         return buffer
     }
 
+    func createBufferFromIntArray(device: MTLDevice, count: Int, bufferLabel: String) -> MTLBuffer {
+        let bufferSize = sizeofValue(Array<Int32>(count: count, repeatedValue: 0))
+        let buffer = device.newBufferWithLength(bufferSize, options: [])
+        buffer.label = bufferLabel
+
+        return buffer
+    }
+
     func updateBufferFromIntArray(buffer: MTLBuffer, data: [Int32]) {
         let contents = buffer.contents()
         let pointer = UnsafeMutablePointer<Int32>(contents)

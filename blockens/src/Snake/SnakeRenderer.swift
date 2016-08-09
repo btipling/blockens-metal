@@ -57,17 +57,13 @@ class SnakeRenderer: Renderer {
         vertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "game tile vertices")
         textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "game tile texture coords")
 
+        let count = Int(gridInfoData.numBoxes)
+        gameTilesBuffer = renderUtils.createBufferFromIntArray(device, count: count, bufferLabel: "game tiles")
+        boxTilesBuffer = renderUtils.createBufferFromIntArray(device, count: count, bufferLabel: "box tiles")
+
         let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer.label = "grid info"
-
-        let gameTileBufferSize = sizeofValue(Array<Int32>(count: Int(gridInfoData.numBoxes), repeatedValue: 0))
-        gameTilesBuffer = device.newBufferWithLength(gameTileBufferSize, options: [])
-        gameTilesBuffer.label = "game tiles"
-
-        let boxTileBufferSize = sizeofValue(Array<Int32>(count: Int(gridInfoData.numBoxes), repeatedValue: 0))
-        boxTilesBuffer = device.newBufferWithLength(boxTileBufferSize, options: [])
-        boxTilesBuffer.label = "box tiles"
 
         print("loading snake assets done")
     }

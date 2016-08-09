@@ -68,7 +68,6 @@ class StringRenderer: Renderer  {
 
         renderUtils.updateBufferFromIntArray(segmentPositionsBuffer, data: segmentPositions)
         renderUtils.updateBufferFromIntArray(segmentsPerCharacterBuffer, data: segmentsPerCharacter)
-//        print("info \(stringInfo) \n \(segmentsPerCharacter) \n \(segmentPositions)")
     }
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
