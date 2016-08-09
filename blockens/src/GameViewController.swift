@@ -55,6 +55,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         // Add render controllers, order matters.
         let renderControllers: [RenderController] = [
                 BackgroundController(),
+                //backgroundSpriteLayer,
                 SkyController(),
                 snake,
                 score,
@@ -85,6 +86,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 width: 20,
                 height: 20,
                 viewDiffRatio: frameInfo.viewDiffRatio))
+        let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
+        renderer.addSprite(Grass())
+        renderer.update()
     }
 
     func loadAssets(view: MTKView, frameInfo: FrameInfo) {

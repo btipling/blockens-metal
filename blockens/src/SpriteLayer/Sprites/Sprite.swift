@@ -7,5 +7,5 @@ import Foundation
 
 protocol Sprite {
     func gridPosition() -> Int32
-    func update() -> [Int32]
+    func update() -> [Float32]
 }

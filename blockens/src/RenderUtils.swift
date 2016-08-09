@@ -18,7 +18,7 @@ class RenderUtils {
             1.0,  -1.0,
     ]
 
-    private let rectangleTextureCoords:[Float] = [
+    let rectangleTextureCoords:[Float] = [
             0.0,  1.0,
             0.0,  0.0,
             1.0,  1.0,
@@ -117,9 +117,23 @@ class RenderUtils {
         return buffer
     }
 
+    func createBufferFromFloatArray(device: MTLDevice, count: Int, bufferLabel: String) -> MTLBuffer {
+        let bufferSize = sizeofValue(Array<Float32>(count: count, repeatedValue: 0))
+        let buffer = device.newBufferWithLength(bufferSize, options: [])
+        buffer.label = bufferLabel
+
+        return buffer
+    }
+
     func updateBufferFromIntArray(buffer: MTLBuffer, data: [Int32]) {
         let contents = buffer.contents()
         let pointer = UnsafeMutablePointer<Int32>(contents)
+        pointer.initializeFrom(data)
+    }
+
+    func updateBufferFromFloatArray(buffer: MTLBuffer, data: [Float32]) {
+        let contents = buffer.contents()
+        let pointer = UnsafeMutablePointer<Float32>(contents)
         pointer.initializeFrom(data)
     }
 }

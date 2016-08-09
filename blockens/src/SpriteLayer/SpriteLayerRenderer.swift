@@ -20,7 +20,7 @@ class SpriteLayerRenderer: Renderer {
     private var sprites: [Sprite] = Array()
     private var gridPositions: [Int32] = Array()
     private var info: SpriteLayerInfo! = nil
-    private var textureCoordinates: [Int32]? = nil
+    private var textureCoordinates: [Float32]? = nil
 
     var pipelineState: MTLRenderPipelineState! = nil
 
@@ -58,14 +58,13 @@ class SpriteLayerRenderer: Renderer {
 
         spriteVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sprite layer vertices")
         gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: gridPositions.count, bufferLabel: "grid positions")
-        textCoordBuffer = renderUtils.createBufferFromIntArray(device, count: textureCoordinates!.count, bufferLabel: "text coords tiles")
+        textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: textureCoordinates!.count, bufferLabel: "text coords tiles")
 
         spriteInfoBuffer = device.newBufferWithBytes(&spriteInfoBuffer, length: sizeofValue(spriteInfoBuffer), options: [])
         spriteInfoBuffer.label = "sprite layer info"
 
-
         print("loading sprite layer assets done")
-
+        update()
     }
 
     func update() {
@@ -73,7 +72,9 @@ class SpriteLayerRenderer: Renderer {
         for sprite in sprites {
             textureCoordinates! += sprite.update()
         }
-        renderUtils.updateBufferFromIntArray(textCoordBuffer!, data: textureCoordinates!)
+        if textCoordBuffer != nil {
+            renderUtils.updateBufferFromFloatArray(textCoordBuffer!, data: textureCoordinates!)
+        }
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
