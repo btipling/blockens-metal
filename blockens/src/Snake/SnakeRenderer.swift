@@ -23,7 +23,7 @@ class SnakeRenderer: Renderer {
     var pipelineState: MTLRenderPipelineState! = nil
 
     var vertexBuffer: MTLBuffer! = nil
-    var gridInfoBuffer: MTLBuffer! = nil
+    var gridInfoBuffer: MTLBuffer? = nil
     var gameTilesBuffer: MTLBuffer! = nil
     var boxTilesBuffer: MTLBuffer! = nil
     var textureBuffer: MTLBuffer! = nil
@@ -63,7 +63,7 @@ class SnakeRenderer: Renderer {
 
         let gridInfoBufferSize = sizeofValue(gridInfoData)
         gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
-        gridInfoBuffer.label = "grid info"
+        gridInfoBuffer!.label = "grid info"
 
         print("loading snake assets done")
     }
@@ -74,7 +74,11 @@ class SnakeRenderer: Renderer {
 
     func update(gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
 
-        let contents = gridInfoBuffer.contents()
+        if gridInfoBuffer == nil {
+            return
+        }
+
+        let contents = gridInfoBuffer!.contents()
         let pointer = UnsafeMutablePointer<GridInfo>(contents)
         pointer.initializeFrom(&gridInfoData, count: 1)
 

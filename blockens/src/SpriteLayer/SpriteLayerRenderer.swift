@@ -81,7 +81,7 @@ class SpriteLayerRenderer: Renderer {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sprite layer")
 
-        for (i, buffer) in [spriteVertexBuffer, gridPositionsBuffer, textCoordBuffer, spriteInfoBuffer].enumerate() {
+        for (i, buffer) in [spriteVertexBuffer, textCoordBuffer, gridPositionsBuffer, spriteInfoBuffer].enumerate() {
             renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
         }
 

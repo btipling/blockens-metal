@@ -3,9 +3,29 @@
   <component name="NewModuleRootManager">
     <content url="file://$USER_HOME$/Library/Caches/AppCode2016.2/DerivedData/blockens-fktibwtyjjwcafghmcllmbbbbhuf/Build/Intermediates/blockens.build/Debug/blockens.build/DerivedSources" />
     <content url="file://$MODULE_DIR$">
-      <sourceFolder url="file://$MODULE_DIR$/blockens/Base.lproj/MainMenu.xib" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/utils.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RendererController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Renderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameWindow.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameViewController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/characterData.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RenderUtils.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/AppDelegate.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Score.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Grass.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Sprite.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerController.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/Assets.xcassets" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/Info.plist" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/Base.lproj/MainMenu.xib" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/utils.h" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Sky.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Background.metal" isTestSource="false" />
@@ -13,27 +33,7 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/Snake.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/utils.metal" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/shaders/SpriteLayer.metal" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/utils.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/AppDelegate.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Renderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Snake/SnakeRenderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameViewController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/characterData.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/String/StringRenderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Background/BackgroundRenderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/GameWindow.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Score.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RendererController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyController.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyRenderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/RenderUtils.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerRenderer.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Grass.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Sprite.swift" isTestSource="false" />
-      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerController.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/Info.plist" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensUITests/blockensUITests.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensUITests/Info.plist" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockensTests/blockensTests.swift" isTestSource="false" />

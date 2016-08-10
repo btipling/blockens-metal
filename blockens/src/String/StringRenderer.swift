@@ -35,7 +35,7 @@ class StringRenderer: Renderer  {
     var stringVertexBuffer: MTLBuffer! = nil
     var segmentPositionsBuffer: MTLBuffer! = nil
     var segmentsPerCharacterBuffer: MTLBuffer! = nil
-    var stringInfoBuffer: MTLBuffer! = nil
+    var stringInfoBuffer: MTLBuffer? = nil
 
     // Sixes vertices for two triangles to make a rectangle.
     let gridWidth: Int32 = 5
@@ -57,12 +57,16 @@ class StringRenderer: Renderer  {
 
 
     func update(segmentPositions: [Int32], segmentsPerCharacter: [Int32]) {
+
+        if stringInfoBuffer == nil {
+            return
+        }
+
         stringInfo.numCharacters = Int32(segmentsPerCharacter.count)
         stringInfo.numSegments = Int32(segmentPositions.count)
         stringInfo.numVertices = stringInfo.numSegments
         stringInfo.numVertices *= Int32(renderUtils.numVerticesInARectangle())
-
-        let contents = stringInfoBuffer.contents()
+        let contents = stringInfoBuffer!.contents()
         let pointer = UnsafeMutablePointer<StringInfo>(contents)
         pointer.initializeFrom(&stringInfo, count: 1)
 
@@ -75,7 +79,7 @@ class StringRenderer: Renderer  {
         pipelineState = renderUtils.createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
 
         stringInfoBuffer = device.newBufferWithBytes(&stringInfo, length: sizeofValue(stringInfo), options: [])
-        stringInfoBuffer.label = "string info"
+        stringInfoBuffer!.label = "string info"
 
         stringVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "string vertices")
         segmentPositionsBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "string box tile vertices")

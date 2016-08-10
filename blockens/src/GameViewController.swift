@@ -55,7 +55,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         // Add render controllers, order matters.
         let renderControllers: [RenderController] = [
                 BackgroundController(),
-                //backgroundSpriteLayer,
+//                backgroundSpriteLayer,
                 SkyController(),
                 snake,
                 score,
