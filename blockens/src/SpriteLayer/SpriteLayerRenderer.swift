@@ -97,6 +97,7 @@ class SpriteLayerRenderer: Renderer {
 
         print("loading sprite layer assets done")
 
+        update()
         //tick()
     }
 
@@ -107,6 +108,7 @@ class SpriteLayerRenderer: Renderer {
         }
         if spriteCoordBuffer != nil {
             renderUtils.updateBufferFromFloatArray(spriteCoordBuffer!, data: spriteCoordinates!)
+            print("spriteCoordinates wtf \(spriteCoordinates!) \(spriteCoordBuffer!)")
         }
     }
 

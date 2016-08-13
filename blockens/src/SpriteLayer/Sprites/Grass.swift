@@ -14,7 +14,7 @@ class Grass: Sprite {
     }
 
     func update() -> [Float32] {
-        return [0.0, 0.0]
+        return [4.0, 0.0]
     }
 
 }

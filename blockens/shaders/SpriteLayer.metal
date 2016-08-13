@@ -22,15 +22,17 @@ vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
     pos[1] = pushDownYByRatio(pos[1], spriteLayerInfo->viewDiffRatio);
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.textCoords = textureCoordinatesForSprite(spritePos[vid], textCoords[vid], *spriteLayerInfo);
+    outVertex.textCoords = textureCoordinatesForSprite(spritePos[vid / 6], textCoords[vid], *spriteLayerInfo);
 
     return outVertex;
 }
 
 float2 textureCoordinatesForSprite(float2 spritePos, float2 textCoords, SpriteLayerInfo spriteLayerInfo) {
 
-    float spriteWidth = textCoords[0] / spriteLayerInfo.textureWidth;
-    textCoords[0] = spriteWidth * spritePos[0];
+    float spriteWidth = 1.0 / spriteLayerInfo.textureWidth;
+    float start = spriteWidth * spritePos[0];
+    float y = textCoords[0];
+    textCoords[0] = start + spriteWidth * y;
     return textCoords;
 }
 
