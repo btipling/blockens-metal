@@ -97,18 +97,18 @@ class SpriteLayerRenderer: Renderer {
 
         print("loading sprite layer assets done")
 
-        update()
-        //tick()
+//        update()
+        tick()
     }
 
     func update() {
+
         spriteCoordinates = Array()
         for sprite in sprites {
             spriteCoordinates! += sprite.update()
         }
         if spriteCoordBuffer != nil {
             renderUtils.updateBufferFromFloatArray(spriteCoordBuffer!, data: spriteCoordinates!)
-            print("spriteCoordinates wtf \(spriteCoordinates!) \(spriteCoordBuffer!)")
         }
     }
 

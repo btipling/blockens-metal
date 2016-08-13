@@ -5,6 +5,11 @@
 
 import Foundation
 
+struct SpriteFrame {
+    var frameCount: Int
+    var spritePosition: Float32
+}
+
 protocol Sprite {
     func gridPosition() -> Int32
     func update() -> [Float32]
