@@ -37,9 +37,9 @@ class SkyRenderer: Renderer {
         textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "sky texture coords")
         skyInfoDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "sky colors")
 
-        let pData = skyInfoDataBuffer.contents()
-        let vData = UnsafeMutablePointer<SkyInfo>(pData)
-        vData.initializeFrom(&skyInfoData, count: 1)
+        let contents = skyInfoDataBuffer.contents()
+        let pointer = UnsafeMutablePointer<SkyInfo>(contents)
+        pointer.initializeFrom(&skyInfoData, count: 1)
 
         print("loading sky assets done")
     }

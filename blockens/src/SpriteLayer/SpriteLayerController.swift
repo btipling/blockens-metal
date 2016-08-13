@@ -9,6 +9,8 @@ struct SpriteLayerSetup {
     let textureName: String
     let width: Int32
     let height: Int32
+    let textureWidth: Int32
+    let textureHeight: Int32
     let viewDiffRatio : Float32
 }
 

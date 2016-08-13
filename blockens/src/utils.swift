@@ -7,6 +7,7 @@ import Foundation
 import Cocoa
 
 let MAX_TICK_MILLISECONDS = 300.0
+let SPRITE_ANIMATION_FPS = 60.0;
 
 let movementMap: [UInt16: Direction] = [
         123: Direction.Left,

@@ -8,27 +8,30 @@
 
 #include "utils.h"
 
-
-struct SpriteLayerInfo {
-    int gridWidth;
-    int gridHeight;
-    float viewDiffRatio;
-    int numVertices;
-};
-
 vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
                             constant packed_float2* position [[ buffer(0) ]],
-                            constant packed_float2* textCoords [[ buffer(1) ]],
-                            constant int* gridPositions [[ buffer(2) ]],
-                            constant SpriteLayerInfo* spriteLayerInfo [[ buffer(3) ]]) {
+                            constant int* gridPositions [[ buffer(1) ]],
+                            constant packed_float2* spritePos [[ buffer(2) ]],
+                            constant packed_float2* textCoords [[ buffer(3) ]],
+                            constant SpriteLayerInfo* spriteLayerInfo [[ buffer(4) ]]) {
 
     float2 pos = position[vid];
+
     VertexTextureOut outVertex;
 
+    pos[1] = pushDownYByRatio(pos[1], spriteLayerInfo->viewDiffRatio);
+
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.textCoords = textCoords[vid];
+    outVertex.textCoords = textureCoordinatesForSprite(spritePos[vid], textCoords[vid], *spriteLayerInfo);
 
     return outVertex;
+}
+
+float2 textureCoordinatesForSprite(float2 spritePos, float2 textCoords, SpriteLayerInfo spriteLayerInfo) {
+
+    float spriteWidth = textCoords[0] / spriteLayerInfo.textureWidth;
+    textCoords[0] = spriteWidth * spritePos[0];
+    return textCoords;
 }
 
 fragment float4 spriteFragment(VertexTextureOut inFrag [[stage_in]],
@@ -36,8 +39,7 @@ fragment float4 spriteFragment(VertexTextureOut inFrag [[stage_in]],
 
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
 
-    float2 coords = inFrag.textCoords;
-    float4 result = spriteTexture.sample(textureSampler, coords);
+    float4 result = spriteTexture.sample(textureSampler, inFrag.textCoords);
 
     if (result[3] == 0) {
         discard_fragment();

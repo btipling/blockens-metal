@@ -7,9 +7,11 @@ import Foundation
 import MetalKit
 
 struct SpriteLayerInfo {
-    let gridWidth: Int32
-    let gridHeight: Int32
-    let viewDiffRatio : Float32
+    var gridWidth: Int32
+    var gridHeight: Int32
+    var textureWidth: Int32
+    var textureHeight: Int32
+    var viewDiffRatio : Float32
     var numVertices: Int32
 }
 
@@ -17,10 +19,13 @@ class SpriteLayerRenderer: Renderer {
 
     let renderUtils: RenderUtils
 
+    var timer: NSTimer?
+    var interval: NSTimeInterval = 1.0/SPRITE_ANIMATION_FPS;
+
     private var sprites: [Sprite] = Array()
     private var gridPositions: [Int32] = Array()
-    private var info: SpriteLayerInfo! = nil
-    private var textureCoordinates: [Float32]? = nil
+    var info: SpriteLayerInfo! = nil
+    private var spriteCoordinates: [Float32]? = nil
 
     var pipelineState: MTLRenderPipelineState! = nil
 
@@ -30,7 +35,8 @@ class SpriteLayerRenderer: Renderer {
     private var spriteVertexBuffer: MTLBuffer! = nil
     private var gridPositionsBuffer: MTLBuffer! = nil
     private var spriteInfoBuffer: MTLBuffer! = nil
-    private var textCoordBuffer: MTLBuffer? = nil
+    private var textCoordBuffer: MTLBuffer! = nil
+    private var spriteCoordBuffer: MTLBuffer? = nil
 
     init (utils: RenderUtils, setup: SpriteLayerSetup) {
         renderUtils = utils
@@ -39,10 +45,30 @@ class SpriteLayerRenderer: Renderer {
         info = SpriteLayerInfo(
                 gridWidth: setup.width,
                 gridHeight: setup.height,
+                textureWidth: setup.textureWidth,
+                textureHeight: setup.textureHeight,
                 viewDiffRatio: setup.viewDiffRatio,
                 numVertices: 0)
     }
 
+
+    func scheduleTick() {
+        if timer?.valid ?? false {
+            // If timer isn't nil and is valid don't start a new one.
+            return
+        }
+        timer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self,
+                selector: #selector(SpriteLayerRenderer.tick), userInfo: nil, repeats: false)
+    }
+
+    @objc func tick() {
+        print("ticking")
+        if let currentTimer = timer {
+            currentTimer.invalidate()
+        }
+        update()
+        scheduleTick()
+    }
 
     func addSprite(sprite: Sprite) {
         sprites.append(sprite)
@@ -58,22 +84,29 @@ class SpriteLayerRenderer: Renderer {
 
         spriteVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sprite layer vertices")
         gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: gridPositions.count, bufferLabel: "grid positions")
-        textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: textureCoordinates!.count, bufferLabel: "text coords tiles")
+        spriteCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: spriteCoordinates!.count, bufferLabel: "sprite coordinates")
+
+        textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: renderUtils.numVerticesInARectangle(), bufferLabel: "text coords tiles")
+        renderUtils.updateBufferFromFloatArray(textCoordBuffer, data: renderUtils.rectangleTextureCoords)
 
         spriteInfoBuffer = device.newBufferWithBytes(&spriteInfoBuffer, length: sizeofValue(spriteInfoBuffer), options: [])
-        spriteInfoBuffer.label = "sprite layer info"
+
+        let contents = spriteInfoBuffer.contents()
+        let pointer = UnsafeMutablePointer<SpriteLayerInfo>(contents)
+        pointer.initializeFrom(&info!, count: 1)
 
         print("loading sprite layer assets done")
-        update()
+
+        //tick()
     }
 
     func update() {
-        textureCoordinates = Array()
+        spriteCoordinates = Array()
         for sprite in sprites {
-            textureCoordinates! += sprite.update()
+            spriteCoordinates! += sprite.update()
         }
-        if textCoordBuffer != nil {
-            renderUtils.updateBufferFromFloatArray(textCoordBuffer!, data: textureCoordinates!)
+        if spriteCoordBuffer != nil {
+            renderUtils.updateBufferFromFloatArray(spriteCoordBuffer!, data: spriteCoordinates!)
         }
     }
 
@@ -81,7 +114,7 @@ class SpriteLayerRenderer: Renderer {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sprite layer")
 
-        for (i, buffer) in [spriteVertexBuffer, textCoordBuffer, gridPositionsBuffer, spriteInfoBuffer].enumerate() {
+    for (i, buffer) in [spriteVertexBuffer, gridPositionsBuffer, spriteCoordBuffer!, textCoordBuffer, spriteInfoBuffer].enumerate() {
             renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
         }
 
