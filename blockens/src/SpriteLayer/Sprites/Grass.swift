@@ -53,7 +53,6 @@ class Grass: Sprite {
     }
 
     func gridPosition() -> Int32 {
-        print("returning grid pos \(gridPos)")
         return gridPos
     }
 

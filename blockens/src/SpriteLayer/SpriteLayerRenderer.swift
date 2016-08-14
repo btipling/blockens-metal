@@ -25,7 +25,7 @@ class SpriteLayerRenderer: Renderer {
     private var sprites: [Sprite] = Array()
     private var gridPositions: [Int32] = Array()
     var info: SpriteLayerInfo! = nil
-    private var spriteCoordinates: [Float32]? = nil
+    private var spriteCoordinates: [Float32]? = Array()
 
     var pipelineState: MTLRenderPipelineState! = nil
 
@@ -78,7 +78,6 @@ class SpriteLayerRenderer: Renderer {
         repeat {
             pos = getRandomNum(range)
         } while (gridPositions.contains(pos))
-        print("sprite pos: \(pos)")
         return pos
     }
 
@@ -91,15 +90,15 @@ class SpriteLayerRenderer: Renderer {
 
     // Must add all sprites and call update before loading assets.
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+
         pipelineState = renderUtils.createPipeLineState("spriteVertex", fragment: "spriteFragment", device: device, view: view)
 
         texture = renderUtils.loadTexture(device, name: textureName)
 
+        let maxNumSprites = Int(info.gridWidth * info.gridHeight)
+
         spriteVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sprite layer vertices")
-
-        gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: gridPositions.count, bufferLabel: "grid positions")
-        renderUtils.updateBufferFromIntArray(gridPositionsBuffer, data: gridPositions)
-
+        gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: maxNumSprites, bufferLabel: "grid positions")
         spriteCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: spriteCoordinates!.count, bufferLabel: "sprite coordinates")
 
         textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: renderUtils.numVerticesInARectangle(), bufferLabel: "text coords tiles")
@@ -113,7 +112,19 @@ class SpriteLayerRenderer: Renderer {
 
         print("loading sprite layer assets done")
 
+        updateSprites()
         tick()
+    }
+
+    func updateSprites() {
+        renderUtils.updateBufferFromIntArray(gridPositionsBuffer, data: gridPositions)
+    }
+
+    func clear() {
+        sprites.removeAll(keepCapacity: true)
+        gridPositions.removeAll(keepCapacity: true)
+        updateSprites()
+        update()
     }
 
     func update() {

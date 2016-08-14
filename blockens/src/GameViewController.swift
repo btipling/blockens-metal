@@ -79,7 +79,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         return FrameInfo(viewWidth: Int32(width), viewHeight: Int32(height), viewDiffRatio: ratio)
     }
 
-    func  setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
+    func setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
                 textureName: "grass",
@@ -88,9 +88,13 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 textureWidth: 5,
                 textureHeight: 1,
                 viewDiffRatio: frameInfo.viewDiffRatio))
+    }
+
+    func resetBackgroundSprites() {
         let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
+        renderer.clear()
         renderer.addSprite(Grass())
-        renderer.update()
+        renderer.updateSprites()
     }
 
     func loadAssets(view: MTKView, frameInfo: FrameInfo) {
@@ -103,6 +107,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func resetGame() {
+        resetBackgroundSprites()
         score.reset()
         gameStatus = GameStatus.Running
         currentTickWait = MAX_TICK_MILLISECONDS
