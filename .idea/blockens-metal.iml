@@ -21,6 +21,7 @@
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/Sky/SkyRenderer.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/AppDelegate.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerRenderer.swift" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Crater.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Grass.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/Sprites/Sprite.swift" isTestSource="false" />
       <sourceFolder url="file://$MODULE_DIR$/blockens/src/SpriteLayer/SpriteLayerController.swift" isTestSource="false" />

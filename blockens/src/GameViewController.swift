@@ -83,8 +83,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
                 textureName: "bg_sprites",
-                width: 20,
-                height: 20,
+                width: 15,
+                height: 15,
                 textureWidth: 5,
                 textureHeight: 2,
                 viewDiffRatio: frameInfo.viewDiffRatio))
@@ -93,8 +93,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func resetBackgroundSprites() {
         let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
         renderer.clear()
-        for _ in 0..<NUM_BACKGROUND_SPRITES {
+        for _ in 0..<NUM_BACKGROUND_SPRITES/3 {
             renderer.addSprite(Grass())
+            renderer.addSprite(Crater())
         }
         renderer.updateSprites()
     }
