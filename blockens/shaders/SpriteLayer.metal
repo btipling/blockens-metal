@@ -32,7 +32,7 @@ vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
     pos[1] = pushDownYByRatio(pos[1], spriteLayerInfo->viewDiffRatio);
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.textCoords = textureCoordinatesForSprite(spritePos[vid / 6], textCoords[vid], *spriteLayerInfo);
+    outVertex.textCoords = textureCoordinatesForSprite(spritePos[arrayIndex], textCoords[vertexIndex], *spriteLayerInfo);
 
     return outVertex;
 }

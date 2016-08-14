@@ -93,7 +93,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func resetBackgroundSprites() {
         let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
         renderer.clear()
-        renderer.addSprite(Grass())
+        for _ in 0..<NUM_BACKGROUND_SPRITES {
+            renderer.addSprite(Grass())
+        }
         renderer.updateSprites()
     }
 

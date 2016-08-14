@@ -8,6 +8,8 @@ import Cocoa
 
 let MAX_TICK_MILLISECONDS = 300.0
 let SPRITE_ANIMATION_FPS = 60.0;
+let NUM_BACKGROUND_SPRITES = 50;
+let ANIMATION_PAUSE_RANGE = 10000;
 
 let movementMap: [UInt16: Direction] = [
         123: Direction.Left,

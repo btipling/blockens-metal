@@ -45,7 +45,7 @@ class Grass: Sprite {
     }
 
     func newStartFrame() {
-        currentFrame = Int(getRandomNum(100) * -1)
+        currentFrame = Int(getRandomNum(Int32(ANIMATION_PAUSE_RANGE)) * -1)
     }
 
     func setGridPosition(gridPosition: Int32) {
