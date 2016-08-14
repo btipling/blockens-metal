@@ -89,7 +89,7 @@ class SpriteLayerRenderer: Renderer {
         textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: renderUtils.numVerticesInARectangle(), bufferLabel: "text coords tiles")
         renderUtils.updateBufferFromFloatArray(textCoordBuffer, data: renderUtils.rectangleTextureCoords)
 
-        spriteInfoBuffer = device.newBufferWithBytes(&spriteInfoBuffer, length: sizeofValue(spriteInfoBuffer), options: [])
+        spriteInfoBuffer = device.newBufferWithBytes(&info, length: sizeofValue(info), options: [])
 
         let contents = spriteInfoBuffer.contents()
         let pointer = UnsafeMutablePointer<SpriteLayerInfo>(contents)
