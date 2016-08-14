@@ -10,7 +10,6 @@
 
 struct GridInfo {
     int gridDimension;
-    float gridOffset;
     int numBoxes;
     int numVertices;
     float viewDiffRatio;
@@ -51,18 +50,7 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     float2 pos = position[positionIndex];
     float2 coords = textCoords[positionIndex];
 
-    float2 orgPosition = float2(pos[0], pos[1]);
-
-    // Scale box size based on dimension where dimension is the width and height as both are the same value.
-    pos /= dimension;
-
-    // Translate box to bottom right (-1, -1) position.
-    pos[0] -= fabs(orgPosition[0]) - fabs(pos[0]);
-    pos[1] -= fabs(orgPosition[1]) - fabs(pos[1]);
-
-    // Translate box to its colum and row position from bottom right.
-    pos[0] += gridInfo->gridOffset * float(col);
-    pos[1] += gridInfo->gridOffset * float(row);
+    pos = moveToGridPosition(pos, col, row, dimension, dimension);
 
     pos[1] = pushDownYByRatio(pos[1], gridInfo->viewDiffRatio);
 

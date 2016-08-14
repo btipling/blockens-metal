@@ -33,5 +33,7 @@ float pushDownYByRatio(float y, float viewDiffRatio);
 float pushUpYByRatio(float y, float viewDiffRatio);
 float4 rgbaToNormalizedGPUColors(int r, int g, int b);
 float2 textureCoordinatesForSprite(float2 spriteCol, float2 textCoords, SpriteLayerInfo spriteLayerInfo);
+float2 moveToGridPosition(float2 originalPos, int col, int row, float gridWidth, float gridHeight);
+
 
 #endif /* utils_h */

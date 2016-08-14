@@ -43,19 +43,7 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
     float col = segmentPosition % stringInfo->gridWidth;
     float row = (stringInfo->gridHeight - 1) - segmentPosition / stringInfo->gridWidth;
 
-    float2 orgPosition = float2(pos[0], pos[1]);
-
-    pos[0] /= stringInfo->gridWidth;
-    pos[1] /= stringInfo->gridHeight;
-
-    // Translate box to bottom right (-1, -1) position.
-    pos[0] -= fabs(orgPosition[0]) - fabs(pos[0]);
-    pos[1] -= fabs(orgPosition[1]) - fabs(pos[1]);
-
-    // Translate box to its colum and row position from bottom right.
-    pos[0] += float((2.0/stringInfo->gridWidth) * col);
-    pos[1] += float((2.0/stringInfo->gridHeight) * row);
-
+    pos = moveToGridPosition(pos, col, row, stringInfo->gridWidth, stringInfo->gridHeight);
 
     // Offset to character x position.
     int currentChar = 0;
@@ -77,8 +65,6 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
     pos[0] -= offset;
     pos[0] += stringInfo->xPadding;
     pos[1] += offset - stringInfo->yPadding;
-
-
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     return outVertex;

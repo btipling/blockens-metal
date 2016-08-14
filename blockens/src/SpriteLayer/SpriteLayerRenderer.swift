@@ -62,7 +62,6 @@ class SpriteLayerRenderer: Renderer {
     }
 
     @objc func tick() {
-        print("ticking")
         if let currentTimer = timer {
             currentTimer.invalidate()
         }
@@ -97,7 +96,6 @@ class SpriteLayerRenderer: Renderer {
 
         print("loading sprite layer assets done")
 
-//        update()
         tick()
     }
 
