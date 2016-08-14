@@ -37,15 +37,6 @@ vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
     return outVertex;
 }
 
-float2 textureCoordinatesForSprite(float2 spritePos, float2 textCoords, SpriteLayerInfo spriteLayerInfo) {
-
-    float spriteWidth = 1.0 / spriteLayerInfo.textureWidth;
-    float start = spriteWidth * spritePos[0];
-    float y = textCoords[0];
-    textCoords[0] = start + spriteWidth * y;
-    return textCoords;
-}
-
 fragment float4 spriteFragment(VertexTextureOut inFrag [[stage_in]],
         texture2d<float> spriteTexture [[ texture(0) ]]) {
 

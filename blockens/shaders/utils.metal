@@ -56,3 +56,18 @@ float2 moveToGridPosition(float2 orgPosition, int col, int row, float gridWidth,
 
     return pos;
 }
+
+float getCoordinateForDimension(float textCoord, float dimensionSize, float spritePos) {
+    float spriteSize = 1.0 / dimensionSize;
+    float start = spriteSize * spritePos;
+    float pos = textCoord;
+    return start + spriteSize * pos;
+}
+
+float2 textureCoordinatesForSprite(float2 spritePos, float2 textCoords, SpriteLayerInfo spriteLayerInfo) {
+
+    textCoords[0] = getCoordinateForDimension(textCoords[0], spriteLayerInfo.textureWidth, spritePos[0]);
+    textCoords[1] = getCoordinateForDimension(textCoords[1], spriteLayerInfo.textureHeight, spritePos[1]);
+
+    return textCoords;
+}

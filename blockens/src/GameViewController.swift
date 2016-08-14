@@ -82,11 +82,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
-                textureName: "grass",
+                textureName: "bg_sprites",
                 width: 20,
                 height: 20,
                 textureWidth: 5,
-                textureHeight: 1,
+                textureHeight: 2,
                 viewDiffRatio: frameInfo.viewDiffRatio))
     }
 
