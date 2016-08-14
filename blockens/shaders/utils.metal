@@ -28,6 +28,7 @@ float2 moveToGridPosition(float2 orgPosition, int col, int row, float gridWidth,
 
     float2 pos = float2(orgPosition[0], orgPosition[1]);
 
+    // Shrink box to grid cell size.
     pos[0] /= gridWidth;
     pos[1] /= gridHeight;
 
@@ -35,7 +36,7 @@ float2 moveToGridPosition(float2 orgPosition, int col, int row, float gridWidth,
     pos[0] -= fabs(orgPosition[0]) - fabs(pos[0]);
     pos[1] -= fabs(orgPosition[1]) - fabs(pos[1]);
 
-    // Translate box to its colum and row position from bottom right.
+    // Translate box to its column and row position from bottom right.
     pos[0] += float((2.0/gridWidth) * col);
     pos[1] += float((2.0/gridHeight) * row);
 
