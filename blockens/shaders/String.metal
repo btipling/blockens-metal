@@ -40,10 +40,10 @@ vertex VertexOut stringVertex(uint vid [[ vertex_id ]],
     // Position segment vertex within character grid.
     int segmentPosition = segmentPositions[currentSegment];
 
-    float col = segmentPosition % stringInfo->gridWidth;
-    float row = (stringInfo->gridHeight - 1) - segmentPosition / stringInfo->gridWidth;
+    GridPosition gridPos = gridPosFromArrayLocation(segmentPosition, stringInfo->gridWidth);
+    gridPos = flipGridVertically(gridPos, stringInfo->gridHeight);
 
-    pos = moveToGridPosition(pos, col, row, stringInfo->gridWidth, stringInfo->gridHeight);
+    pos = moveToGridPosition(pos, gridPos.col, gridPos.row, stringInfo->gridWidth, stringInfo->gridHeight);
 
     // Offset to character x position.
     int currentChar = 0;

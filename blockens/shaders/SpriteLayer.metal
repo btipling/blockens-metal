@@ -15,9 +15,19 @@ vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
                             constant packed_float2* textCoords [[ buffer(3) ]],
                             constant SpriteLayerInfo* spriteLayerInfo [[ buffer(4) ]]) {
 
-    float2 pos = position[vid];
+    uint numVerticesInARectangle = 6;
+
+    uint arrayIndex = vid / numVerticesInARectangle;
+    uint vertexIndex = vid % numVerticesInARectangle;
+
+    float2 pos = position[vertexIndex];
 
     VertexTextureOut outVertex;
+
+    GridPosition gridPos = gridPosFromArrayLocation(gridPositions[arrayIndex], spriteLayerInfo->gridWidth);
+    gridPos = flipGridVertically(gridPos, spriteLayerInfo->gridHeight);
+
+    pos = moveToGridPosition(pos, gridPos.col, gridPos.row, spriteLayerInfo->gridWidth, spriteLayerInfo->gridHeight);
 
     pos[1] = pushDownYByRatio(pos[1], spriteLayerInfo->viewDiffRatio);
 

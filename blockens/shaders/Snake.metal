@@ -44,13 +44,12 @@ vertex VertexOut gameTileVertex(uint vid [[ vertex_id ]],
     int gameTile = gameTiles[tileNum];
     int boxNum = boxTiles[tileNum];
 
-    int col = boxNum % dimension;
-    int row = boxNum / dimension;
+    GridPosition gridPos = gridPosFromArrayLocation(boxNum, dimension);
 
     float2 pos = position[positionIndex];
     float2 coords = textCoords[positionIndex];
 
-    pos = moveToGridPosition(pos, col, row, dimension, dimension);
+    pos = moveToGridPosition(pos, gridPos.col, gridPos.row, dimension, dimension);
 
     pos[1] = pushDownYByRatio(pos[1], gridInfo->viewDiffRatio);
 

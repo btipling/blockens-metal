@@ -1,6 +1,24 @@
 
 #include "utils.h"
 
+float4 rgbaToNormalizedGPUColors(int r, int g, int b) {
+    return float4(float(r)/255.0, float(g)/255.0, float(b)/255.0, 1.0);
+}
+
+GridPosition gridPosFromArrayLocation(int arrayIndex, int gridWidth) {
+
+    GridPosition gridPosition;
+    gridPosition.col = arrayIndex % gridWidth;
+    gridPosition.row = arrayIndex / gridWidth;
+
+    return gridPosition;
+}
+
+GridPosition flipGridVertically(GridPosition gridPos, int gridHeight) {
+    gridPos.row = (gridHeight - 1) - gridPos.row;
+    return gridPos;
+}
+
 float pushDownYByRatio(float y, float viewDiffRatio) {
     y -= 1;
     y *= -1;
@@ -18,10 +36,6 @@ float pushUpYByRatio(float y, float viewDiffRatio) {
     float offset = 2 * viewDiffRatio;
     result += (2 - offset)/2;
     return result;
-}
-
-float4 rgbaToNormalizedGPUColors(int r, int g, int b) {
-    return float4(float(r)/255.0, float(g)/255.0, float(b)/255.0, 1.0);
 }
 
 float2 moveToGridPosition(float2 orgPosition, int col, int row, float gridWidth, float gridHeight) {

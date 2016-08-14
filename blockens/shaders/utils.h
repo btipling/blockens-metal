@@ -19,6 +19,11 @@ struct VertexTextureOut {
     uint vid;
 };
 
+struct GridPosition {
+    int col;
+    int row;
+};
+
 struct SpriteLayerInfo {
     int gridWidth;
     int gridHeight;
@@ -34,6 +39,7 @@ float pushUpYByRatio(float y, float viewDiffRatio);
 float4 rgbaToNormalizedGPUColors(int r, int g, int b);
 float2 textureCoordinatesForSprite(float2 spriteCol, float2 textCoords, SpriteLayerInfo spriteLayerInfo);
 float2 moveToGridPosition(float2 originalPos, int col, int row, float gridWidth, float gridHeight);
-
+GridPosition gridPosFromArrayLocation(int arrayIndex, int gridWidth);
+GridPosition flipGridVertically(GridPosition gridPos, int gridHeight);
 
 #endif /* utils_h */
