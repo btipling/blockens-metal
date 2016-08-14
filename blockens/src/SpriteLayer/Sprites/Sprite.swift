@@ -11,6 +11,7 @@ struct SpriteFrame {
 }
 
 protocol Sprite {
+    func setGridPosition(gridPosition: Int32)
     func gridPosition() -> Int32
     func update() -> [Float32]
 }

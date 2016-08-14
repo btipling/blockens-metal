@@ -34,6 +34,10 @@ enum GameTile: Int32 {
     case EmptyTile, GrowTile
 }
 
+enum BlockensError: ErrorType {
+    case RuntimeError(String)
+}
+
 struct GameTileInfo {
     var x: Int32
     var y: Int32

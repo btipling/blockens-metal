@@ -10,6 +10,7 @@ class Grass: Sprite {
     private var currentFrame = 0
     private var frameModifier: Float32 = 1.0
     private var currentTextCoords: [Float32] = [0.0, 0.0]
+    private var gridPos: Int32 = 0
 
 
     private let spritesPerLoop: Float32 = 4.0
@@ -47,8 +48,13 @@ class Grass: Sprite {
         currentFrame = Int(getRandomNum(100) * -1)
     }
 
+    func setGridPosition(gridPosition: Int32) {
+        gridPos = gridPosition
+    }
+
     func gridPosition() -> Int32 {
-        return 0
+        print("returning grid pos \(gridPos)")
+        return gridPos
     }
 
     func update() -> [Float32] {

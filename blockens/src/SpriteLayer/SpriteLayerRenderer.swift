@@ -69,8 +69,22 @@ class SpriteLayerRenderer: Renderer {
         scheduleTick()
     }
 
+    func genGridPosition() throws -> Int32 {
+        let range = info.gridWidth * info.gridHeight;
+        if Int32(gridPositions.count) >= range {
+            throw BlockensError.RuntimeError("No more sprite positions available.")
+        }
+        var pos: Int32
+        repeat {
+            pos = getRandomNum(range)
+        } while (gridPositions.contains(pos))
+        print("sprite pos: \(pos)")
+        return pos
+    }
+
     func addSprite(sprite: Sprite) {
         sprites.append(sprite)
+        sprite.setGridPosition(try! genGridPosition())
         gridPositions.append(sprite.gridPosition())
         info.numVertices += renderUtils.numVerticesInARectangle()
     }
@@ -82,7 +96,10 @@ class SpriteLayerRenderer: Renderer {
         texture = renderUtils.loadTexture(device, name: textureName)
 
         spriteVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "sprite layer vertices")
+
         gridPositionsBuffer = renderUtils.createBufferFromIntArray(device, count: gridPositions.count, bufferLabel: "grid positions")
+        renderUtils.updateBufferFromIntArray(gridPositionsBuffer, data: gridPositions)
+
         spriteCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: spriteCoordinates!.count, bufferLabel: "sprite coordinates")
 
         textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: renderUtils.numVerticesInARectangle(), bufferLabel: "text coords tiles")
