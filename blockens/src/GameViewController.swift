@@ -90,14 +90,24 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 viewDiffRatio: frameInfo.viewDiffRatio))
     }
 
+    func getBackgroundSprite() -> Sprite {
+        switch getRandomNum(100) {
+            case 1...10:
+                return Bush()
+            case 11...25:
+                return Crater()
+            case 26...50:
+                return Rocks()
+            default:
+                return Grass()
+        }
+    }
+
     func resetBackgroundSprites() {
         let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
         renderer.clear()
-        for _ in 0..<NUM_BACKGROUND_SPRITES/2 {
-            renderer.addSprite(Grass())
-            renderer.addSprite(Crater())
-            renderer.addSprite(Rocks())
-            renderer.addSprite(Bush())
+        for _ in 0..<NUM_BACKGROUND_SPRITES {
+            renderer.addSprite(getBackgroundSprite())
         }
         renderer.updateSprites()
     }
