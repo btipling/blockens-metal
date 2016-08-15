@@ -55,10 +55,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
         // Add render controllers, order matters.
         let renderControllers: [RenderController] = [
                 BackgroundController(),
-//                backgroundSpriteLayer,
                 SkyController(),
-                snake,
+                backgroundSpriteLayer,
                 score,
+                snake,
         ]
 
         for renderController in renderControllers {
@@ -82,13 +82,24 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
-                textureName: "grass",
+                textureName: "bg_sprites",
                 width: 20,
                 height: 20,
+                textureWidth: 5,
+                textureHeight: 3,
                 viewDiffRatio: frameInfo.viewDiffRatio))
+    }
+
+    func resetBackgroundSprites() {
         let renderer = backgroundSpriteLayer.renderer() as! SpriteLayerRenderer
-        renderer.addSprite(Grass())
-        renderer.update()
+        renderer.clear()
+        for _ in 0..<NUM_BACKGROUND_SPRITES/2 {
+            renderer.addSprite(Grass())
+            renderer.addSprite(Crater())
+            renderer.addSprite(Rocks())
+            renderer.addSprite(Bush())
+        }
+        renderer.updateSprites()
     }
 
     func loadAssets(view: MTKView, frameInfo: FrameInfo) {
@@ -101,6 +112,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func resetGame() {
+        resetBackgroundSprites()
         score.reset()
         gameStatus = GameStatus.Running
         currentTickWait = MAX_TICK_MILLISECONDS

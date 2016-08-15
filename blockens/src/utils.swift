@@ -7,6 +7,9 @@ import Foundation
 import Cocoa
 
 let MAX_TICK_MILLISECONDS = 300.0
+let SPRITE_ANIMATION_FPS = 60.0;
+let NUM_BACKGROUND_SPRITES = 50;
+let ANIMATION_PAUSE_RANGE = 10000;
 
 let movementMap: [UInt16: Direction] = [
         123: Direction.Left,
@@ -31,6 +34,10 @@ enum GameTile: Int32 {
     case BodyHorizontal, BodyVertical
     case CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight
     case EmptyTile, GrowTile
+}
+
+enum BlockensError: ErrorType {
+    case RuntimeError(String)
 }
 
 struct GameTileInfo {
@@ -79,4 +86,36 @@ func flipImage(image: NSImage) -> NSImage {
     flippedImage.unlockFocus()
 
     return flippedImage
+}
+
+func newStartFrame() -> Int {
+    return Int(getRandomNum(Int32(ANIMATION_PAUSE_RANGE)) * -1)
+}
+
+func updateSpriteFrames(frames: [Float32], currentTextCoords: [Float32], currentFrame: Int) -> ([Float32], Int) {
+    var frame = currentFrame
+    var textCoords = currentTextCoords
+    frame += 1
+    if frame > 0 {
+        if frame >= frames.count {
+            frame = newStartFrame()
+            textCoords[0] = 0.0
+            return (textCoords, frame)
+        }
+
+        textCoords[0] = frames[frame]
+    }
+    return (textCoords, frame)
+}
+
+func setupFrames(spriteFrames: [SpriteFrame]) -> [Float32] {
+    var frames: [Float32] = Array()
+    for spriteFrame in spriteFrames {
+        var frameCount = spriteFrame.frameCount
+        while (frameCount > 0) {
+            frames.append(spriteFrame.spritePosition)
+            frameCount -= 1
+        }
+    }
+    return frames
 }

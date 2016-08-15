@@ -6,21 +6,7 @@
 import Foundation
 import MetalKit
 
-let maxSecondsUntilBGAnimation: Int32 = 18
-let framesPerSecond: NSTimeInterval = 15.0
-let framesOnFullWind: NSTimeInterval = 10.0
-let secondsUntilNextFrame: NSTimeInterval = 1.0/framesPerSecond
-
-enum WindDirection {
-    case Forward, Backward, Stopped
-}
-
-func getSecondsUntilBGAnimation() -> NSTimeInterval {
-    return NSTimeInterval(getRandomNum(maxSecondsUntilBGAnimation))
-}
-
 struct BGInfo {
-    var tickCount: Int32
     var viewDiffRatio : Float32
 }
 
@@ -32,81 +18,33 @@ class BackgroundRenderer: Renderer {
 
     var backgroundVertexBuffer: MTLBuffer! = nil
     var bgDataBuffer: MTLBuffer! = nil
-    var textureBuffer: MTLBuffer! = nil
-    var textures: [MTLTexture!] = []
-    var bgInfoData = BGInfo(tickCount: 0, viewDiffRatio : 0.0)
-    var currentFrame = 0
-    var lastAnimationTime: NSTimeInterval = NSDate().timeIntervalSince1970
-    var lastAnimationFrame: NSTimeInterval = 0
-    var windDirection = WindDirection.Stopped
-    var secondsUntilBGAnimation = getSecondsUntilBGAnimation()
+    var bgInfoData = BGInfo(viewDiffRatio : 0.0)
 
     init (utils: RenderUtils) {
         renderUtils = utils
     }
 
     func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
-        for i in 1...5 {
-            textures.append(renderUtils.loadTexture(device, name: "bg\(i)"))
-        }
-        bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
 
+        bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         pipelineState = renderUtils.createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
 
         bgDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "background colors")
-        backgroundVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "background vertices")
-        textureBuffer = renderUtils.createRectangleTextureCoordsBuffer(device, bufferLabel: "bg texture coords")
-
-        updateTickCount()
-        print("loading bg assets done")
-    }
-
-    func blowWind() {
-        let now = NSDate().timeIntervalSince1970
-        if (windDirection == WindDirection.Stopped && now - lastAnimationTime > secondsUntilBGAnimation) {
-            lastAnimationFrame = NSDate().timeIntervalSince1970
-            windDirection = WindDirection.Forward
-            updateTickCount()
-        }
-        if (windDirection != WindDirection.Stopped && now - lastAnimationFrame > secondsUntilNextFrame) {
-            if (windDirection == WindDirection.Forward && bgInfoData.tickCount < 4) {
-                lastAnimationFrame = now
-                bgInfoData.tickCount += 1
-                if (bgInfoData.tickCount == 4) {
-                    // Hang on to the full wind state for a little longer.
-                    lastAnimationFrame += secondsUntilNextFrame * framesOnFullWind
-                }
-            } else {
-                windDirection = WindDirection.Backward
-                lastAnimationFrame = now
-                bgInfoData.tickCount -= 1
-                if (bgInfoData.tickCount == 0) {
-                    lastAnimationTime = now
-                    secondsUntilBGAnimation = getSecondsUntilBGAnimation()
-                    windDirection = WindDirection.Stopped
-                }
-            }
-            updateTickCount()
-        }
-    }
-
-    func updateTickCount() {
         let pData = bgDataBuffer.contents()
         let vData = UnsafeMutablePointer<BGInfo>(pData)
         vData.initializeFrom(&bgInfoData, count: 1)
+
+        backgroundVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "background vertices")
+
+        print("loading bg assets done")
     }
 
     func render(renderEncoder: MTLRenderCommandEncoder) {
 
-        blowWind()
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "background")
 
-        for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer, textureBuffer].enumerate() {
+        for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer].enumerate() {
             renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
-        }
-
-        for i in 0..<5 {
-            renderEncoder.setFragmentTexture(textures[i], atIndex: i)
         }
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle())

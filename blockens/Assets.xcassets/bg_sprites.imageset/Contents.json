@@ -2,7 +2,7 @@
   "images" : [
     {
       "idiom" : "universal",
-      "filename" : "bg1.png",
+      "filename" : "bg_sprites.png",
       "scale" : "1x"
     },
     {

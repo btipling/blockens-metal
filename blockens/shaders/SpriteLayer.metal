@@ -8,25 +8,31 @@
 
 #include "utils.h"
 
-
-struct SpriteLayerInfo {
-    int gridWidth;
-    int gridHeight;
-    float viewDiffRatio;
-    int numVertices;
-};
-
 vertex VertexTextureOut spriteVertex(uint vid [[ vertex_id ]],
                             constant packed_float2* position [[ buffer(0) ]],
-                            constant packed_float2* textCoords [[ buffer(1) ]],
-                            constant int* gridPositions [[ buffer(2) ]],
-                            constant SpriteLayerInfo* spriteLayerInfo [[ buffer(3) ]]) {
+                            constant int* gridPositions [[ buffer(1) ]],
+                            constant packed_float2* spritePos [[ buffer(2) ]],
+                            constant packed_float2* textCoords [[ buffer(3) ]],
+                            constant SpriteLayerInfo* spriteLayerInfo [[ buffer(4) ]]) {
 
-    float2 pos = position[vid];
+    uint numVerticesInARectangle = 6;
+
+    uint arrayIndex = vid / numVerticesInARectangle;
+    uint vertexIndex = vid % numVerticesInARectangle;
+
+    float2 pos = position[vertexIndex];
+
     VertexTextureOut outVertex;
 
+    GridPosition gridPos = gridPosFromArrayLocation(gridPositions[arrayIndex], spriteLayerInfo->gridWidth);
+    gridPos = flipGridVertically(gridPos, spriteLayerInfo->gridHeight);
+
+    pos = moveToGridPosition(pos, gridPos.col, gridPos.row, spriteLayerInfo->gridWidth, spriteLayerInfo->gridHeight);
+
+    pos[1] = pushDownYByRatio(pos[1], spriteLayerInfo->viewDiffRatio);
+
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
-    outVertex.textCoords = textCoords[vid];
+    outVertex.textCoords = textureCoordinatesForSprite(spritePos[arrayIndex], textCoords[vertexIndex], *spriteLayerInfo);
 
     return outVertex;
 }
@@ -36,8 +42,7 @@ fragment float4 spriteFragment(VertexTextureOut inFrag [[stage_in]],
 
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
 
-    float2 coords = inFrag.textCoords;
-    float4 result = spriteTexture.sample(textureSampler, coords);
+    float4 result = spriteTexture.sample(textureSampler, inFrag.textCoords);
 
     if (result[3] == 0) {
         discard_fragment();
