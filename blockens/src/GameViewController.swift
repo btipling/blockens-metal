@@ -83,8 +83,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
                 textureName: "bg_sprites",
-                width: 20,
-                height: 20,
+                width: 13,
+                height: 13,
                 textureWidth: 5,
                 textureHeight: 3,
                 viewDiffRatio: frameInfo.viewDiffRatio))
