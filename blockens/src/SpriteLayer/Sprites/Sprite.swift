@@ -15,3 +15,16 @@ protocol Sprite {
     func gridPosition() -> Int32
     func update() -> [Float32]
 }
+
+let breezeSpriteFrames = [
+    SpriteFrame(frameCount: 3, spritePosition: 0.0),
+    SpriteFrame(frameCount: 3, spritePosition: 1.0),
+    SpriteFrame(frameCount: 3, spritePosition: 2.0),
+    SpriteFrame(frameCount: 3, spritePosition: 3.0),
+    SpriteFrame(frameCount: 3, spritePosition: 4.0),
+    SpriteFrame(frameCount: 3, spritePosition: 3.0),
+    SpriteFrame(frameCount: 3, spritePosition: 4.0),
+    SpriteFrame(frameCount: 3, spritePosition: 3.0),
+    SpriteFrame(frameCount: 3, spritePosition: 2.0),
+    SpriteFrame(frameCount: 3, spritePosition: 1.0),
+]

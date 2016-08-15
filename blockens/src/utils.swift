@@ -87,3 +87,35 @@ func flipImage(image: NSImage) -> NSImage {
 
     return flippedImage
 }
+
+func newStartFrame() -> Int {
+    return Int(getRandomNum(Int32(ANIMATION_PAUSE_RANGE)) * -1)
+}
+
+func updateSpriteFrames(frames: [Float32], currentTextCoords: [Float32], currentFrame: Int) -> ([Float32], Int) {
+    var frame = currentFrame
+    var textCoords = currentTextCoords
+    frame += 1
+    if frame > 0 {
+        if frame >= frames.count {
+            frame = newStartFrame()
+            textCoords[0] = 0.0
+            return (textCoords, frame)
+        }
+
+        textCoords[0] = frames[frame]
+    }
+    return (textCoords, frame)
+}
+
+func setupFrames(spriteFrames: [SpriteFrame]) -> [Float32] {
+    var frames: [Float32] = Array()
+    for spriteFrame in spriteFrames {
+        var frameCount = spriteFrame.frameCount
+        while (frameCount > 0) {
+            frames.append(spriteFrame.spritePosition)
+            frameCount -= 1
+        }
+    }
+    return frames
+}

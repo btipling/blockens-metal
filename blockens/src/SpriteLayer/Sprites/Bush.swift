@@ -5,10 +5,10 @@
 
 import Foundation
 
-class Grass: Sprite {
+class Bush: Sprite {
 
     private var currentFrame = 0
-    private var currentTextCoords: [Float32] = [0.0, 0.0]
+    private var currentTextCoords: [Float32] = [0.0, 2.0]
     private var gridPos: Int32 = 0
     private var frames: [Float32] = Array()
 
