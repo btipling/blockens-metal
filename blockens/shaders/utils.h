@@ -19,6 +19,11 @@ struct VertexTextureOut {
     uint vid;
 };
 
+struct VertexPointOut {
+    float4  position [[position]];
+    float  pointSize [[ point_size ]];
+};
+
 struct GridPosition {
     int col;
     int row;
