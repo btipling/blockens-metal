@@ -177,6 +177,9 @@ class GameViewController: NSViewController, MTKViewDelegate {
             case P_KEY:
                 gameStatus = GameStatus.Paused
                 break
+            case N_KEY:
+                resetGame()
+                break
             default:
                 // Unhandled key code.
                 break

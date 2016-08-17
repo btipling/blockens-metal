@@ -20,6 +20,7 @@ let movementMap: [UInt16: Direction] = [
 
 let S_KEY: UInt16 = 1
 let P_KEY: UInt16 = 35
+let N_KEY: UInt16 = 45
 
 let DARK_GREEN = rgbaToNormalizedGPUColors(31, g: 60, b: 6)
 let LIGHT_GREEN = rgbaToNormalizedGPUColors(159, g: 229, b: 88)
