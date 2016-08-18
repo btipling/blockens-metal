@@ -24,6 +24,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
     let snake: SnakeController = SnakeController()
     var backgroundSpriteLayer: SpriteLayerController! = nil
     let score = Score()
+    let stars = StarsController()
     var renderers: [Renderer] = Array()
 
     override func viewDidLoad() {
@@ -59,6 +60,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
                 backgroundSpriteLayer,
                 score,
                 snake,
+                stars,
         ]
 
         for renderController in renderControllers {
@@ -127,6 +129,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         gameStatus = GameStatus.Running
         currentTickWait = MAX_TICK_MILLISECONDS
         snake.reset()
+        stars.reset()
         scheduleTick()
     }
 

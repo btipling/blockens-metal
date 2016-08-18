@@ -117,7 +117,9 @@ class SpriteLayerRenderer: Renderer {
     }
 
     func updateSprites() {
-        renderUtils.updateBufferFromIntArray(gridPositionsBuffer, data: gridPositions)
+        if gridPositionsBuffer != nil {
+            renderUtils.updateBufferFromIntArray(gridPositionsBuffer, data: gridPositions)
+        }
     }
 
     func clear() {

@@ -11,14 +11,14 @@
 
 vertex VertexPointOut starsVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
-                                     constant packed_float2* sizes [[ buffer(1) ]],
+                                     constant float* sizes [[ buffer(1) ]],
                                      constant float* viewDiffRatio [[ buffer(2) ]]) {
 
     VertexPointOut outVertex;
 
     float2 pos = position[vid];
 
-    pos[1] = pushUpYByRatio(pos[1], viewDiffRatio);
+    pos[1] = pushUpYByRatio(pos[1], *viewDiffRatio);
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     outVertex.pointSize = sizes[vid];

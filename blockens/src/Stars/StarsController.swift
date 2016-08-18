@@ -10,8 +10,12 @@ class StarsController: RenderController {
 
     let _renderer: StarsRenderer
 
-    init (setup: SpriteLayerSetup) {
+    init () {
         _renderer = StarsRenderer(utils: RenderUtils())
+    }
+
+    func reset () {
+        _renderer.update()
     }
 
     func renderer() -> Renderer {
