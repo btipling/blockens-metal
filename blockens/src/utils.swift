@@ -10,6 +10,10 @@ let MAX_TICK_MILLISECONDS = 300.0
 let SPRITE_ANIMATION_FPS = 60.0;
 let NUM_BACKGROUND_SPRITES = 75;
 let ANIMATION_PAUSE_RANGE = 10000;
+let MAX_STARS: Int32 = 100;
+let MIN_STARS: Int32 = 20;
+let MAX_STAR_SIZE: Int32 = 15;
+let MIN_STAR_SIZE: Int32 = 5;
 
 let movementMap: [UInt16: Direction] = [
         123: Direction.Left,
@@ -22,12 +26,12 @@ let S_KEY: UInt16 = 1
 let P_KEY: UInt16 = 35
 let N_KEY: UInt16 = 45
 
-let DARK_GREEN = rgbaToNormalizedGPUColors(31, g: 60, b: 6)
-let LIGHT_GREEN = rgbaToNormalizedGPUColors(159, g: 229, b: 88)
-let YELLOW = rgbaToNormalizedGPUColors(251, g: 243, b: 131)
-let ORANGE = rgbaToNormalizedGPUColors(236, g: 202, b: 0)
-let ORANGE_BROWN = rgbaToNormalizedGPUColors(214, g: 158, b: 2)
-let BLUE = rgbaToNormalizedGPUColors(2, g: 166, b: 214)
+// Colors from http://www.colourlovers.com/palette/689633/Light_of_the_Angels
+let ANGEL_PROTECTION = rgbaToNormalizedGPUColors(254, g: 236, b: 174)
+let ANGEL_GLOW = rgbaToNormalizedGPUColors(255, g: 244, b: 194)
+let HEAVEN_LIGHTS = rgbaToNormalizedGPUColors(255, g: 247, b: 219)
+let ANGEL_WHITE = rgbaToNormalizedGPUColors(255, g: 252, b: 246)
+let WHITE = rgbaToNormalizedGPUColors(255, g: 255, b: 255)
 
 enum GameTile: Int32 {
     case HeadUp = 0, HeadDown, HeadLeft, HeadRight

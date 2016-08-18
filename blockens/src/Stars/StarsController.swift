@@ -15,6 +15,7 @@ class StarsController: RenderController {
     }
 
     func reset () {
+        _renderer.loadStars()
         _renderer.update()
     }
 

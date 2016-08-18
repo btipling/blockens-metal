@@ -57,10 +57,10 @@ class GameViewController: NSViewController, MTKViewDelegate {
         let renderControllers: [RenderController] = [
                 BackgroundController(),
                 SkyController(),
+                stars,
                 backgroundSpriteLayer,
                 score,
                 snake,
-                stars,
         ]
 
         for renderController in renderControllers {

@@ -4,6 +4,7 @@
 
 
 #include <metal_stdlib>
+
 using namespace metal;
 
 struct VertexOut {
@@ -22,6 +23,7 @@ struct VertexTextureOut {
 struct VertexPointOut {
     float4  position [[position]];
     float  pointSize [[ point_size ]];
+    float4 color;
 };
 
 struct GridPosition {

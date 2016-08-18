@@ -49,7 +49,7 @@ class SnakeRenderer: Renderer {
 
         pipelineState = renderUtils.createPipeLineState("gameTileVertex", fragment: "gameTileFragment", device: device, view: view)
 
-        foodTexture = renderUtils.loadTexture(device, name: "yellow_block")
+        foodTexture = renderUtils.loadTexture(device, name: "dark_yellow_block")
         snakeTexture = renderUtils.loadTexture(device, name: "green_block")
 
         vertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "game tile vertices")

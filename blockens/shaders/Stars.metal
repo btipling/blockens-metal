@@ -11,8 +11,9 @@
 
 vertex VertexPointOut starsVertex(uint vid [[ vertex_id ]],
                                      constant packed_float2* position  [[ buffer(0) ]],
-                                     constant float* sizes [[ buffer(1) ]],
-                                     constant float* viewDiffRatio [[ buffer(2) ]]) {
+                                     constant packed_float4* colors [[ buffer(1) ]],
+                                     constant float* sizes [[ buffer(2) ]],
+                                     constant float* viewDiffRatio [[ buffer(3) ]]) {
 
     VertexPointOut outVertex;
 
@@ -22,11 +23,12 @@ vertex VertexPointOut starsVertex(uint vid [[ vertex_id ]],
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     outVertex.pointSize = sizes[vid];
+    outVertex.color = colors[vid];
 
     return outVertex;
 }
 
-fragment half4 starsFragment(VertexPointOut inFrag [[stage_in]]) {
+fragment float4 starsFragment(VertexPointOut inFrag [[stage_in]]) {
 
-    return half4(1.0, 1.0, 1.0, 1.0);
+    return inFrag.color;
 }
