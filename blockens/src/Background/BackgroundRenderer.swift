@@ -47,6 +47,6 @@ class BackgroundRenderer: Renderer {
             renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
         }
 
-        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle())
+        renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle() * 2)
     }
 }

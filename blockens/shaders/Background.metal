@@ -20,14 +20,23 @@ vertex VertexTextureOut backgroundVertex(uint vid [[ vertex_id ]],
 
     float2 pos = position[vid % 6];
 
-    pos[1] = pushDownYByRatio(pos[1], bgInfo->viewDiffRatio);
-
+    if (vid < 6) {
+        pos[1] = pushUpYByRatio(pos[1], bgInfo->viewDiffRatio);
+    } else {
+        pos[1] = pushDownYByRatio(pos[1], bgInfo->viewDiffRatio);
+    }
+    outVertex.vid = vid;
     outVertex.position = float4(pos[0], pos[1], 1.0, 1.0);
 
     return outVertex;
 }
 
 fragment float4 backgroundFragment(VertexTextureOut inFrag [[stage_in]]) {
+
+    if (inFrag.vid < 6) {
+        float4 blue = rgbaToNormalizedGPUColors(2, 166, 214);
+        return blue;
+    }
 
     return float4(1.0, 1.0, 1.0, 1.0);
 
