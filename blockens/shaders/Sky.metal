@@ -28,17 +28,11 @@ vertex VertexTextureOut skyVertex(uint vid [[ vertex_id ]],
 
     outVertex.position = float4(pos[0], pos[1], 0.0, 1.0);
     outVertex.textCoords = textCoords[positionIndex];
-    outVertex.vid = vid;
     return outVertex;
 }
 
 fragment float4 skyFragment(VertexTextureOut inFrag [[stage_in]],
         texture2d<float> skyTexture [[ texture(0) ]]) {
-
-    if (inFrag.vid < 6) {
-        float4 blue = rgbaToNormalizedGPUColors(2, 166, 214);
-        return blue;
-    }
 
     constexpr sampler textureSampler(coord::normalized, address::repeat, filter::linear);
     float4 result = skyTexture.sample(textureSampler, inFrag.textCoords);
