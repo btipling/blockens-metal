@@ -87,7 +87,7 @@ func flipImage(image: NSImage) -> NSImage {
 
     flippedImage.lockFocus()
     transform.concat()
-    image.drawInRect(imageBounds, fromRect: NSZeroRect, operation: NSCompositingOperation.CompositeCopy, fraction: 1.0)
+    image.drawInRect(imageBounds, fromRect: NSZeroRect, operation: NSCompositingOperation.Copy, fraction: 1.0)
     flippedImage.unlockFocus()
 
     return flippedImage
