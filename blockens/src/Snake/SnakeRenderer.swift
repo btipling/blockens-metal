@@ -43,7 +43,7 @@ class SnakeRenderer: Renderer {
     }
 
 
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         gridInfoData.viewDiffRatio = frameInfo.viewDiffRatio
 
@@ -59,18 +59,18 @@ class SnakeRenderer: Renderer {
         gameTilesBuffer = renderUtils.createBufferFromIntArray(device, count: count, bufferLabel: "game tiles")
         boxTilesBuffer = renderUtils.createBufferFromIntArray(device, count: count, bufferLabel: "box tiles")
 
-        let gridInfoBufferSize = sizeofValue(gridInfoData)
-        gridInfoBuffer = device.newBufferWithBytes(&gridInfoData, length: gridInfoBufferSize, options: [])
+        let gridInfoBufferSize = MemoryLayout.size(ofValue: gridInfoData)
+        gridInfoBuffer = device.makeBuffer(bytes: &gridInfoData, length: gridInfoBufferSize, options: [])
         gridInfoBuffer!.label = "grid info"
 
         print("loading snake assets done")
     }
 
-    func updateTileCount(count: Int) {
+    func updateTileCount(_ count: Int) {
         vertexCount = count * Int(gridInfoData.numVertices)
     }
 
-    func update(gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
+    func update(_ gameTiles: Array<Int32>, boxTiles: Array<Int32>) {
 
         if gridInfoBuffer == nil {
             return
@@ -78,25 +78,31 @@ class SnakeRenderer: Renderer {
 
         let contents = gridInfoBuffer!.contents()
         let pointer = UnsafeMutablePointer<GridInfo>(contents)
-        pointer.initializeFrom(&gridInfoData, count: 1)
+        pointer.initialize(from: &gridInfoData, count: 1)
 
         renderUtils.updateBufferFromIntArray(gameTilesBuffer, data: gameTiles)
         renderUtils.updateBufferFromIntArray(boxTilesBuffer, data: boxTiles)
 
     }
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "snake and food")
 
 
-        for (i, buffer) in [vertexBuffer, textureBuffer, gridInfoBuffer, gameTilesBuffer, boxTilesBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
+        for (i, buffer) in [vertexBuffer, textureBuffer, gridInfoBuffer, gameTilesBuffer, boxTilesBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, at: i)
         }
 
-        renderEncoder.setFragmentTexture(snakeTexture, atIndex: 0)
-        renderEncoder.setFragmentTexture(foodTexture, atIndex: 1)
+        renderEncoder.setFragmentTexture(snakeTexture, at: 0)
+        renderEncoder.setFragmentTexture(foodTexture, at: 1)
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: vertexCount)
+    }
+}
+
+extension UnsafeMutablePointer {
+    init(_ rawPointer: UnsafeMutableRawPointer) {
+        self.init(OpaquePointer(rawPointer))
     }
 }

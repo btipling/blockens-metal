@@ -7,17 +7,17 @@ import Foundation
 
 class Grass: Sprite {
 
-    private var currentFrame = 0
-    private var currentTextCoords: [Float32] = [0.0, 0.0]
-    private var gridPos: Int32 = 0
-    private var frames: [Float32] = Array()
+    fileprivate var currentFrame = 0
+    fileprivate var currentTextCoords: [Float32] = [0.0, 0.0]
+    fileprivate var gridPos: Int32 = 0
+    fileprivate var frames: [Float32] = Array()
 
     init() {
         frames = setupFrames(breezeSpriteFrames)
         currentFrame = newStartFrame()
     }
 
-    func setGridPosition(gridPosition: Int32) {
+    func setGridPosition(_ gridPosition: Int32) {
         gridPos = gridPosition
     }
 

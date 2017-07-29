@@ -27,7 +27,7 @@ class SkyRenderer: Renderer {
         renderUtils = utils
     }
 
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         texture = renderUtils.loadTexture(device, name: "mountains")
         skyInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         skyInfoData.tickCount = 0
@@ -39,22 +39,22 @@ class SkyRenderer: Renderer {
 
         let contents = skyInfoDataBuffer.contents()
         let pointer = UnsafeMutablePointer<SkyInfo>(contents)
-        pointer.initializeFrom(&skyInfoData, count: 1)
+        pointer.initialize(from:&skyInfoData, count: 1)
 
         print("loading sky assets done")
     }
 
 
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sky")
 
-        for (i, vertexBuffer) in [skyVertexBuffer, textureBuffer, skyInfoDataBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
+        for (i, vertexBuffer) in [skyVertexBuffer, textureBuffer, skyInfoDataBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, at: i)
         }
 
-        renderEncoder.setFragmentTexture(texture, atIndex: 0)
+        renderEncoder.setFragmentTexture(texture, at: 0)
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle())
 

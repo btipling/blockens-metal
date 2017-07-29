@@ -7,10 +7,10 @@ import Foundation
 
 class Rocks: Sprite {
 
-    private var textCoords: [Float32] = [1.0, 1.0]
-    private var gridPos: Int32 = 0
+    fileprivate var textCoords: [Float32] = [1.0, 1.0]
+    fileprivate var gridPos: Int32 = 0
 
-    func setGridPosition(gridPosition: Int32) {
+    func setGridPosition(_ gridPosition: Int32) {
         gridPos = gridPosition
     }
 

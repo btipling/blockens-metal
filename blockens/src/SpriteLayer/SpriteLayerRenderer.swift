@@ -19,24 +19,24 @@ class SpriteLayerRenderer: Renderer {
 
     let renderUtils: RenderUtils
 
-    var timer: NSTimer?
-    var interval: NSTimeInterval = 1.0/SPRITE_ANIMATION_FPS;
+    var timer: Timer?
+    var interval: TimeInterval = 1.0/SPRITE_ANIMATION_FPS;
 
-    private var sprites: [Sprite] = Array()
-    private var gridPositions: [Int32] = Array()
+    fileprivate var sprites: [Sprite] = Array()
+    fileprivate var gridPositions: [Int32] = Array()
     var info: SpriteLayerInfo! = nil
-    private var spriteCoordinates: [Float32]? = Array()
+    fileprivate var spriteCoordinates: [Float32]? = Array()
 
     var pipelineState: MTLRenderPipelineState! = nil
 
-    private let textureName: String
-    private var texture: MTLTexture! = nil
+    fileprivate let textureName: String
+    fileprivate var texture: MTLTexture! = nil
 
-    private var spriteVertexBuffer: MTLBuffer! = nil
-    private var gridPositionsBuffer: MTLBuffer! = nil
-    private var spriteInfoBuffer: MTLBuffer! = nil
-    private var textCoordBuffer: MTLBuffer! = nil
-    private var spriteCoordBuffer: MTLBuffer? = nil
+    fileprivate var spriteVertexBuffer: MTLBuffer! = nil
+    fileprivate var gridPositionsBuffer: MTLBuffer! = nil
+    fileprivate var spriteInfoBuffer: MTLBuffer! = nil
+    fileprivate var textCoordBuffer: MTLBuffer! = nil
+    fileprivate var spriteCoordBuffer: MTLBuffer? = nil
 
     init (utils: RenderUtils, setup: SpriteLayerSetup) {
         renderUtils = utils
@@ -53,11 +53,11 @@ class SpriteLayerRenderer: Renderer {
 
 
     func scheduleTick() {
-        if timer?.valid ?? false {
+        if timer?.isValid ?? false {
             // If timer isn't nil and is valid don't start a new one.
             return
         }
-        timer = NSTimer.scheduledTimerWithTimeInterval(interval, target: self,
+        timer = Timer.scheduledTimer(timeInterval: interval, target: self,
                 selector: #selector(SpriteLayerRenderer.tick), userInfo: nil, repeats: false)
     }
 
@@ -72,7 +72,7 @@ class SpriteLayerRenderer: Renderer {
     func genGridPosition() throws -> Int32 {
         let range = info.gridWidth * info.gridHeight;
         if Int32(gridPositions.count) >= range {
-            throw BlockensError.RuntimeError("No more sprite positions available.")
+            throw BlockensError.runtimeError("No more sprite positions available.")
         }
         var pos: Int32
         repeat {
@@ -81,7 +81,7 @@ class SpriteLayerRenderer: Renderer {
         return pos
     }
 
-    func addSprite(sprite: Sprite) {
+    func addSprite(_ sprite: Sprite) {
         sprites.append(sprite)
         sprite.setGridPosition(try! genGridPosition())
         gridPositions.append(sprite.gridPosition())
@@ -89,7 +89,7 @@ class SpriteLayerRenderer: Renderer {
     }
 
     // Must add all sprites and call update before loading assets.
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         pipelineState = renderUtils.createPipeLineState("spriteVertex", fragment: "spriteFragment", device: device, view: view)
 
@@ -104,11 +104,11 @@ class SpriteLayerRenderer: Renderer {
         textCoordBuffer = renderUtils.createBufferFromFloatArray(device, count: renderUtils.numVerticesInARectangle(), bufferLabel: "text coords tiles")
         renderUtils.updateBufferFromFloatArray(textCoordBuffer, data: renderUtils.rectangleTextureCoords)
 
-        spriteInfoBuffer = device.newBufferWithBytes(&info, length: sizeofValue(info), options: [])
+        spriteInfoBuffer = device.makeBuffer(bytes: &info, length: MemoryLayout.size(ofValue: info), options: [])
 
         let contents = spriteInfoBuffer.contents()
         let pointer = UnsafeMutablePointer<SpriteLayerInfo>(contents)
-        pointer.initializeFrom(&info!, count: 1)
+        pointer.initialize(from:&info!, count: 1)
 
         print("loading sprite layer assets done")
 
@@ -123,8 +123,8 @@ class SpriteLayerRenderer: Renderer {
     }
 
     func clear() {
-        sprites.removeAll(keepCapacity: true)
-        gridPositions.removeAll(keepCapacity: true)
+        sprites.removeAll(keepingCapacity: true)
+        gridPositions.removeAll(keepingCapacity: true)
         updateSprites()
         update()
     }
@@ -140,15 +140,15 @@ class SpriteLayerRenderer: Renderer {
         }
     }
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "sprite layer")
 
-    for (i, buffer) in [spriteVertexBuffer, gridPositionsBuffer, spriteCoordBuffer!, textCoordBuffer, spriteInfoBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
+    for (i, buffer) in [spriteVertexBuffer, gridPositionsBuffer, spriteCoordBuffer!, textCoordBuffer, spriteInfoBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, at: i)
         }
 
-        renderEncoder.setFragmentTexture(texture, atIndex: 0)
+        renderEncoder.setFragmentTexture(texture, at: 0)
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: Int(info.numVertices))
     }

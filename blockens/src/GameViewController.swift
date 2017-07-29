@@ -15,11 +15,11 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
     var commandQueue: MTLCommandQueue! = nil
 
-    let inflightSemaphore = dispatch_semaphore_create(1)
+    let inflightSemaphore = DispatchSemaphore(value: 1)
     var currentTickWait = MAX_TICK_MILLISECONDS
 
-    var timer: NSTimer?
-    var gameStatus: GameStatus = GameStatus.Running
+    var timer: Timer?
+    var gameStatus: GameStatus = GameStatus.running
 
     let snake: SnakeController = SnakeController()
     var backgroundSpriteLayer: SpriteLayerController! = nil
@@ -31,7 +31,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
 
         super.viewDidLoad()
 
-        let appDelegate = NSApplication.sharedApplication().delegate as! AppDelegate
+        let appDelegate = NSApplication.shared().delegate as! AppDelegate
         let gameWindow = appDelegate.getWindow()
         gameWindow.addKeyEventCallback(handleKeyEvent)
 
@@ -70,7 +70,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         resetGame()
     }
 
-    func setupFrameInfo(view: MTKView) -> FrameInfo {
+    func setupFrameInfo(_ view: MTKView) -> FrameInfo {
         let frame = view.frame
         let width = frame.size.width
         let height = frame.size.height
@@ -81,7 +81,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         return FrameInfo(viewWidth: Int32(width), viewHeight: Int32(height), viewDiffRatio: ratio)
     }
 
-    func setupBackgroundSpriteLayer(frameInfo: FrameInfo) {
+    func setupBackgroundSpriteLayer(_ frameInfo: FrameInfo) {
 
         backgroundSpriteLayer = SpriteLayerController(setup: SpriteLayerSetup(
                 textureName: "bg_sprites",
@@ -114,8 +114,8 @@ class GameViewController: NSViewController, MTKViewDelegate {
         renderer.updateSprites()
     }
 
-    func loadAssets(view: MTKView, frameInfo: FrameInfo) {
-        commandQueue = device.newCommandQueue()
+    func loadAssets(_ view: MTKView, frameInfo: FrameInfo) {
+        commandQueue = device.makeCommandQueue()
         commandQueue.label = "main command queue"
 
         for renderer in renderers {
@@ -126,34 +126,34 @@ class GameViewController: NSViewController, MTKViewDelegate {
     func resetGame() {
         resetBackgroundSprites()
         score.reset()
-        gameStatus = GameStatus.Running
+        gameStatus = GameStatus.running
         currentTickWait = MAX_TICK_MILLISECONDS
         snake.reset()
         stars.reset()
         scheduleTick()
     }
 
-    func handleKeyEvent(event: NSEvent) {
+    func handleKeyEvent(_ event: NSEvent) {
         if Array(movementMap.keys).contains(event.keyCode) {
             let newDirection = movementMap[event.keyCode]!
             switch (newDirection) {
-                case Direction.Down:
-                    if snake.oneEighty(Direction.Up) {
+                case Direction.down:
+                    if snake.oneEighty(Direction.up) {
                         return
                     }
                     break
-                case Direction.Up:
-                    if snake.oneEighty(Direction.Down) {
+                case Direction.up:
+                    if snake.oneEighty(Direction.down) {
                         return
                     }
                     break
-                case Direction.Left:
-                    if snake.oneEighty(Direction.Right) {
+                case Direction.left:
+                    if snake.oneEighty(Direction.right) {
                         return
                     }
                     break
-                case Direction.Right:
-                    if snake.oneEighty(Direction.Left) {
+                case Direction.right:
+                    if snake.oneEighty(Direction.left) {
                         return
                     }
                     break
@@ -166,19 +166,19 @@ class GameViewController: NSViewController, MTKViewDelegate {
         switch event.keyCode {
             case S_KEY:
                 switch gameStatus {
-                    case GameStatus.Running:
+                    case GameStatus.running:
                         break
-                    case GameStatus.Stopped:
+                    case GameStatus.stopped:
                         resetGame()
                         break
                     default:
-                        gameStatus = GameStatus.Running
+                        gameStatus = GameStatus.running
                         scheduleTick()
                         break
                 }
                 break
             case P_KEY:
-                gameStatus = GameStatus.Paused
+                gameStatus = GameStatus.paused
                 break
             case N_KEY:
                 resetGame()
@@ -191,14 +191,14 @@ class GameViewController: NSViewController, MTKViewDelegate {
     }
 
     func scheduleTick() {
-        if gameStatus != GameStatus.Running {
+        if gameStatus != GameStatus.running {
             return
         }
-        if timer?.valid ?? false {
+        if timer?.isValid ?? false {
             // If timer isn't nil and is valid don't start a new one.
             return
         }
-        timer = NSTimer.scheduledTimerWithTimeInterval(Double(currentTickWait) / 1000.0, target: self,
+        timer = Timer.scheduledTimer(timeInterval: Double(currentTickWait) / 1000.0, target: self,
                 selector: #selector(GameViewController.tick), userInfo: nil, repeats: false)
     }
 
@@ -207,7 +207,7 @@ class GameViewController: NSViewController, MTKViewDelegate {
         if let currentTimer = timer {
             currentTimer.invalidate()
         }
-        if gameStatus != GameStatus.Running {
+        if gameStatus != GameStatus.running {
             return
         }
         if (snake.eatFoodIfOnFood()) {
@@ -218,40 +218,40 @@ class GameViewController: NSViewController, MTKViewDelegate {
         }
         if !snake.move() {
             print("Collision")
-            gameStatus = GameStatus.Stopped
+            gameStatus = GameStatus.stopped
             return
         }
         scheduleTick()
     }
 
-    func drawInMTKView(view: MTKView) {
-        dispatch_semaphore_wait(inflightSemaphore, DISPATCH_TIME_FOREVER)
+    func draw(in view: MTKView) {
+        inflightSemaphore.wait(timeout: DispatchTime.distantFuture)
 
-        let commandBuffer = commandQueue.commandBuffer()
+        let commandBuffer = commandQueue.makeCommandBuffer()
         commandBuffer.label = "Frame command buffer"
 
         commandBuffer.addCompletedHandler{ [weak self] commandBuffer in
             if let strongSelf = self {
-                dispatch_semaphore_signal(strongSelf.inflightSemaphore)
+                strongSelf.inflightSemaphore.signal()
             }
             return
         }
 
-        if let renderPassDescriptor = view.currentRenderPassDescriptor, currentDrawable = view.currentDrawable {
+        if let renderPassDescriptor = view.currentRenderPassDescriptor, let currentDrawable = view.currentDrawable {
 
-            let parallelCommandEncoder = commandBuffer.parallelRenderCommandEncoderWithDescriptor(renderPassDescriptor)
+            let parallelCommandEncoder = commandBuffer.makeParallelRenderCommandEncoder(descriptor: renderPassDescriptor)
 
             for renderer in renderers {
-                renderer.render(parallelCommandEncoder.renderCommandEncoder())
+                renderer.render(parallelCommandEncoder.makeRenderCommandEncoder())
             }
 
             parallelCommandEncoder.endEncoding()
-            commandBuffer.presentDrawable(currentDrawable)
+            commandBuffer.present(currentDrawable)
         }
         commandBuffer.commit()
     }
 
-    func mtkView(view: MTKView, drawableSizeWillChange size: CGSize) {
+    func mtkView(_ view: MTKView, drawableSizeWillChange size: CGSize) {
         // Pass through and do nothing.
     }
 }

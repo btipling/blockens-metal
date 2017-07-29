@@ -24,7 +24,7 @@ class BackgroundRenderer: Renderer {
         renderUtils = utils
     }
 
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         bgInfoData.viewDiffRatio = frameInfo.viewDiffRatio
         pipelineState = renderUtils.createPipeLineState("backgroundVertex", fragment: "backgroundFragment", device: device, view: view)
@@ -32,19 +32,19 @@ class BackgroundRenderer: Renderer {
         bgDataBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "background colors")
         let pData = bgDataBuffer.contents()
         let vData = UnsafeMutablePointer<BGInfo>(pData)
-        vData.initializeFrom(&bgInfoData, count: 1)
+        vData.initialize(from:&bgInfoData, count: 1)
 
         backgroundVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "background vertices")
 
         print("loading bg assets done")
     }
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "background")
 
-        for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
+        for (i, vertexBuffer) in [bgDataBuffer, backgroundVertexBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, at: i)
         }
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: renderUtils.numVerticesInARectangle() * 2)

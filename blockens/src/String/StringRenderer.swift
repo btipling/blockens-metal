@@ -56,7 +56,7 @@ class StringRenderer: Renderer  {
     }
 
 
-    func update(segmentPositions: [Int32], segmentsPerCharacter: [Int32]) {
+    func update(_ segmentPositions: [Int32], segmentsPerCharacter: [Int32]) {
 
         if stringInfoBuffer == nil {
             return
@@ -68,17 +68,17 @@ class StringRenderer: Renderer  {
         stringInfo.numVertices *= Int32(renderUtils.numVerticesInARectangle())
         let contents = stringInfoBuffer!.contents()
         let pointer = UnsafeMutablePointer<StringInfo>(contents)
-        pointer.initializeFrom(&stringInfo, count: 1)
+        pointer.initialize(from: &stringInfo, count: 1)
 
         renderUtils.updateBufferFromIntArray(segmentPositionsBuffer, data: segmentPositions)
         renderUtils.updateBufferFromIntArray(segmentsPerCharacterBuffer, data: segmentsPerCharacter)
     }
 
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
 
         pipelineState = renderUtils.createPipeLineState("stringVertex", fragment: "stringFragment", device: device, view: view)
 
-        stringInfoBuffer = device.newBufferWithBytes(&stringInfo, length: sizeofValue(stringInfo), options: [])
+        stringInfoBuffer = device.makeBuffer(bytes: &stringInfo, length: MemoryLayout.size(ofValue: stringInfo), options: [])
         stringInfoBuffer!.label = "string info"
 
         stringVertexBuffer = renderUtils.createRectangleVertexBuffer(device, bufferLabel: "string vertices")
@@ -88,12 +88,12 @@ class StringRenderer: Renderer  {
         print("loading string assets done")
     }
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
 
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "string")
 
-        for (i, buffer) in [stringVertexBuffer, segmentPositionsBuffer, segmentsPerCharacterBuffer, stringInfoBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(buffer, offset: 0, atIndex: i)
+        for (i, buffer) in [stringVertexBuffer, segmentPositionsBuffer, segmentsPerCharacterBuffer, stringInfoBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(buffer, offset: 0, at: i)
         }
 
         renderUtils.drawPrimitives(renderEncoder, vertexCount: Int(stringInfo.numVertices))

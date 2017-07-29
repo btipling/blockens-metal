@@ -16,10 +16,10 @@ let MAX_STAR_SIZE: Int32 = 15;
 let MIN_STAR_SIZE: Int32 = 5;
 
 let movementMap: [UInt16: Direction] = [
-        123: Direction.Left,
-        124: Direction.Right,
-        125: Direction.Down,
-        126: Direction.Up,
+        123: Direction.left,
+        124: Direction.right,
+        125: Direction.down,
+        126: Direction.up,
 ]
 
 let S_KEY: UInt16 = 1
@@ -34,15 +34,15 @@ let ANGEL_WHITE = rgbaToNormalizedGPUColors(255, g: 252, b: 246)
 let WHITE = rgbaToNormalizedGPUColors(255, g: 255, b: 255)
 
 enum GameTile: Int32 {
-    case HeadUp = 0, HeadDown, HeadLeft, HeadRight
-    case TailUp, TailDown, TailLeft, TailRight
-    case BodyHorizontal, BodyVertical
-    case CornerUpLeft, CornerUpRight, CornerDownLeft, CornerDownRight
-    case EmptyTile, GrowTile
+    case headUp = 0, headDown, headLeft, headRight
+    case tailUp, tailDown, tailLeft, tailRight
+    case bodyHorizontal, bodyVertical
+    case cornerUpLeft, cornerUpRight, cornerDownLeft, cornerDownRight
+    case emptyTile, growTile
 }
 
-enum BlockensError: ErrorType {
-    case RuntimeError(String)
+enum BlockensError: Error {
+    case runtimeError(String)
 }
 
 struct GameTileInfo {
@@ -58,36 +58,36 @@ struct FrameInfo {
 }
 
 enum GameStatus {
-    case Stopped, Paused, Running
+    case stopped, paused, running
 }
 
 enum Direction {
-    case Up, Down, Left, Right
+    case up, down, left, right
 }
 
-func rgbaToNormalizedGPUColors(r: Int, g: Int, b: Int, a: Int = 255) -> [Float32] {
+func rgbaToNormalizedGPUColors(_ r: Int, g: Int, b: Int, a: Int = 255) -> [Float32] {
     return [Float32(r)/255.0, Float32(g)/255.0, Float32(b)/255.0, Float32(a)/255.0]
 }
 
-func getRandomNum(n: Int32) -> Int32 {
+func getRandomNum(_ n: Int32) -> Int32 {
     return Int32(arc4random_uniform(UInt32(n)))
 }
 
-func log_e(n: Double) -> Double {
+func log_e(_ n: Double) -> Double {
     return log(n)/log(M_E)
 }
 
-func flipImage(image: NSImage) -> NSImage {
+func flipImage(_ image: NSImage) -> NSImage {
     var imageBounds = NSZeroRect
     imageBounds.size = image.size
-    let transform = NSAffineTransform()
-    transform.translateXBy(0.0, yBy: imageBounds.height)
-    transform.scaleXBy(1, yBy: -1)
+    var transform = AffineTransform.identity
+    transform.translate(x: 0.0, y: imageBounds.height)
+    transform.scale(x: 1, y: -1)
     let flippedImage = NSImage(size: imageBounds.size)
 
     flippedImage.lockFocus()
-    transform.concat()
-    image.drawInRect(imageBounds, fromRect: NSZeroRect, operation: NSCompositingOperation.Copy, fraction: 1.0)
+    (transform as NSAffineTransform).concat()
+    image.draw(in: imageBounds, from: NSZeroRect, operation: NSCompositingOperation.copy, fraction: 1.0)
     flippedImage.unlockFocus()
 
     return flippedImage
@@ -97,7 +97,7 @@ func newStartFrame() -> Int {
     return Int(getRandomNum(Int32(ANIMATION_PAUSE_RANGE)) * -1)
 }
 
-func updateSpriteFrames(frames: [Float32], currentTextCoords: [Float32], currentFrame: Int) -> ([Float32], Int) {
+func updateSpriteFrames(_ frames: [Float32], currentTextCoords: [Float32], currentFrame: Int) -> ([Float32], Int) {
     var frame = currentFrame
     var textCoords = currentTextCoords
     frame += 1
@@ -113,7 +113,7 @@ func updateSpriteFrames(frames: [Float32], currentTextCoords: [Float32], current
     return (textCoords, frame)
 }
 
-func setupFrames(spriteFrames: [SpriteFrame]) -> [Float32] {
+func setupFrames(_ spriteFrames: [SpriteFrame]) -> [Float32] {
     var frames: [Float32] = Array()
     for spriteFrame in spriteFrames {
         var frameCount = spriteFrame.frameCount

@@ -16,15 +16,15 @@ class Score: RenderController {
 
     let stringController = StringController(scale: 0.018, xPadding: 0.01, yPadding: 0.01)
 
-    private var currentScore = 0.0
-    private var movementModifier = BASE_MOVEMENT_MODIFIER
-    private var foodModifier = BASE_FOOD_MODIFIER
+    fileprivate var currentScore = 0.0
+    fileprivate var movementModifier = BASE_MOVEMENT_MODIFIER
+    fileprivate var foodModifier = BASE_FOOD_MODIFIER
 
     init() {
         reset()
     }
 
-    private func updateScore() {
+    fileprivate func updateScore() {
         stringController.set(" SCORE: \(String(score()))")
     }
 
