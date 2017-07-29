@@ -36,7 +36,7 @@ class StarsRenderer: Renderer {
         loadStars()
     }
 
-    func loadAssets(device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
+    func loadAssets(_ device: MTLDevice, view: MTKView, frameInfo: FrameInfo) {
         pipelineState = renderUtils.createPipeLineState("starsVertex", fragment: "starsFragment", device: device, view: view)
 
         starsVertexBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "star positions")
@@ -44,8 +44,8 @@ class StarsRenderer: Renderer {
         starsSizeBuffer = renderUtils.createSizedBuffer(device, bufferLabel: "star sizes")
 
 
-        let pointer = UnsafeMutablePointer<Float32>([frameInfo.viewDiffRatio])
-        viewDiffBuffer = device.newBufferWithBytes(pointer, length: sizeofValue(frameInfo.viewDiffRatio), options: [])
+        let pointer = UnsafeMutablePointer<Float32>(mutating: [frameInfo.viewDiffRatio])
+        viewDiffBuffer = device.makeBuffer(bytes: pointer, length: MemoryLayout.size(ofValue: frameInfo.viewDiffRatio), options: [])
 
         print("loading stars assets done")
     }
@@ -77,13 +77,13 @@ class StarsRenderer: Renderer {
         }
     }
 
-    func render(renderEncoder: MTLRenderCommandEncoder) {
+    func render(_ renderEncoder: MTLRenderCommandEncoder) {
         renderUtils.setPipeLineState(renderEncoder, pipelineState: pipelineState, name: "stars")
-        for (i, vertexBuffer) in [starsVertexBuffer, starColorsBuffer, starsSizeBuffer, viewDiffBuffer].enumerate() {
-            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, atIndex: i)
+        for (i, vertexBuffer) in [starsVertexBuffer, starColorsBuffer, starsSizeBuffer, viewDiffBuffer].enumerated() {
+            renderEncoder.setVertexBuffer(vertexBuffer, offset: 0, at: i)
         }
 
-        renderEncoder.drawPrimitives(.Point, vertexStart: 0, vertexCount: starPositions.count/2, instanceCount: 1)
+        renderEncoder.drawPrimitives(type: .point, vertexStart: 0, vertexCount: starPositions.count/2, instanceCount: 1)
         renderEncoder.popDebugGroup()
         renderEncoder.endEncoding()
     }

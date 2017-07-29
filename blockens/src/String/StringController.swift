@@ -6,14 +6,14 @@
 import Foundation
 
 class StringController: RenderController {
-    private let _renderer: StringRenderer!
-    private var _str: String = "";
+    fileprivate let _renderer: StringRenderer!
+    fileprivate var _str: String = "";
 
     init (scale: Float32, xPadding: Float32, yPadding: Float32) {
         _renderer = StringRenderer(utils: RenderUtils(), scale: scale, xPadding: xPadding, yPadding: yPadding)
     }
 
-    func set(str: String) {
+    func set(_ str: String) {
         _str = str
 
         // Put together the complete grid. We could do this in one loop, but that would be messy. It's still O(n).

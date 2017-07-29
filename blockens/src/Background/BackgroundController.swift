@@ -7,7 +7,7 @@ import Foundation
 
 class BackgroundController: RenderController {
 
-    private let _renderer = BackgroundRenderer(utils: RenderUtils())
+    fileprivate let _renderer = BackgroundRenderer(utils: RenderUtils())
 
     func renderer() -> Renderer {
         return _renderer

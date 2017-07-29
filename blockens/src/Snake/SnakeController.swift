@@ -7,30 +7,30 @@ import Foundation
 
 class SnakeController: RenderController {
 
-    var currentDirection: Direction = Direction.Right
+    var currentDirection: Direction = Direction.right
 
     var gameTiles: Array<Int32> = []
     var boxTiles: Array<Int32> = []
 
     var snakeTiles: Array<GameTileInfo> = []
     var foodBoxLocation: Int32 = 0
-    private let _renderer: SnakeRenderer = SnakeRenderer(utils: RenderUtils())
+    fileprivate let _renderer: SnakeRenderer = SnakeRenderer(utils: RenderUtils())
 
     init() {
         reset()
     }
 
     func reset() {
-        currentDirection = Direction.Right
+        currentDirection = Direction.right
         let newSpot = getRandomNum(_renderer.gridInfoData.numBoxes)
         let x = Int32(newSpot % _renderer.gridInfoData.gridDimension)
         let y = Int32(newSpot / _renderer.gridInfoData.gridDimension)
-        snakeTiles = [GameTileInfo(x: x, y: y, tile: GameTile.HeadRight)]
+        snakeTiles = [GameTileInfo(x: x, y: y, tile: GameTile.headRight)]
         findFood()
 
     }
 
-    func setDirection(direction: Direction) {
+    func setDirection(_ direction: Direction) {
         currentDirection = direction
     }
 
@@ -56,7 +56,7 @@ class SnakeController: RenderController {
         return true
     }
 
-    func mapSnakeTiles(start: Int = 0) -> [Int32: GameTileInfo] {
+    func mapSnakeTiles(_ start: Int = 0) -> [Int32: GameTileInfo] {
 
         var snakeTilePosition: [Int32: GameTileInfo] = [:]
 
@@ -106,7 +106,7 @@ class SnakeController: RenderController {
         return result
     }
 
-    private func update() {
+    fileprivate func update() {
         let snakeTilePosition = mapSnakeTiles()
         gameTiles = []
         boxTiles = []
@@ -115,7 +115,7 @@ class SnakeController: RenderController {
             boxTiles.append(boxNum)
         }
         if snakeTilePosition[foodBoxLocation] == nil {
-            gameTiles.append(GameTile.GrowTile.rawValue)
+            gameTiles.append(GameTile.growTile.rawValue)
             boxTiles.append(foodBoxLocation)
         }
         _renderer.updateTileCount(gameTiles.count)
@@ -125,16 +125,16 @@ class SnakeController: RenderController {
 
     func moveHead() -> Bool {
         switch (currentDirection) {
-        case Direction.Down:
+        case Direction.down:
             moveDown()
             break
-        case Direction.Up:
+        case Direction.up:
             moveUp()
             break
-        case Direction.Left:
+        case Direction.left:
             moveLeft()
             break
-        case Direction.Right:
+        case Direction.right:
             moveRight()
             break
         }
@@ -145,7 +145,7 @@ class SnakeController: RenderController {
         return snakeMap[currentBoxNum] == nil // This returns true if snake moved without colliding.
     }
 
-    func log_e(n: Double) -> Double {
+    func log_e(_ n: Double) -> Double {
         return log(n)/log(M_E)
     }
 
@@ -153,13 +153,13 @@ class SnakeController: RenderController {
         let snakeTile = snakeTiles[0]
         let numBox = snakeTile.y * _renderer.gridInfoData.gridDimension + snakeTile.x;
         if numBox == foodBoxLocation {
-            snakeTiles.append(GameTileInfo(x: snakeTile.x, y: snakeTile.y, tile: GameTile.HeadRight))
+            snakeTiles.append(GameTileInfo(x: snakeTile.x, y: snakeTile.y, tile: GameTile.headRight))
             return findFood()
         }
         return false
     }
 
-    func oneEighty(oppositeDirection: Direction) -> Bool {
+    func oneEighty(_ oppositeDirection: Direction) -> Bool {
 
         if snakeTiles.count > 1 && oppositeDirection == currentDirection {
             // It's a 180.
@@ -178,7 +178,7 @@ class SnakeController: RenderController {
         if y < 0 {
             y = _renderer.gridInfoData.gridDimension - 1
         }
-        snakeHead.tile = GameTile.HeadDown
+        snakeHead.tile = GameTile.headDown
         snakeHead.y = y
         snakeTiles[0] = snakeHead
     }
@@ -192,7 +192,7 @@ class SnakeController: RenderController {
         if y >= _renderer.gridInfoData.gridDimension {
             y = 0
         }
-        snakeHead.tile = GameTile.HeadUp
+        snakeHead.tile = GameTile.headUp
         snakeHead.y = y
         snakeTiles[0] = snakeHead
     }
@@ -206,7 +206,7 @@ class SnakeController: RenderController {
         if x < 0 {
             x = _renderer.gridInfoData.gridDimension - 1
         }
-        snakeHead.tile = GameTile.HeadLeft
+        snakeHead.tile = GameTile.headLeft
         snakeHead.x = x
         snakeTiles[0] = snakeHead
     }
@@ -220,7 +220,7 @@ class SnakeController: RenderController {
         if x >= _renderer.gridInfoData.gridDimension {
             x = 0
         }
-        snakeHead.tile = GameTile.HeadRight
+        snakeHead.tile = GameTile.headRight
         snakeHead.x = x
         snakeTiles[0] = snakeHead
     }
